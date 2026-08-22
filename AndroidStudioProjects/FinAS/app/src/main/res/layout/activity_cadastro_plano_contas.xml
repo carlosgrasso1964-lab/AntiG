@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/editCodGeral"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Código Geral" />
+
+        <EditText
+            android:id="@+id/edtNomeP"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome Primário" />
+
+        <EditText
+            android:id="@+id/edtNomeS"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome Secundário" />
+
+        <EditText
+            android:id="@+id/edtNomeC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome Completo" />
+
+        <Button
+            android:id="@+id/btnSalvar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/salvar" />
+
+        <Button
+            android:id="@+id/btnExcluir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/excluir"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewPlanos"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+</layout>

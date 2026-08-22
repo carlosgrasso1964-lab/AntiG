@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FinAS</string>
+    <string name="bem_vindo">Bem-vindo</string>
+    <string name="entrar">Entrar</string>
+    <string name="senha">Senha</string>
+    <string name="usuario">Usuário</string>
+    <string name="hint_cod_clifor">Código</string>
+    <string name="hint_nome_clifor">Nome/Razão Social</string>
+    <string name="hint_apelido_clifor">Apelido/Nome Fantasia</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_celular">Celular</string>
+    <string name="hint_telefone">Telefone</string>
+    <string name="hint_endereco">Endereço</string>
+    <string name="hint_numero">Número</string>
+    <string name="hint_complemento">Complemento</string>
+    <string name="hint_bairro">Bairro</string>
+    <string name="hint_cidade">Cidade</string>
+    <string name="hint_estado">Estado</string>
+    <string name="hint_cep">CEP</string>
+    <string name="hint_rg">RG/CNPJ</string>
+    <string name="hint_cpf">CPF/Inscrição Estadual</string>
+    <string name="hint_contato_clifor">Contato</string>
+    <string name="hint_obs">Observações</string>
+    <string name="hint_fk_clifor_gp">Vínculo</string>
+    <string name="hint_codigo">Código</string>
+    <string name="hint_nome_banco">Nome do Banco</string>
+    <string name="hint_agencia">Agência</string>
+    <string name="hint_limite">Limite</string>
+    <string name="hint_abertura">Data de Abertura</string>
+    <string name="hint_encerramento">Data de Encerramento</string>
+    <string name="hint_Usuário">Usuário</string>
+    <string name="hint_Senha">Senha</string>
+    <string name="abrir_pdf">Abrir PDF</string>
+    <string name="calendario">Calendário</string>
+    <string name="agenda">Agenda</string>
+    <string name="bloco_notas">Bloco de Notas</string>
+    <string name="voltar">Voltar</string>
+    <string name="fluxo_prompt">Fluxo de Caixa</string>
+    <string name="status_prompt">Status</string>
+    <string name="plano_contas_prompt">Conta Vinculada</string>
+    <string name="prompt_tipo">Informe o tipo desejado: CLI para Cliente, FOR para Fornecedor, BCO para Banco, CAR para Cartão, PER para Permanente</string>
+    <string name="prompt_vinculo">Selecione a conta para Vínculo</string>
+    <string name="filtro_recurso">Filtro Recurso</string>
+    <string name="recurso">Recurso</string>
+    <string name="vrecurso">Recurso Vinculado</string>
+    <string name="clifor">Cliente/Fornecedor</string>
+    <string name="vclifor">Cliente/Fornecedor Vinculado</string>
+    <string name="dt_lancto">Data de Lançamento</string>
+    <string name="dt_emi">Data de Emissão</string>
+    <string name="dt_vcto">Data de Vencimento</string>
+    <string name="documento">Documento</string>
+    <string name="classif">Classificação</string>
+    <string name="descr">Descrição</string>
+    <string name="valor">Valor</string>
+    <string name="status_mov">Status do Movimento</string>
+    <string name="prev">Previsão</string>
+    <string name="tipo_operacao">Tipo de Operação</string>
+    <string name="status_movimento">Status Movimento</string>
+    <string name="previsao">Previsão</string>
+    <string name="salvar">Salvar</string>
+    <string name="alterar">Alterar</string>
+    <string name="excluir">Excluir</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="listar">Listar</string>
+    <string name="limpar">Limpar</string>
+    <string name="fechar">Fechar</string>
+    <string name="editar">Editar</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="pag">Pag</string>
+    <string name="rec">Rec</string>
+    <string name="prompt_tipo_operacao">Selecione o Tipo de Operação</string>
+    <string name="prompt_recurso">Selecione um recurso</string>
+    <string name="prompt_clifor">Selecione o Cliente/Fornecedor</string>
+    <string name="prompt_classif">Selecione a Classificação</string>
+    <string name="prompt_status_mov">Selecione o Status do Movimento</string>
+    <string name="prompt_prev">Selecione a Previsão</string>
+    <string name="hint_dt_lancto">Data de Lançamento</string>
+    <string name="hint_dt_emi">Data de Emissão</string>
+    <string name="hint_dt_vcto">Data de Vencimento</string>
+    <string name="hint_documento">Documento</string>
+    <string name="hint_descr">Descrição</string>
+    <string name="hint_valor">Ex.: 1.234,56</string>
+    <string name="hint_dt_apr">Data de Apresentação</string>
+    <string name="sair_dialog_titulo">Sair</string>
+    <string name="sair_dialog_mensagem">Deseja realmente sair do aplicativo?</string>
+    <string name="sair_dialog_sim">Sim</string>
+    <string name="sair_dialog_nao">Não</string>
+    <string name="movimentos">Tela de Movimentos</string>
+    <string name="lancamentos">Lançamentos</string>
+    <string name="transferencias">Transferências</string>
+    <string name="parcelamentos">Parcelamentos</string>
+    <string name="parcel_cartoes">Parcel. Cartões</string>
+    <string name="transferencias_em_desenvolvimento">Tela de Transferências em desenvolvimento</string>
+    <string name="parcelamentos_em_desenvolvimento">Tela de Parcelamentos em desenvolvimento</string>
+    <string name="parcel_cartoes_em_desenvolvimento">Tela de Parcelamentos de Cartões em desenvolvimento</string>
+    <!-- Strings para Tela Principal -->
+    <string name="menu_principal">Menu Principal</string>
+    <string name="cadastros">Cadastros</string>
+    <string name="movimentacao">Movimentação</string>
+    <string name="consultas">Consultas</string>
+    <string name="manutencao">Manutenção</string>
+    <string name="utilitarios">Utilitários</string>
+    <string name="sair">Sair</string>
+    <!-- Strings para Consultas -->
+    <string name="recursos">Recursos</string>
+    <string name="favorecidos">Favorecidos</string>
+    <string name="classificacao">Classificação</string>
+    <string name="saldos">Saldos</string>
+    <string name="fluxo_diario">Fluxo Diário</string>
+    <string name="receitas_despesas">Receitas X Despesas</string>
+    <string name="referencia_cruzada">Referência Cruzada</string>
+    <string name="balanco">Balanço</string>
+    <string name="inflacao">Inflação</string>
+    <!-- Novas strings para Cadastros -->
+    <string name="usuarios">Usuários</string>
+    <string name="plano_contas">Plano de Contas</string>
+    <!-- Novas strings para Parcelamentos -->
+    <string name="hint_valor_total">Valor Total</string>
+    <string name="hint_valor_parcela">Valor da Parcela</string>
+    <string name="prompt_periodicidade">Selecione a Periodicidade</string>
+    <!-- <string name="hint_prev">Previsão (V ou F)</string> -->
+    <string name="gerar">Gerar</string>
+    <string name="prompt_numparcelas">numparcelas</string>
+    <string-array name="tipo_options">
+        <item>Selecione o tipo</item>
+        <item>CLI - Cliente</item>
+        <item>FOR - Fornecedor</item>
+    </string-array>
+
+    <string name="hint_descricao">Descrição</string>
+    <string name="hint_dt_inicio">Data Inicial</string>
+
+    <string-array name="tipo_operacao">
+        <item>Saída</item>
+        <item>Entrada</item>
+        <item>Neutro</item>
+    </string-array>
+    <string-array name="estado_options">
+        <item>Selecione o estado</item>
+        <item>AC</item>
+        <item>AL</item>
+        <item>AP</item>
+        <item>AM</item>
+        <item>BA</item>
+        <item>CE</item>
+        <item>DF</item>
+        <item>ES</item>
+        <item>GO</item>
+        <item>MA</item>
+        <item>MT</item>
+        <item>MS</item>
+        <item>MG</item>
+        <item>PA</item>
+        <item>PB</item>
+        <item>PR</item>
+        <item>PE</item>
+        <item>PI</item>
+        <item>RJ</item>
+        <item>RN</item>
+        <item>RS</item>
+        <item>RO</item>
+        <item>RR</item>
+        <item>SC</item>
+        <item>SP</item>
+        <item>SE</item>
+        <item>TO</item>
+    </string-array>
+    <string-array name="fluxo_options">
+        <item>Não definido</item>
+        <item>Entrada</item>
+        <item>Saída</item>
+    </string-array>
+    <string-array name="fluxo_values">
+        <item>N</item>
+        <item>E</item>
+        <item>S</item>
+    </string-array>
+    <string-array name="status_options">
+        <item>Ativo</item>
+        <item>Inativo</item>
+    </string-array>
+    <string-array name="status_values">
+        <item>A</item>
+        <item>I</item>
+    </string-array>
+    <string-array name="tipos_clifor">
+        <item>FOR</item>
+        <item>CLI</item>
+    </string-array>
+    <string-array name="tipos_plano_contas">
+        <item>Ativo</item>
+        <item>Passivo</item>
+        <item>Receita</item>
+        <item>Despesa</item>
+    </string-array>
+    <string-array name="fluxo_options_binary">
+        <item>Sim</item>
+        <item>Não</item>
+    </string-array>
+    <string-array name="fluxo_values_binary">
+        <item>S</item>
+        <item>N</item>
+    </string-array>
+    <string-array name="num_parcelas_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+    </string-array>
+    <string-array name="periodicidade_array">
+        <item>Mensal</item>
+        <item>Trimestral</item>
+        <item>Bimestral</item>
+        <item>Anual</item>
+        <item>Semanal</item>
+        <item>Diária</item>
+        <item>Quadrimestral</item>
+    </string-array>
+    <string-array name="status_array">
+        <item>""</item>
+        <item>PG</item>
+        <item>RC</item>
+    </string-array>
+    <string-array name="prev_array">
+        <item>V</item>
+        <item>F</item>
+    </string-array>
+    <string name="painel_diario">Painel Diário</string>
+    <string name="saldos_e_totais">Saldos e Totais</string>
+    <string name="saldo_inicial">Saldo Inicial:</string>
+    <string name="total_entradas">Total Entradas:</string>
+    <string name="total_saidas">Total Saídas:</string>
+    <string name="saldo_final">Saldo Final:</string>
+    <string name="saldo_poupanca">Saldo Poupança:</string>
+    <string name="sugestoes">Sugestões</string>
+    <string name="sugestao_aplicar">Sugestão Aplicar:</string>
+    <string name="sugestao_segura">Sugestão Segura:</string>
+    <string name="menor_saldo_futuro">Menor Saldo Futuro:</string>
+    <string name="data_menor_saldo">Data Menor Saldo:</string>
+    <string name="alerta">Alerta</string>
+    <string name="entradas_do_dia">Entradas do Dia</string>
+    <string name="saidas_do_dia">Saídas do Dia</string>
+    <string name="atualizar">Atualizar</string>
+    <string name="descricao">Descrição</string>
+    <string name="nenhum_registro">Nenhum registro</string>
+</resources>

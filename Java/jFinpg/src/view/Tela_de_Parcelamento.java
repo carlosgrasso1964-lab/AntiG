@@ -1,0 +1,921 @@
+package view;
+
+import utilitarios.Conexao;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+
+public class Tela_de_Parcelamento extends javax.swing.JFrame {
+
+    CarregarCbx re = new CarregarCbx(); //Carrega combobox de Favorecidos
+    CarregarCbx3 r3 = new CarregarCbx3(); //Carrega combobox de ClassificaÃ§Ã£o por Conta
+
+    public Tela_de_Parcelamento() throws SQLException {
+        initComponents();
+        re.CarregarCbx("tbclifor", "apelidoclifor", jComboBoxFav);
+        r3.CarregarCbx3("gpprincipal", "nome_c", jComboBoxClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jTextField7 = new javax.swing.JTextField();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jTextFieldVrCompra = new javax.swing.JTextField();
+        jTextFieldParcelas = new javax.swing.JTextField();
+        jComboBoxFav = new javax.swing.JComboBox<>();
+        jTextFieldDoc = new javax.swing.JTextField();
+        jFormattedTextFieldEmissao = new javax.swing.JFormattedTextField();
+        jFormattedTextFieldVencimento = new javax.swing.JFormattedTextField();
+        jTextFieldVrParcela = new javax.swing.JTextField();
+        jTextFieldDescricao = new javax.swing.JTextField();
+        jTextFieldStatus = new javax.swing.JTextField();
+        jTextFieldPrev = new javax.swing.JTextField();
+        jTextFieldNrFav = new javax.swing.JTextField();
+        jTextFieldClassFav = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jRadioButtonMensal = new javax.swing.JRadioButton();
+        jRadioButtonTrimestral = new javax.swing.JRadioButton();
+        jRadioButtonBimestral = new javax.swing.JRadioButton();
+        jRadioButtonAnual = new javax.swing.JRadioButton();
+        jRadioButtonSemanal = new javax.swing.JRadioButton();
+        jRadioButtonDiario = new javax.swing.JRadioButton();
+        jRadioButtonQuadrimestral = new javax.swing.JRadioButton();
+        jLabel12 = new javax.swing.JLabel();
+        jComboBoxClass = new javax.swing.JComboBox<>();
+        jTextFieldVClass = new javax.swing.JTextField();
+        jCbxTipo = new javax.swing.JComboBox<>();
+        jButtonGerar = new javax.swing.JButton();
+        jButtonFechar = new javax.swing.JButton();
+
+        jTextField7.setText("jTextField7");
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setUndecorated(true);
+
+        jLabel2.setText("Valor da Compra :");
+
+        jLabel3.setText("Número de Parcelas: ");
+
+        jLabel4.setText("Favorecido :");
+
+        jLabel5.setText("Documento:");
+
+        jLabel6.setText("Emissão:");
+
+        jLabel7.setText("Vencimento:");
+
+        jLabel8.setText("Valor da Parcela:");
+
+        jLabel9.setText("Descrição:");
+
+        jLabel10.setText("Status:");
+
+        jLabel11.setText("Previsto:");
+
+        jTextFieldVrCompra.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldVrCompraFocusLost(evt);
+            }
+        });
+
+        jComboBoxFav.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione o Favorecido" }));
+        jComboBoxFav.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxFavActionPerformed(evt);
+            }
+        });
+
+        jTextFieldDoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldDocActionPerformed(evt);
+            }
+        });
+
+        try {
+            jFormattedTextFieldEmissao.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            jFormattedTextFieldVencimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        jTextFieldVrParcela.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldVrParcelaFocusLost(evt);
+            }
+        });
+        jTextFieldVrParcela.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldVrParcelaActionPerformed(evt);
+            }
+        });
+
+        jTextFieldPrev.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldPrevFocusLost(evt);
+            }
+        });
+
+        jTextFieldNrFav.setEnabled(false);
+
+        jTextFieldClassFav.setEnabled(false);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("P a r c e l a m e n t o s");
+
+        buttonGroup1.add(jRadioButtonMensal);
+        jRadioButtonMensal.setText("Mensal");
+        jRadioButtonMensal.setActionCommand("1");
+        jRadioButtonMensal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+
+        buttonGroup1.add(jRadioButtonTrimestral);
+        jRadioButtonTrimestral.setText("Trimestral");
+        jRadioButtonTrimestral.setActionCommand("2");
+        jRadioButtonTrimestral.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jRadioButtonTrimestral.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonTrimestralActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(jRadioButtonBimestral);
+        jRadioButtonBimestral.setText("Bimestral");
+        jRadioButtonBimestral.setActionCommand("3");
+        jRadioButtonBimestral.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+
+        buttonGroup1.add(jRadioButtonAnual);
+        jRadioButtonAnual.setText("Anual");
+        jRadioButtonAnual.setActionCommand("4");
+        jRadioButtonAnual.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+
+        buttonGroup1.add(jRadioButtonSemanal);
+        jRadioButtonSemanal.setText("Semanal");
+        jRadioButtonSemanal.setActionCommand("5");
+        jRadioButtonSemanal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+
+        buttonGroup1.add(jRadioButtonDiario);
+        jRadioButtonDiario.setText("Dias");
+        jRadioButtonDiario.setActionCommand("6");
+        jRadioButtonDiario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+
+        buttonGroup1.add(jRadioButtonQuadrimestral);
+        jRadioButtonQuadrimestral.setText("Quadrimestral");
+        jRadioButtonQuadrimestral.setActionCommand("7");
+        jRadioButtonQuadrimestral.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jRadioButtonQuadrimestral.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonQuadrimestralActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRadioButtonQuadrimestral)
+                    .addComponent(jRadioButtonBimestral)
+                    .addComponent(jRadioButtonTrimestral)
+                    .addComponent(jRadioButtonAnual)
+                    .addComponent(jRadioButtonSemanal)
+                    .addComponent(jRadioButtonDiario)
+                    .addComponent(jRadioButtonMensal))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jRadioButtonMensal)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButtonTrimestral)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButtonBimestral)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButtonAnual)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButtonSemanal)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButtonDiario)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButtonQuadrimestral)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jRadioButtonAnual, jRadioButtonBimestral, jRadioButtonDiario, jRadioButtonMensal, jRadioButtonQuadrimestral, jRadioButtonSemanal, jRadioButtonTrimestral});
+
+        jLabel12.setText("Classificação:");
+
+        jComboBoxClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione a Classificação" }));
+        jComboBoxClass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxClassActionPerformed(evt);
+            }
+        });
+
+        jTextFieldVClass.setEnabled(false);
+        jTextFieldVClass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldVClassActionPerformed(evt);
+            }
+        });
+
+        jCbxTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione (\"E\"ntrada - \"S\"aída)", "E", "S" }));
+
+        jButtonGerar.setText("Gerar");
+        jButtonGerar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButtonGerar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonGerarActionPerformed(evt);
+            }
+        });
+
+        jButtonFechar.setText("Fechar");
+        jButtonFechar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButtonFechar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonFecharActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(32, 32, 32)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel12)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel11))
+                                .addGap(6, 6, 6)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jComboBoxFav, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jTextFieldPrev, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jComboBoxClass, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jTextFieldDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jFormattedTextFieldEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jTextFieldVrParcela, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jTextFieldDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jTextFieldStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(18, 18, 18))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonGerar)
+                                .addGap(41, 41, 41)
+                                .addComponent(jButtonFechar)
+                                .addGap(121, 121, 121)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jTextFieldNrFav, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextFieldClassFav, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                                    .addComponent(jTextFieldVClass)))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(357, 357, 357)
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jFormattedTextFieldVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(125, 125, 125)
+                                .addComponent(jCbxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldVrCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(30, 30, 30)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldParcelas, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextFieldVrCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCbxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jTextFieldParcelas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jComboBoxFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldNrFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldClassFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(jComboBoxClass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldVClass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldDoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jFormattedTextFieldEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7)
+                    .addComponent(jFormattedTextFieldVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(jTextFieldVrParcela, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextFieldDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jButtonGerar)
+                                    .addComponent(jButtonFechar)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldPrev, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11))
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jTextFieldDescricao, jTextFieldPrev, jTextFieldStatus, jTextFieldVrParcela});
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jRadioButtonTrimestralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonTrimestralActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButtonTrimestralActionPerformed
+
+    private void jButtonFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFecharActionPerformed
+
+        try {
+            TelaPrincipal exibir;
+            exibir = new TelaPrincipal();
+            exibir.setVisible(true);
+            setVisible(false);
+        } catch (IOException ex) {
+            Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonFecharActionPerformed
+
+    private void jRadioButtonQuadrimestralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonQuadrimestralActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButtonQuadrimestralActionPerformed
+
+    private void jTextFieldDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldDocActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldDocActionPerformed
+
+    private void jComboBoxFavActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFavActionPerformed
+        String selectedValue = jComboBoxFav.getSelectedItem().toString();
+        var texto = selectedValue.length();
+        selectedValue = jComboBoxFav.getSelectedItem().toString().substring(texto - 14);
+        if (!selectedValue.isEmpty()) {
+            String frase1 = selectedValue.substring(0, 4);
+            jTextFieldNrFav.setText(frase1);
+            String frase2 = selectedValue.substring(5);
+            jTextFieldClassFav.setText(frase2);
+        }
+    }//GEN-LAST:event_jComboBoxFavActionPerformed
+
+    private void jButtonGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGerarActionPerformed
+
+        int Parcelas = Integer.parseInt(jTextFieldParcelas.getText());  //Número de Parcelas
+        BigDecimal Princ = BigDecimal.ZERO;
+        BigDecimal LiqParc = BigDecimal.ZERO;
+        BigDecimal difer = BigDecimal.ZERO;
+        BigDecimal comparaCompra = new BigDecimal(jTextFieldVrCompra.getText().replaceAll(",", "."));
+        int i = 0;
+        int idsc = 0;
+        if (comparaCompra.compareTo(BigDecimal.ZERO) == 0) {
+            BigDecimal vrParcela = new BigDecimal(jTextFieldVrParcela.getText());
+            Princ = vrParcela.multiply(new BigDecimal(Parcelas));
+            LiqParc = vrParcela;
+        } else {
+            Princ = new BigDecimal(jTextFieldVrCompra.getText().replaceAll(",", "."));
+            BigDecimal meValor = Princ.divide(new BigDecimal(Parcelas), 10, RoundingMode.HALF_UP); // Divisão com precisão extra
+            BigDecimal Valor = meValor.setScale(2, RoundingMode.FLOOR);
+            LiqParc = Valor;
+
+            BigDecimal vrParcD;
+            BigDecimal pc = new BigDecimal(Parcelas); // Atribuo o pc com a variável Parcelas
+            vrParcD = Princ.subtract(Valor.multiply(pc)).setScale(2, RoundingMode.FLOOR);
+            difer = vrParcD;
+
+            if (difer.compareTo(BigDecimal.ZERO) > 0) {
+                String escolha = JOptionPane.showInputDialog(null, "Em qual parcela deseja lançar a diferença?");
+                idsc = Integer.parseInt(escolha);
+            }
+        }
+        String opc = buttonGroup1.getSelection().getActionCommand();
+        switch (opc) {
+            case "1" ->
+                System.out.println("Escolhida Mensal");
+            //break;  
+            case "2" ->
+                System.out.println("Escolhida Trimestral");
+            case "3" ->
+                System.out.println("Escolhida Bimestral");
+            case "4" ->
+                System.out.println("Escolhida Anual");
+            case "5" ->
+                System.out.println("Escolhida Semanal");
+            case "6" ->
+                System.out.println("Escolhida Diária");
+            case "7" ->
+                System.out.println("Escolhida Quadrimestral");
+            default ->
+                System.out.println("Escolhida opção inválida! Escolha entre a 1 e 7");
+        }
+        String corrige;
+        Object[] options = {"Sim", "Não"};
+        int i1 = JOptionPane.showOptionDialog(null, "Corrige Data da Emissão? !!", "Corrige Emissão", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        if (i1 == JOptionPane.YES_OPTION) { //opçao SIM selecionada !!}
+            //if (JOptionPane.showConfirmDialog(null, "Corrige Data da Emissão?", "Corrige Emissão", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+            corrige = "S";
+            int diasParaAdicionar = 0;
+            int diasParaAdicionarv = 0;
+            for (i = 0; i < Parcelas; i++) {
+                try {
+                    Connection con;
+                    con = Conexao.faz_conexao();
+                    String sql = "INSERT INTO tbmovimento(\"recurso\",\"vrecurso\",\"clifor\",\"vclifor\",\"dtlancto\",\"dtemi\",\"dtvcto\",\"documento\",\"classif\",\"descr\",\"valor\",\"dtapr\",\"statusmov\",\"prev\") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    SimpleDateFormat formato_data = new SimpleDateFormat("dd/MM/yyyy");
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    String cBase = jFormattedTextFieldEmissao.getText();
+                    Calendar c = Calendar.getInstance();
+                    try {
+                        c.setTime(dateFormat.parse(cBase));
+                    } catch (ParseException ex) {
+                        System.out.println("Erro :" + ex);
+                    }
+                    // Guardar o dia original e o mês
+                    int diaOriginal = c.get(Calendar.DAY_OF_MONTH);
+                    if (i > 0) {
+                        if (opc == "1") {
+                            c.add(Calendar.MONTH, 1);
+                        } else if (opc == "2") {
+                            c.add(Calendar.MONTH, 3);
+                        } else if (opc == "3") {
+                            c.add(Calendar.MONTH, 2);    
+                        } else if (opc == "4") {
+                            c.add(Calendar.YEAR, 1);
+                        } else if (opc == "5") {
+                            c.add(Calendar.WEEK_OF_MONTH, 1);
+                        } else if (opc == "6") {
+                            c.add(Calendar.DAY_OF_MONTH, 1);
+                        } else if (opc == "7") {
+                            c.add(Calendar.MONTH, 4);
+                        }
+                        int mesOriginal = c.get(Calendar.MONTH);
+                        if (mesOriginal == 1) {
+                            int diaAtual = c.get(Calendar.DAY_OF_MONTH);
+                            diasParaAdicionar = diaOriginal - diaAtual;
+                        }
+                        if (mesOriginal == 2) {
+                            c.add(Calendar.DAY_OF_MONTH, diasParaAdicionar);
+                            diasParaAdicionar = 0;
+                        }
+                        String data = dateFormat.format(c.getTime());
+                        jFormattedTextFieldEmissao.setText(data);
+                        String vBase = jFormattedTextFieldVencimento.getText();
+                        Calendar v = Calendar.getInstance();
+                        try {
+                            v.setTime(dateFormat.parse(vBase));
+                        } catch (ParseException exv) {
+                            System.out.println("Erro :" + exv);
+                        }
+                        // Guardar o dia original e o mês
+                        int diaOriginalv = v.get(Calendar.DAY_OF_MONTH);
+                        if (opc == "1") {
+                            v.add(Calendar.MONTH, 1);
+                        } else if (opc == "2") {
+                            v.add(Calendar.MONTH, 3);
+                        } else if (opc == "3") {
+                            v.add(Calendar.MONTH, 2);    
+                        } else if (opc == "4") {
+                            v.add(Calendar.YEAR, 1);
+                        } else if (opc == "5") {
+                            v.add(Calendar.WEEK_OF_MONTH, 1);
+                        } else if (opc == "6") {
+                            v.add(Calendar.DAY_OF_MONTH, 1);
+                        } else if (opc == "7") {
+                            v.add(Calendar.MONTH, 4);
+                        }
+                        int mesOriginalv = v.get(Calendar.MONTH);
+                        if (mesOriginalv == 1) {
+                            int diaAtualv = v.get(Calendar.DAY_OF_MONTH);
+                            diasParaAdicionarv = diaOriginalv - diaAtualv;
+                        }
+                        if (mesOriginalv == 2) {
+                            v.add(Calendar.DAY_OF_MONTH, diasParaAdicionarv);
+                            diasParaAdicionarv = 0;
+                        }
+                        String datav = dateFormat.format(v.getTime());
+                        jFormattedTextFieldVencimento.setText(datav);
+                    }
+                    try (PreparedStatement stmt = con.prepareStatement(sql)) {
+                        String tipo = jCbxTipo.getSelectedItem().toString(); // Pegando o valor selecionado
+                        if (tipo.equals("S")) { // Se for Entrada
+                            stmt.setString(1, "0079");
+                            stmt.setString(2, "2.001.002");
+                        } else if (tipo.equals("E")) { // Se for Saída
+                            stmt.setString(1, "0022");
+                            stmt.setString(2, "1.002.001");
+                        }
+                        stmt.setString(3, jTextFieldNrFav.getText());
+                        stmt.setString(4, jTextFieldClassFav.getText());
+                        java.util.Date data_l = formato_data.parse(jFormattedTextFieldEmissao.getText());
+                        stmt.setDate(5, new java.sql.Date(data_l.getTime()));
+                        java.util.Date data_e = formato_data.parse(jFormattedTextFieldEmissao.getText());
+                        stmt.setDate(6, new java.sql.Date(data_e.getTime()));
+                        java.util.Date data_v = formato_data.parse(jFormattedTextFieldVencimento.getText());
+                        stmt.setDate(7, new java.sql.Date(data_v.getTime()));
+                        stmt.setString(8, jTextFieldDoc.getText());
+                        stmt.setString(9, jTextFieldVClass.getText());
+                        stmt.setString(10, "parc." + (i + 1) + "/" + Parcelas + "-" + jTextFieldDescricao.getText());
+                        String t = "S";
+                        if ((i + 1) == idsc) {
+                            stmt.setBigDecimal(11, LiqParc.add(difer)); // Usa BigDecimal para manter a precisão
+                        } else {
+                            stmt.setBigDecimal(11, LiqParc); // Define LiqParc diretamente
+                        }
+                        stmt.setDate(12, null);
+                        stmt.setString(13, jTextFieldStatus.getText());
+                        stmt.setString(14, jTextFieldPrev.getText());
+                        stmt.execute();
+                    } catch (ParseException ex) {
+                        Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    con.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            JOptionPane.showMessageDialog(null, "Parcelamento gerado com sucesso!");
+        } else {
+            corrige = "N";
+            int diasParaAdicionarv = 0;
+            for (i = 0; i < Parcelas; i++) {
+                try {
+                    Connection con;
+                    con = Conexao.faz_conexao();
+                    String sql = "INSERT INTO tbmovimento(\"recurso\",\"vrecurso\",\"clifor\",\"vclifor\",\"dtlancto\",\"dtemi\",\"dtvcto\",\"documento\",\"classif\",\"descr\",\"valor\",\"dtapr\",\"statusmov\",\"prev\") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    SimpleDateFormat formato_data = new SimpleDateFormat("dd/MM/yyyy");
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    String cBase = jFormattedTextFieldEmissao.getText();
+                    Calendar c = Calendar.getInstance();
+                    try {
+                        c.setTime(dateFormat.parse(cBase));
+                    } catch (ParseException ex) {
+                        System.out.println("Erro :" + ex);
+                    }
+                    if (i > 0) {
+                        String vBase = jFormattedTextFieldVencimento.getText();
+                        Calendar v = Calendar.getInstance();
+                        try {
+                            v.setTime(dateFormat.parse(vBase));
+                        } catch (ParseException exv) {
+                            System.out.println("Erro :" + exv);
+                        }
+                        // Guardar o dia original e o mês
+                        int diaOriginalv = v.get(Calendar.DAY_OF_MONTH);
+                        if (opc == "1") {
+                            v.add(Calendar.MONTH, 1);
+                        } else if (opc == "2") {
+                            v.add(Calendar.MONTH, 3);
+                        } else if (opc == "3") {
+                            v.add(Calendar.MONTH, 2);    
+                        } else if (opc == "4") {
+                            v.add(Calendar.YEAR, 1);
+                        } else if (opc == "5") {
+                            v.add(Calendar.WEEK_OF_MONTH, 1);
+                        } else if (opc == "6") {
+                            v.add(Calendar.DAY_OF_MONTH, 1);
+                        } else if (opc == "7") {
+                            v.add(Calendar.MONTH, 4);
+                        }
+                        int mesOriginalv = v.get(Calendar.MONTH);
+                        if (mesOriginalv == 1) {
+                            int diaAtual = v.get(Calendar.DAY_OF_MONTH);
+                            diasParaAdicionarv = diaOriginalv - diaAtual;
+                        }
+                        if (mesOriginalv == 2) {
+                            v.add(Calendar.DAY_OF_MONTH, diasParaAdicionarv);
+                            diasParaAdicionarv = 0;
+                        }
+                        String datav = dateFormat.format(v.getTime());
+                        jFormattedTextFieldVencimento.setText(datav);
+                    }
+                    try (PreparedStatement stmt = con.prepareStatement(sql)) {
+                        String tipo = jCbxTipo.getSelectedItem().toString(); // Pegando o valor selecionado
+                        if (tipo.equals("S")) { // Se for Entrada
+                            stmt.setString(1, "0079");
+                            stmt.setString(2, "2.001.002");
+                        } else if (tipo.equals("E")) { // Se for Saída
+                            stmt.setString(1, "0022");
+                            stmt.setString(2, "1.002.001");
+                        }
+                        stmt.setString(3, jTextFieldNrFav.getText());
+                        stmt.setString(4, jTextFieldClassFav.getText());
+                        java.util.Date data_l = formato_data.parse(jFormattedTextFieldEmissao.getText());
+                        stmt.setDate(5, new java.sql.Date(data_l.getTime()));
+                        java.util.Date data_e = formato_data.parse(jFormattedTextFieldEmissao.getText());
+                        stmt.setDate(6, new java.sql.Date(data_e.getTime()));
+                        java.util.Date data_v = formato_data.parse(jFormattedTextFieldVencimento.getText());
+                        stmt.setDate(7, new java.sql.Date(data_v.getTime()));
+                        stmt.setString(8, jTextFieldDoc.getText());
+                        stmt.setString(9, jTextFieldVClass.getText());
+                        stmt.setString(10, "parc." + (i + 1) + "/" + Parcelas + "-" + jTextFieldDescricao.getText());
+                        String t = "S";
+                        if ((i + 1) == idsc) {
+                            stmt.setBigDecimal(11, LiqParc.add(difer)); // Usa BigDecimal para manter a precisão
+                        } else {
+                            stmt.setBigDecimal(11, LiqParc); // Define LiqParc diretamente
+                        }
+                        stmt.setDate(12, null);
+                        stmt.setString(13, jTextFieldStatus.getText());
+                        stmt.setString(14, jTextFieldPrev.getText());
+                        stmt.execute();
+                    } catch (ParseException ex) {
+                        Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    con.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            JOptionPane.showMessageDialog(null, "Parcelamento gerado com sucesso!");
+        }
+        //Limpar dados dos campos
+        jTextFieldVrCompra.setText("");
+        jTextFieldParcelas.setText("");
+        jTextFieldNrFav.setText("");
+        jTextFieldClassFav.setText("");
+        jTextFieldVClass.setText("");
+        jTextFieldDoc.setText("");
+        jFormattedTextFieldEmissao.setText("");
+        jFormattedTextFieldVencimento.setText("");
+        jTextFieldVrParcela.setText("");
+        jTextFieldDescricao.setText("");
+        jTextFieldStatus.setText("");
+        jTextFieldPrev.setText("");
+        jComboBoxClass.setSelectedIndex(0);
+        jComboBoxFav.setSelectedIndex(0);
+    }//GEN-LAST:event_jButtonGerarActionPerformed
+
+    private void jTextFieldVClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldVClassActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldVClassActionPerformed
+
+    private void jComboBoxClassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClassActionPerformed
+        String selectedValue = jComboBoxClass.getSelectedItem().toString();//.substring(11);
+        var texto = selectedValue.length();
+        texto = texto - 9;
+        selectedValue = jComboBoxClass.getSelectedItem().toString().substring(texto);
+        jTextFieldVClass.setText(selectedValue);
+    }//GEN-LAST:event_jComboBoxClassActionPerformed
+
+    private void jTextFieldVrParcelaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldVrParcelaFocusLost
+        String t = "S";
+        if (jCbxTipo.getSelectedItem().equals(t)) {
+            jTextFieldVrParcela.setText("-" + jTextFieldVrParcela.getText().replaceAll(",", "."));
+        } else {
+            jTextFieldVrParcela.setText(jTextFieldVrParcela.getText().replaceAll(",", "."));
+        }
+                // Se o usuário saiu do campo usando TAB
+        jTextFieldDescricao.requestFocusInWindow();
+    }//GEN-LAST:event_jTextFieldVrParcelaFocusLost
+
+    private void jTextFieldVrCompraFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldVrCompraFocusLost
+        String t = "S";
+        if (jCbxTipo.getSelectedItem().equals(t)) {
+            jTextFieldVrCompra.setText("-" + jTextFieldVrCompra.getText().replaceAll(",", "."));
+        } else {
+            jTextFieldVrCompra.setText(jTextFieldVrCompra.getText().replaceAll(",", "."));
+        }
+    }//GEN-LAST:event_jTextFieldVrCompraFocusLost
+
+    private void jTextFieldPrevFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldPrevFocusLost
+        String texto = jTextFieldPrev.getText().trim();
+        if (!texto.equals("V") && !texto.equals("F") && !texto.equals("v") && !texto.equals("f")) {
+            JOptionPane.showMessageDialog(null, "Entrada inválida! Por favor, insira 'V' ou 'F'.", "Erro", JOptionPane.ERROR_MESSAGE);
+            jTextFieldPrev.setText("");
+            jTextFieldPrev.requestFocus();
+        } else if (texto.equals("v") || texto.equals("f")) {
+            jTextFieldPrev.setText(texto.toUpperCase());
+        }
+    }//GEN-LAST:event_jTextFieldPrevFocusLost
+
+    private void jTextFieldVrParcelaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldVrParcelaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldVrParcelaActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    new Tela_de_Parcelamento().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Tela_de_Parcelamento.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButtonFechar;
+    private javax.swing.JButton jButtonGerar;
+    private javax.swing.JComboBox<String> jCbxTipo;
+    private javax.swing.JComboBox<String> jComboBoxClass;
+    private javax.swing.JComboBox<String> jComboBoxFav;
+    private javax.swing.JFormattedTextField jFormattedTextFieldEmissao;
+    private javax.swing.JFormattedTextField jFormattedTextFieldVencimento;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JRadioButton jRadioButtonAnual;
+    private javax.swing.JRadioButton jRadioButtonBimestral;
+    private javax.swing.JRadioButton jRadioButtonDiario;
+    private javax.swing.JRadioButton jRadioButtonMensal;
+    private javax.swing.JRadioButton jRadioButtonQuadrimestral;
+    private javax.swing.JRadioButton jRadioButtonSemanal;
+    private javax.swing.JRadioButton jRadioButtonTrimestral;
+    private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField jTextFieldClassFav;
+    private javax.swing.JTextField jTextFieldDescricao;
+    private javax.swing.JTextField jTextFieldDoc;
+    private javax.swing.JTextField jTextFieldNrFav;
+    private javax.swing.JTextField jTextFieldParcelas;
+    private javax.swing.JTextField jTextFieldPrev;
+    private javax.swing.JTextField jTextFieldStatus;
+    private javax.swing.JTextField jTextFieldVClass;
+    private javax.swing.JTextField jTextFieldVrCompra;
+    private javax.swing.JTextField jTextFieldVrParcela;
+    // End of variables declaration//GEN-END:variables
+
+    private static class CarregarCbx {
+
+        @SuppressWarnings({"empty-statement", "unchecked"})
+        public void CarregarCbx(String tabela, String valor, JComboBox combo) throws SQLException {
+            String sql = "SELECT * FROM \"" + tabela + "\" ORDER BY \"apelidoclifor\"";
+            Connection con = Conexao.faz_conexao();
+            try {
+                PreparedStatement stmt = con.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    combo.addItem(rs.getString(valor) + "-" + (rs.getString("codclifor") + "-" + rs.getString("fkcliforgp")));
+                }
+                rs.close();
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(Tela_de_Parcelamento.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private static class CarregarCbx3 {
+
+        @SuppressWarnings({"empty-statement", "unchecked"})
+        public void CarregarCbx3(String tabela, String valor, JComboBox combo) throws SQLException {
+            String sql = "Select * FROM \"" + tabela + "\" WHERE \"nome_c\" <> '-' ORDER BY \"nome_c\"";
+            Connection con = Conexao.faz_conexao();
+            try {
+                PreparedStatement stmt = con.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    combo.addItem(rs.getString(valor) + "-" + (rs.getString("cod_geral")));
+                }
+                rs.close();
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(Tela_de_Parcelamento.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+}

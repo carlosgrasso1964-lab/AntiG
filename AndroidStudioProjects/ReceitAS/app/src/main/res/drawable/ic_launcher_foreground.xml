@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <group
+        android:translateX="22"
+        android:translateY="22">
+
+        <!-- Book body -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M10,8h44v48h-44z" />
+
+        <!-- Book spine -->
+        <path
+            android:fillColor="#4CAF50"
+            android:pathData="M10,8h4v48h-4z" />
+
+        <!-- Book lines -->
+        <path
+            android:strokeColor="#757575"
+            android:strokeWidth="1.5"
+            android:fillColor="#00000000"
+            android:pathData="M20,20h28M20,28h28M20,36h20" />
+
+    </group>
+
+</vector>

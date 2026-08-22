@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CalcAS</string>
+    <string name="tape_header">FITA DE CÁLCULO</string>
+    <string name="tape_subheader">REGISTRO CONTÍNUO</string>
+    <string name="empty_history">═══ Nenhum cálculo registrado ═══</string>
+</resources>

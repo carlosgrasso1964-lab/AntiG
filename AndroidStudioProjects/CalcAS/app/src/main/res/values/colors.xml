@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_dark">#0a0f1e</color>
+    <color name="calculator_bg">#0b2b3b</color>
+    <color name="display_bg">#00161f</color>
+    <color name="display_border">#41b0c0</color>
+    <color name="expression_text">#b9f6ff</color>
+    <color name="result_text">#f7f9c1</color>
+    <color name="button_bg">#ffffff</color>
+    <color name="button_text">#0a2f3b</color>
+    <color name="btn_clear_bg">#ffe0cc</color>
+    <color name="btn_clear_text">#bc5a2c</color>
+    <color name="btn_equal_bg">#f7ffcc</color>
+    <color name="btn_equal_text">#2e7d64</color>
+    <color name="btn_op_bg">#eef3ff</color>
+    <color name="btn_op_text">#005f73</color>
+    <color name="btn_del_bg">#f5e3e3</color>
+    <color name="btn_del_text">#ab3e3e</color>
+    <color name="btn_scientific_bg">#e8e0f0</color>
+    <color name="btn_scientific_text">#4a2e6b</color>
+    <color name="tape_bg">#fef7e0</color>
+    <color name="tape_border">#d4c49a</color>
+    <color name="tape_header_text">#5a3e1b</color>
+    <color name="tape_item_bg">#fffc</color>
+    <color name="tape_result_bg">#e9f0df</color>
+    <color name="tape_result_text">#1b5e3f</color>
+    <color name="tape_empty_text">#a28c62</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="shadow_color">#b0b8c0</color>
+    <color name="clear_shadow">#d6a27a</color>
+    <color name="equal_shadow">#b1cfb0</color>
+</resources>

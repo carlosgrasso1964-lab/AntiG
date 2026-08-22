@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#fff8f0</color>
+    <color name="header_bg">#4a90d9</color>
+    <color name="header_text">#ffffff</color>
+    <color name="day_bg">#ffffff</color>
+    <color name="day_text">#333333</color>
+    <color name="day_border">#dddddd</color>
+    <color name="today_border">#e53935</color>
+    <color name="task_day_bg">#a5d6a7</color>
+    <color name="weekday_text">#888888</color>
+    <color name="nav_button">#4a90d9</color>
+    <color name="dialog_bg">#ffffff</color>
+    <color name="save_button">#4caf50</color>
+    <color name="cancel_button">#9e9e9e</color>
+    <color name="completed_text">#9e9e9e</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+</resources>

@@ -1,0 +1,6 @@
+Internet: https://cloud.tembo.io/orgs/org_2jKYuVSPIu4ezaZENywYXZIFVQV/clusters/inst_1722374181383_u4SyoL_21/home
+database: jfinptg
+HotName:smugly-advantaged-cricket.data-1.use1.tembo.io
+Port: 5432
+Username:postgres
+Password:VsAUYEb9K4zMwlhI

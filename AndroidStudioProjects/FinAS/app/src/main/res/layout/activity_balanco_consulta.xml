@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Balanço Patrimonial"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- LinearLayout horizontal para Data Inicial e Data Final -->
+    <LinearLayout
+        android:id="@+id/date_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <EditText
+            android:id="@+id/edit_data_ini"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:hint="Data Inicial (dd/MM/yyyy)"
+            android:inputType="date"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/edit_data_fim"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:hint="Data Final (dd/MM/yyyy)"
+            android:inputType="date"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/radio_group_regime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/date_container"
+        android:layout_marginTop="8dp">
+
+        <RadioButton
+            android:id="@+id/rb_vcto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vencimento"
+            android:textSize="14sp"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/rb_emissao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Emissão"
+            android:textSize="14sp" />
+
+        <RadioButton
+            android:id="@+id/rb_apresentacao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apresentação"
+            android:textSize="14sp" />
+    </RadioGroup>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_balanco"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/layout_buttons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radio_group_regime"
+        android:layout_marginTop="8dp"
+        android:scrollbars="vertical|horizontal" />
+
+    <LinearLayout
+        android:id="@+id/layout_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btn_pesquisar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Pesquisar"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:layout_marginEnd="2dp"
+            android:padding="8dp"
+            android:background="?android:attr/selectableItemBackground" />
+
+        <Button
+            android:id="@+id/btn_limpar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Limpar"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:layout_marginEnd="2dp"
+            android:padding="8dp"
+            android:background="?android:attr/selectableItemBackground" />
+
+        <Button
+            android:id="@+id/btn_imprimir"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Imprimir"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:layout_marginEnd="2dp"
+            android:padding="8dp"
+            android:background="?android:attr/selectableItemBackground" />
+
+        <Button
+            android:id="@+id/btn_exportar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Exportar"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:layout_marginEnd="2dp"
+            android:padding="8dp"
+            android:background="?android:attr/selectableItemBackground" />
+
+        <Button
+            android:id="@+id/btn_grafico"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Gráfico"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:background="?android:attr/selectableItemBackground" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

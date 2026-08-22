@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ComprAS</string>
+    <string name="total_label">TOTAL: %s</string>
+    <string name="btn_atualizar">Atualizar</string>
+</resources>

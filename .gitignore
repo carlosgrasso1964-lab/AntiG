@@ -1,0 +1,48 @@
+# ===== Geral =====
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# ===== Java / NetBeans (build artifacts) =====
+**/build/
+**/dist/
+**/temp/
+**/Backup/
+**/snapshots/
+**/nbproject/private/
+**/nbproject/remote-build/
+**/outprt/
+*.class
+*.jar
+*.db
+*.db.bak*
+*.mp3
+tmp.txt
+
+# ===== Android / Gradle =====
+**/.gradle/
+**/.idea/
+**/app/build/
+*.apk
+*.aab
+local.properties
+captures/
+.cxx/
+*.keystore
+**/baselineProfiles/
+**/release/
+build_log*.txt
+!gradle/wrapper/gradle-wrapper.jar
+
+# ===== PHP / Web (runtime artifacts) =====
+PHP/web/backups/
+PHP/web/notas/
+PHP/web/pdfs/
+PHP/web/analises_lia/
+**/analises_lia/
+**/Lia/Lia/
+.vscode/
+.openclaude-profile.json
+script.txt

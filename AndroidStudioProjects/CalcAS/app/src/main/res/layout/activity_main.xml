@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="32dp"
+            app:cardBackgroundColor="@color/calculator_bg"
+            app:cardElevation="12dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/display_bg"
+                    android:padding="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="end"
+                    app:cardCornerRadius="16dp">
+
+                    <TextView
+                        android:id="@+id/expressionText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textColor="@color/expression_text"
+                        android:fontFamily="monospace"
+                        android:textStyle="bold"
+                        android:gravity="end"
+                        android:minHeight="32dp"
+                        android:text="" />
+
+                    <TextView
+                        android:id="@+id/resultText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="32sp"
+                        android:textColor="@color/result_text"
+                        android:fontFamily="monospace"
+                        android:textStyle="bold"
+                        android:gravity="end"
+                        android:layout_marginTop="4dp"
+                        android:paddingTop="4dp"
+                        android:text="0" />
+                </LinearLayout>
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="5"
+                    android:rowCount="5"
+                    android:alignmentMode="alignMargins"
+                    android:columnOrderPreserved="true"
+                    android:useDefaultMargins="false">
+
+                    <Button
+                        android:id="@+id/btnSqrt"
+                        style="@style/CalcButtonScientific"
+                        android:text="√" />
+
+                    <Button
+                        android:id="@+id/btnPower"
+                        style="@style/CalcButtonScientific"
+                        android:text="xʸ" />
+
+                    <Button
+                        android:id="@+id/btnClearAll"
+                        style="@style/CalcButtonClear"
+                        android:text="AC" />
+
+                    <Button
+                        android:id="@+id/btnDelete"
+                        style="@style/CalcButtonDel"
+                        android:text="⌫" />
+
+                    <Button
+                        android:id="@+id/btnPercent"
+                        style="@style/CalcButtonOp"
+                        android:text="%" />
+
+                    <Button
+                        android:id="@+id/btn7"
+                        style="@style/CalcButtonDefault"
+                        android:text="7" />
+
+                    <Button
+                        android:id="@+id/btn8"
+                        style="@style/CalcButtonDefault"
+                        android:text="8" />
+
+                    <Button
+                        android:id="@+id/btn9"
+                        style="@style/CalcButtonDefault"
+                        android:text="9" />
+
+                    <Button
+                        android:id="@+id/btnDivide"
+                        style="@style/CalcButtonOp"
+                        android:text="÷" />
+
+                    <Button
+                        android:id="@+id/btnMultiply"
+                        style="@style/CalcButtonOp"
+                        android:text="×" />
+
+                    <Button
+                        android:id="@+id/btn4"
+                        style="@style/CalcButtonDefault"
+                        android:text="4" />
+
+                    <Button
+                        android:id="@+id/btn5"
+                        style="@style/CalcButtonDefault"
+                        android:text="5" />
+
+                    <Button
+                        android:id="@+id/btn6"
+                        style="@style/CalcButtonDefault"
+                        android:text="6" />
+
+                    <Button
+                        android:id="@+id/btnSubtract"
+                        style="@style/CalcButtonOp"
+                        android:text="−" />
+
+                    <Button
+                        android:id="@+id/btnAdd"
+                        style="@style/CalcButtonOp"
+                        android:text="+" />
+
+                    <Button
+                        android:id="@+id/btn1"
+                        style="@style/CalcButtonDefault"
+                        android:text="1" />
+
+                    <Button
+                        android:id="@+id/btn2"
+                        style="@style/CalcButtonDefault"
+                        android:text="2" />
+
+                    <Button
+                        android:id="@+id/btn3"
+                        style="@style/CalcButtonDefault"
+                        android:text="3" />
+
+                    <Button
+                        android:id="@+id/btnEqual"
+                        style="@style/CalcButtonEqual"
+                        android:layout_rowSpan="2"
+                        android:layout_gravity="fill_vertical"
+                        android:text="=" />
+
+                    <Button
+                        android:id="@+id/btnClearEntry"
+                        style="@style/CalcButtonClear"
+                        android:text="CE" />
+
+                    <Button
+                        android:id="@+id/btn0"
+                        style="@style/CalcButtonDefault"
+                        android:text="0" />
+
+                    <Button
+                        android:id="@+id/btnDot"
+                        style="@style/CalcButtonDefault"
+                        android:text="." />
+
+                    <Button
+                        android:id="@+id/btnOpenParen"
+                        style="@style/CalcButtonOp"
+                        android:text="(" />
+
+                    <Button
+                        android:id="@+id/btnCloseParen"
+                        style="@style/CalcButtonOp"
+                        android:text=")" />
+
+                </GridLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/tape_bg"
+            app:cardElevation="8dp"
+            android:maxHeight="250dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/tape_header"
+                        android:textColor="@color/tape_header_text"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tape_subheader"
+                        android:textColor="@color/tape_header_text"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/historyList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>

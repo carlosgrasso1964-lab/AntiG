@@ -1,0 +1,162 @@
+ <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>📖 Caderno de Receitas</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f0f2f5;
+    padding: 15px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+input, textarea, button {
+    width: 100%;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-salvar { background: #4CAF50; color: white; }
+.btn-buscar { background: #2196F3; color: white; }
+.btn-limpar { background: #f44336; color: white; }
+
+img {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+</style>
+
+</head>
+<body>
+
+<h2>📖 Caderno de Receitas</h2>
+
+<div class="card">
+    <input type="text" id="nome" placeholder="Nome da receita">
+
+    <input type="file" id="foto" accept="image/*" capture="environment">
+
+    <textarea id="ingredientes" placeholder="Ingredientes"></textarea>
+    <textarea id="modo" placeholder="Modo de preparo"></textarea>
+    <input type="text" id="tempo" placeholder="Tempo de cozimento">
+    <textarea id="obs" placeholder="Observações / Dicas"></textarea>
+
+    <button class="btn-salvar" onclick="salvar()">💾 Salvar</button>
+    <button class="btn-buscar" onclick="buscar()">🔍 Buscar na Web</button>
+    <button class="btn-limpar" onclick="limpar()">🧹 Limpar</button>
+</div>
+
+<h3>📋 Minhas Receitas</h3>
+<div id="lista"></div>
+
+<script>
+function salvar() {
+    let file = document.getElementById("foto").files[0];
+    let reader = new FileReader();
+
+    if (file) {
+        reader.onload = function(e) {
+            salvarDados(e.target.result);
+        }
+        reader.readAsDataURL(file);
+    } else {
+        salvarDados(null);
+    }
+}
+
+function salvarDados(imagem) {
+    let receita = {
+        nome: document.getElementById("nome").value,
+        ingredientes: document.getElementById("ingredientes").value,
+        modo: document.getElementById("modo").value,
+        tempo: document.getElementById("tempo").value,
+        obs: document.getElementById("obs").value,
+        imagem: imagem
+    };
+
+    let lista = JSON.parse(localStorage.getItem("receitas")) || [];
+    lista.push(receita);
+
+    localStorage.setItem("receitas", JSON.stringify(lista));
+
+    alert("Receita salva!");
+    limpar();
+    carregar();
+}
+
+function carregar() {
+    let lista = JSON.parse(localStorage.getItem("receitas")) || [];
+    let div = document.getElementById("lista");
+
+    div.innerHTML = "";
+
+    lista.reverse().forEach((r, index) => {
+        div.innerHTML += `
+        <div class="card">
+            <h3>${r.nome}</h3>
+            ${r.imagem ? `<img src="${r.imagem}">` : ""}
+            <p><b>Ingredientes:</b><br>${r.ingredientes}</p>
+            <p><b>Modo:</b><br>${r.modo}</p>
+            <p><b>Tempo:</b> ${r.tempo}</p>
+            <p><b>Dicas:</b><br>${r.obs}</p>
+
+            <button onclick="excluir(${index})">🗑️ Excluir</button>
+        </div>
+        `;
+    });
+}
+
+function excluir(index) {
+    let lista = JSON.parse(localStorage.getItem("receitas")) || [];
+    lista.splice(lista.length - 1 - index, 1);
+    localStorage.setItem("receitas", JSON.stringify(lista));
+    carregar();
+}
+
+function limpar() {
+    document.getElementById("nome").value = "";
+    document.getElementById("foto").value = "";
+    document.getElementById("ingredientes").value = "";
+    document.getElementById("modo").value = "";
+    document.getElementById("tempo").value = "";
+    document.getElementById("obs").value = "";
+}
+
+function buscar() {
+    let nome = document.getElementById("nome").value;
+
+    if (!nome) {
+        alert("Digite o nome da receita primeiro!");
+        return;
+    }
+
+    window.open("https://www.google.com/search?q=receita+" + nome, "_blank");
+}
+
+carregar();
+</script>
+
+</body>
+</html>

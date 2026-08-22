@@ -1,0 +1,793 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Árvore Genealógica </title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.4em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 0.85em;
+        }
+
+        /* Área da árvore com rolagem horizontal garantida */
+        .tree-wrapper {
+            overflow-x: auto;
+            overflow-y: visible;
+            margin: 0 -20px;
+            padding: 0 20px;
+            cursor: grab;
+        }
+
+        .tree-wrapper:active {
+            cursor: grabbing;
+        }
+
+        .tree {
+            position: relative;
+            display: table;
+            margin: 0 auto;
+            min-width: 100%;
+        }
+
+        /* Estrutura da árvore - SEM LIMITE DE LARGURA */
+        .tree ul {
+            padding-top: 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            flex-wrap: nowrap; /* Impede quebra de linha - força horizontal */
+            margin: 0;
+            padding-left: 0;
+        }
+
+        .tree li {
+            display: inline-block;
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 12px 0 12px;
+            vertical-align: top;
+            flex-shrink: 0; /* Impede encolhimento */
+        }
+
+        /* Linhas de conexão */
+        .tree li::before, .tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 2px solid #ccc;
+            width: 50%;
+            height: 20px;
+        }
+
+        .tree li::after {
+            right: auto;
+            left: 50%;
+        }
+
+        .tree li:only-child::after, .tree li:only-child::before {
+            display: none;
+        }
+
+        .tree li:first-child::before, .tree li:last-child::after {
+            border: 0 none;
+        }
+
+        .tree ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 2px solid #ccc;
+            width: 0;
+            height: 20px;
+        }
+
+        /* Container do casal */
+        .couple-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+
+        /* Card da pessoa - tamanho fixo para caber muitos */
+        .person {
+            border: 2px solid #3498db;
+            background: white;
+            border-radius: 10px;
+            padding: 6px 10px;
+            min-width: 110px;
+            max-width: 130px;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .person:hover {
+            transform: translateY(-2px);
+            background: #f8faff;
+        }
+
+        .person strong {
+            display: block;
+            font-size: 0.85em;
+            color: #2c3e50;
+            word-break: break-word;
+        }
+
+        .person .role {
+            font-size: 0.65em;
+            color: #7f8c8d;
+            margin-top: 2px;
+        }
+
+        .person .partner-info {
+            font-size: 0.6em;
+            color: #e74c3c;
+            margin-top: 2px;
+        }
+
+        .person-actions {
+            margin-top: 5px;
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75em;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        .btn-icon:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-edit { color: #f39c12; }
+        .btn-delete { color: #e74c3c; }
+
+        .connector {
+            font-size: 1.2em;
+            color: #e74c3c;
+        }
+
+        /* Formulário */
+        .form-area {
+            margin-top: 30px;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 12px;
+        }
+
+        .form-field {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.7em;
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: #2c3e50;
+        }
+
+        input, select, button {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid #bdc3c7;
+            font-size: 0.8rem;
+            width: 100%;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .info {
+            margin-top: 12px;
+            font-size: 0.75em;
+            color: #7f8c8d;
+            text-align: center;
+        }
+
+        .empty-tree {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            min-width: 260px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        /* Dica de rolagem */
+        .scroll-hint {
+            text-align: center;
+            font-size: 0.7em;
+            color: #95a5a6;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        @media (max-width: 700px) {
+            .person {
+                min-width: 95px;
+                padding: 4px 8px;
+            }
+            .person strong {
+                font-size: 0.75em;
+            }
+            .couple-container {
+                gap: 5px;
+            }
+            .connector {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🌳 Árvore Genealógica</h1>
+    <div class="subtitle">Família Grasso - (role horizontalmente)</div>
+    
+    <div class="tree-wrapper" id="treeWrapper">
+        <div class="tree" id="treeContainer">
+            <div class="empty-tree">
+                <p>🌱 Sua árvore está vazia</p>
+                <p>Comece adicionando seus avós abaixo!</p>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-hint" id="scrollHint" style="display: none;">
+        ← → Arraste ou use dois dedos para rolar horizontalmente
+    </div>
+
+    <div class="form-area">
+        <h3>➕ Adicionar pessoa</h3>
+        <div class="form-group">
+            <div class="form-field">
+                <label>Nome</label>
+                <input type="text" id="personName" placeholder="Ex: Antônio Grasso">
+            </div>
+            <div class="form-field">
+                <label>Parentesco</label>
+                <input type="text" id="personRole" placeholder="Ex: Filho, Avô">
+            </div>
+            <div class="form-field">
+                <label>Tipo</label>
+                <select id="relationType">
+                    <option value="child">Filho(a) de...</option>
+                    <option value="spouse">Cônjuge de...</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label>Conectar a quem?</label>
+                <select id="parentSelect">
+                    <option value="root">(Ninguém - será raiz)</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <button id="addPersonBtn" class="btn-success">Adicionar</button>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="form-field">
+                <button id="saveDataBtn" class="btn-secondary">💾 Salvar</button>
+            </div>
+            <div class="form-field">
+                <button id="loadDataBtn" class="btn-secondary">📂 Carregar</button>
+            </div>
+            <div class="form-field">
+                <button id="clearAllBtn" class="btn-secondary">🗑️ Limpar</button>
+            </div>
+        </div>
+        
+        <div class="info">
+            💡 <strong>Para muitos filhos:</strong> Role a tela HORIZONTALMENTE (arraste com o dedo ou use dois dedos)<br>
+            ✏️ Clique no lápis para editar • 🗑️ Para remover
+        </div>
+    </div>
+</div>
+
+<!-- Modal de edição -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3>✏️ Editar Pessoa</h3>
+        <input type="hidden" id="editId">
+        <div class="form-field" style="margin-bottom: 15px;">
+            <label>Nome</label>
+            <input type="text" id="editName" style="width: 100%;">
+        </div>
+        <div class="form-field" style="margin-bottom: 15px;">
+            <label>Parentesco</label>
+            <input type="text" id="editRole" style="width: 100%;">
+        </div>
+        <div class="modal-buttons">
+            <button id="saveEditBtn">Salvar</button>
+            <button id="cancelEditBtn">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let familyData = null;
+    let nextId = 1;
+
+    function generateId() {
+        return (nextId++).toString();
+    }
+
+    function findAnyPersonById(node, targetId) {
+        if (!node) return null;
+        if (node.id === targetId) return node;
+        
+        if (node.spouses) {
+            for (let spouse of node.spouses) {
+                if (spouse.id === targetId) return spouse;
+            }
+        }
+        
+        if (node.children) {
+            for (let child of node.children) {
+                const found = findAnyPersonById(child, targetId);
+                if (found) return found;
+            }
+        }
+        return null;
+    }
+
+    function findParentOf(node, targetId, parent = null) {
+        if (!node) return null;
+        if (node.id === targetId) return parent;
+        
+        if (node.spouses) {
+            for (let spouse of node.spouses) {
+                if (spouse.id === targetId) return node;
+            }
+        }
+        
+        if (node.children) {
+            for (let child of node.children) {
+                const found = findParentOf(child, targetId, node);
+                if (found) return found;
+            }
+        }
+        return null;
+    }
+
+    function removeAnyPersonById(targetId) {
+        if (!familyData) return false;
+        if (familyData.id === targetId) {
+            familyData = null;
+            return true;
+        }
+        
+        const parent = findParentOf(familyData, targetId);
+        if (parent) {
+            if (parent.spouses) {
+                const spouseIndex = parent.spouses.findIndex(s => s.id === targetId);
+                if (spouseIndex !== -1) {
+                    parent.spouses.splice(spouseIndex, 1);
+                    return true;
+                }
+            }
+            
+            if (parent.children) {
+                const childIndex = parent.children.findIndex(c => c.id === targetId);
+                if (childIndex !== -1) {
+                    parent.children.splice(childIndex, 1);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function updatePersonSelect() {
+        const select = document.getElementById('parentSelect');
+        
+        if (!familyData) {
+            select.innerHTML = '<option value="root">(Ninguém - será raiz)</option>';
+            return;
+        }
+        
+        select.innerHTML = '<option value="root">(Ninguém - será raiz)</option>';
+        select.innerHTML += '<option disabled>── Pessoas ──</option>';
+        
+        function addOptions(node, prefix = "") {
+            const option = document.createElement('option');
+            option.value = node.id;
+            let text = prefix + node.name;
+            if (node.role) text += ` (${node.role})`;
+            option.textContent = text;
+            select.appendChild(option);
+            
+            if (node.children) {
+                for (let child of node.children) {
+                    addOptions(child, prefix + "  └─ ");
+                }
+            }
+        }
+        
+        addOptions(familyData);
+    }
+
+    function renderPersonWithSpouses(node) {
+        if (!node) return '';
+        
+        let personHtml = `
+            <div class="person" data-id="${node.id}">
+                <strong>${escapeHtml(node.name)}</strong>
+                <div class="role">${escapeHtml(node.role || 'Membro')}</div>
+                <div class="person-actions">
+                    <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditModal('${node.id}')">✏️</button>
+                    <button class="btn-icon btn-delete" onclick="event.stopPropagation(); deletePerson('${node.id}')">🗑️</button>
+                </div>
+            </div>
+        `;
+        
+        if (node.spouses && node.spouses.length > 0) {
+            let spousesHtml = '';
+            for (let spouse of node.spouses) {
+                spousesHtml += `
+                    <div class="person" style="border-color: #e74c3c; background: #fff5f5;" data-id="${spouse.id}">
+                        <strong>${escapeHtml(spouse.name)}</strong>
+                        <div class="role">${escapeHtml(spouse.role || 'Cônjuge')}</div>
+                        <div class="person-actions">
+                            <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditModal('${spouse.id}')">✏️</button>
+                            <button class="btn-icon btn-delete" onclick="event.stopPropagation(); deletePerson('${spouse.id}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="couple-container">
+                    ${personHtml}
+                    <div class="connector">❤️</div>
+                    ${spousesHtml}
+                </div>
+            `;
+        }
+        
+        return personHtml;
+    }
+
+    function renderTree(node) {
+        if (!node) return '';
+        
+        let childrenHtml = '';
+        if (node.children && node.children.length > 0) {
+            for (let child of node.children) {
+                childrenHtml += renderTree(child);
+            }
+        }
+        
+        return `
+            <li>
+                ${renderPersonWithSpouses(node)}
+                ${childrenHtml ? `<ul>${childrenHtml}</ul>` : ''}
+            </li>
+        `;
+    }
+    
+    function refreshTree() {
+        const container = document.getElementById('treeContainer');
+        const wrapper = document.getElementById('treeWrapper');
+        const hint = document.getElementById('scrollHint');
+        
+        if (!familyData) {
+            container.innerHTML = `
+                <div class="empty-tree">
+                    <p>🌱 Sua árvore está vazia</p>
+                    <p>Comece adicionando seus avós abaixo!</p>
+                </div>
+            `;
+            hint.style.display = 'none';
+            updatePersonSelect();
+            return;
+        }
+        
+        // Conta quantos filhos no primeiro nível para mostrar dica
+        let totalChildren = 0;
+        if (familyData.children) {
+            totalChildren = familyData.children.length;
+        }
+        
+        const html = `<ul style="display: flex; flex-wrap: nowrap; justify-content: flex-start;">${renderTree(familyData)}</ul>`;
+        container.innerHTML = html;
+        updatePersonSelect();
+        
+        // Mostra dica de rolagem se tiver muitos filhos (> 4)
+        if (totalChildren > 4) {
+            hint.style.display = 'flex';
+        } else {
+            hint.style.display = 'none';
+        }
+        
+        // Evento de clique
+        document.querySelectorAll('.person').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.classList && (e.target.classList.contains('btn-icon') || e.target.tagName === 'BUTTON')) return;
+                const id = card.getAttribute('data-id');
+                const person = findAnyPersonById(familyData, id);
+                if (person) {
+                    alert(`📋 ${person.name}\n👔 ${person.role || 'Membro'}\n👶 Filhos: ${person.children?.length || 0}`);
+                }
+            });
+        });
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function addPerson(name, role, relationType, targetId) {
+        if (!name.trim()) {
+            alert("Por favor, informe o nome.");
+            return false;
+        }
+        
+        const newNode = {
+            id: generateId(),
+            name: name.trim(),
+            role: role.trim() || (relationType === 'spouse' ? 'Cônjuge' : 'Membro'),
+            children: [],
+            spouses: []
+        };
+        
+        if (!familyData || targetId === "root") {
+            if (familyData) {
+                if (!familyData.children) familyData.children = [];
+                familyData.children.push(newNode);
+            } else {
+                familyData = newNode;
+            }
+            refreshTree();
+            return true;
+        }
+        
+        const targetPerson = findAnyPersonById(familyData, targetId);
+        if (!targetPerson) {
+            alert("Pessoa não encontrada!");
+            return false;
+        }
+        
+        if (relationType === 'child') {
+            if (!targetPerson.children) targetPerson.children = [];
+            targetPerson.children.push(newNode);
+            refreshTree();
+            return true;
+        } else if (relationType === 'spouse') {
+            if (!targetPerson.spouses) targetPerson.spouses = [];
+            if (targetPerson.spouses.some(s => s.name === newNode.name)) {
+                alert(`${newNode.name} já é cônjuge de ${targetPerson.name}!`);
+                return false;
+            }
+            targetPerson.spouses.push(newNode);
+            refreshTree();
+            return true;
+        }
+        
+        return false;
+    }
+    
+    function editPerson(id, newName, newRole) {
+        const person = findAnyPersonById(familyData, id);
+        if (person) {
+            if (newName.trim()) person.name = newName.trim();
+            if (newRole.trim()) person.role = newRole.trim();
+            refreshTree();
+            return true;
+        }
+        alert("Pessoa não encontrada!");
+        return false;
+    }
+    
+    window.deletePerson = function(id) {
+        if (!familyData) return;
+        
+        const person = findAnyPersonById(familyData, id);
+        if (!person) {
+            alert("Pessoa não encontrada!");
+            return;
+        }
+        
+        if (familyData.id === id) {
+            if (confirm(`Remover "${person.name}" e TODA a árvore?`)) {
+                familyData = null;
+                refreshTree();
+            }
+            return;
+        }
+        
+        if (confirm(`Remover "${person.name}"?`)) {
+            if (removeAnyPersonById(id)) {
+                refreshTree();
+            }
+        }
+    };
+    
+    function clearAll() {
+        if (confirm("⚠️ Apagar TODA a árvore?")) {
+            familyData = null;
+            nextId = 1;
+            refreshTree();
+        }
+    }
+    
+    function openEditModal(id) {
+        const person = findAnyPersonById(familyData, id);
+        if (person) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editName').value = person.name;
+            document.getElementById('editRole').value = person.role || '';
+            document.getElementById('editModal').style.display = 'flex';
+        }
+    }
+    
+    window.openEditModal = openEditModal;
+    
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+    
+    function saveData() {
+        if (!familyData) {
+            alert("Árvore vazia!");
+            return;
+        }
+        localStorage.setItem('familyTreeData', JSON.stringify(familyData));
+        localStorage.setItem('nextId', nextId);
+        alert("✅ Salvou!");
+    }
+    
+    function loadData() {
+        const saved = localStorage.getItem('familyTreeData');
+        if (saved) {
+            familyData = JSON.parse(saved);
+            const savedNextId = localStorage.getItem('nextId');
+            if (savedNextId) nextId = parseInt(savedNextId);
+            refreshTree();
+            alert("✅ Carregou!");
+        } else {
+            alert("Nenhum dado salvo.");
+        }
+    }
+    
+    // Eventos
+    document.getElementById('addPersonBtn').addEventListener('click', () => {
+        const name = document.getElementById('personName').value;
+        const role = document.getElementById('personRole').value;
+        const relationType = document.getElementById('relationType').value;
+        const targetId = document.getElementById('parentSelect').value;
+        
+        if (addPerson(name, role, relationType, targetId)) {
+            document.getElementById('personName').value = '';
+            document.getElementById('personRole').value = '';
+        }
+    });
+    
+    document.getElementById('saveDataBtn').addEventListener('click', saveData);
+    document.getElementById('loadDataBtn').addEventListener('click', loadData);
+    document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+    
+    document.getElementById('saveEditBtn').addEventListener('click', () => {
+        const id = document.getElementById('editId').value;
+        const newName = document.getElementById('editName').value;
+        const newRole = document.getElementById('editRole').value;
+        if (editPerson(id, newName, newRole)) {
+            closeEditModal();
+        }
+    });
+    
+    document.getElementById('cancelEditBtn').addEventListener('click', closeEditModal);
+    
+    window.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('editModal')) {
+            closeEditModal();
+        }
+    });
+    
+    refreshTree();
+</script>
+</body>
+</html>
