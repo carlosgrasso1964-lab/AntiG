@@ -1,0 +1,247 @@
+body {
+    background-color: #f5f5f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+.card {
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    border: none;
+    margin-bottom: 20px;
+}
+.card-header {
+    font-weight: 600;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+.table th {
+    background-color: #f8f9fa;
+    border-top: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+.table td {
+    vertical-align: middle;
+}
+.valor-positivo {
+    color: #198754;
+    font-weight: 600;
+}
+.valor-negativo {
+    color: #dc3545;
+    font-weight: 600;
+}
+.page-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #0d6efd;
+}
+.stat-card {
+    transition: transform 0.2s;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+.stat-card .card-body {
+    padding: 1.25rem;
+}
+.stat-card .stat-icon {
+    font-size: 2rem;
+    opacity: 0.2;
+}
+.stat-card .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+.stat-card .stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+}
+.dataTables_wrapper {
+    padding-top: 10px;
+}
+.select2-container--bootstrap-5 .select2-selection {
+    min-height: 38px;
+}
+.form-label {
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+.required::after {
+    content: " *";
+    color: #dc3545;
+}
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.login-card .card-header {
+    background: #1e3c72;
+    color: white;
+    text-align: center;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 2rem;
+}
+.login-card .card-header h3 {
+    margin: 0;
+    font-weight: 600;
+}
+.login-card .card-body {
+    padding: 2rem;
+}
+.login-logo {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+/* Submenu aninhado (Bootstrap 5 não tem nativo) — ex.: Favorecidos > Fornecedores/Clientes */
+.dropdown-submenu {
+    position: relative;
+}
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+}
+@media (min-width: 992px) {
+    .dropdown-submenu:hover > .dropdown-menu {
+        display: block;
+    }
+    .dropdown-submenu > a.dropdown-toggle::after {
+        transform: rotate(-90deg);
+        vertical-align: middle;
+    }
+}
+
+/* ===== Tema escuro (data-bs-theme="dark" no <html>) ===== */
+[data-bs-theme="dark"] body {
+    background-color: #121212;
+}
+[data-bs-theme="dark"] .navbar {
+    background-color: #1e1e1e !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .4);
+}
+[data-bs-theme="dark"] .card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+}
+[data-bs-theme="dark"] .card-header {
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #3a3a3a;
+    color: #e9ecef;
+}
+[data-bs-theme="dark"] .table {
+    --bs-table-bg: transparent;
+    color: #e9ecef;
+}
+[data-bs-theme="dark"] .table th {
+    background-color: #2a2a2a;
+    color: #dee2e6;
+    border-color: #3a3a3a;
+}
+[data-bs-theme="dark"] .table td {
+    border-color: #333;
+}
+[data-bs-theme="dark"] .table-hover > tbody > tr:hover > * {
+    background-color: #2a2a2a;
+    color: #fff;
+}
+[data-bs-theme="dark"] .page-title {
+    color: #e9ecef;
+    border-bottom-color: #0d6efd;
+}
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #e9ecef;
+}
+/* Campos readonly com bg-light (modais Receber/Pagar etc.): no tema escuro o fundo claro
+   + texto claro ficam ilegíveis — força fundo escuro e texto claro.
+   NOTA: o .bg-light do Bootstrap 5.3 usa !important, então o override também precisa. */
+[data-bs-theme="dark"] .form-control.bg-light,
+[data-bs-theme="dark"] .form-select.bg-light,
+[data-bs-theme="dark"] .bg-light.form-control[readonly],
+[data-bs-theme="dark"] .form-control[readonly] {
+    background-color: #2a2a2a !important;
+    border-color: #444 !important;
+    color: #e9ecef;
+}
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+    background-color: #2a2a2a;
+    color: #fff;
+}
+[data-bs-theme="dark"] .text-muted {
+    color: #9ca3af !important;
+}
+[data-bs-theme="dark"] .dropdown-menu {
+    background-color: #1e1e1e;
+    border-color: #333;
+}
+[data-bs-theme="dark"] .dropdown-item {
+    color: #e9ecef;
+}
+[data-bs-theme="dark"] .dropdown-item:hover,
+[data-bs-theme="dark"] .dropdown-item:focus {
+    background-color: #2a2a2a;
+    color: #fff;
+}
+[data-bs-theme="dark"] .dropdown-divider {
+    border-color: #3a3a3a;
+}
+/* Select2 (dropdown e caixa) no tema escuro */
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #e9ecef;
+}
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection__rendered {
+    color: #e9ecef;
+}
+[data-bs-theme="dark"] .select2-dropdown {
+    background-color: #1e1e1e;
+    border-color: #444;
+}
+/* Opções NÃO destacadas do dropdown: o tema claro usa #212529 (quase preto),
+   invisível sobre o fundo escuro — força texto claro. */
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option {
+    color: #e9ecef;
+}
+/* Placeholder ("Selecione...") da caixa fechada no tema escuro */
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection__placeholder {
+    color: #9ca3af;
+}
+[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-results__option--highlighted {
+    background-color: #0d6efd;
+    color: #fff;
+}
+/* Modal e alertas */
+[data-bs-theme="dark"] .modal-content {
+    background-color: #1e1e1e;
+    border-color: #333;
+}
+[data-bs-theme="dark"] .modal-header,
+[data-bs-theme="dark"] .modal-footer {
+    border-color: #3a3a3a;
+}
+[data-bs-theme="dark"] .alert {
+    border-color: #3a3a3a;
+}
+[data-bs-theme="dark"] .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
