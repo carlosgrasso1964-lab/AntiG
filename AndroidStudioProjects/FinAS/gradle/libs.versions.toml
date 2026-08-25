@@ -17,6 +17,7 @@ itext7 = "7.2.5"
 poi = "5.2.3"
 poi-ooxml = "5.2.3"
 protoliteWellKnownTypes = "18.0.1"
+work = "2.9.1"
 
 [libraries]
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -36,6 +37,7 @@ itext7-core = { module = "com.itextpdf:itext7-core", version.ref = "itext7" }
 poi = { module = "org.apache.poi:poi", version.ref = "poi" }
 poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi-ooxml" }
 protolite-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

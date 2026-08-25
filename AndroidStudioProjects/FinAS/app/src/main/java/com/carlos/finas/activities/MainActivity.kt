@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.carlos.finas.DatabaseHelper
 import com.carlos.finas.databinding.ActivityMainBinding
 import com.carlos.finas.R
+import com.carlos.finas.workers.DailyReportScheduler
 import org.mindrot.jbcrypt.BCrypt
 import java.util.*
 
@@ -89,6 +90,10 @@ class MainActivity : AppCompatActivity() {
                         if (BCrypt.checkpw(senhaReal, user.senha)) {
                             Log.d("FinasApp", "Autenticação bem-sucedida para usuário: $usuario")
                             Toast.makeText(this, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
+
+                            // Agendar envio diário do Painel para o Telegram
+                            DailyReportScheduler.schedule(this)
+
                             val intent = Intent(this, DashboardActivity::class.java)
                             startActivity(intent)
                             finish()

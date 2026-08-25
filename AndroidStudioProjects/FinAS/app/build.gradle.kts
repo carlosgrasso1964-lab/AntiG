@@ -17,6 +17,7 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -24,6 +25,7 @@ android {
         }
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug") // Assina o release com a chave de debug para testes
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -91,4 +93,5 @@ dependencies {
     implementation("org.slf4j:slf4j-android:1.7.36")
     implementation(libs.protolite.types)
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+    implementation(libs.work.runtime.ktx)
 }

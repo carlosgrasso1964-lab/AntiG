@@ -28,7 +28,7 @@ class DatabaseHelper(private val context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         const val DATABASE_NAME = "FinASDB"
-        private const val DATABASE_VERSION = 13 // Incrementado para criar tb_plano_diretor
+        private const val DATABASE_VERSION = 15 // Incrementado de 13 para 15 para evitar erro de downgrade no Android 15
         private var cachedRecursos: List<Recurso>? = null
 
         // Tabela usu

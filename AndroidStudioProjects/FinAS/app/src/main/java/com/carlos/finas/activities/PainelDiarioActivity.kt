@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.carlos.finas.DatabaseHelper
 import com.carlos.finas.R
 import com.carlos.finas.databinding.ActivityPainelDiarioBinding
+import com.carlos.finas.repositories.PainelDiarioRepository
+import com.carlos.finas.services.TelegramService
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
@@ -32,7 +34,7 @@ class PainelDiarioActivity : AppCompatActivity() {
 
     private lateinit var entradasAdapter: MovimentoAdapter
     private lateinit var saidasAdapter: MovimentoAdapter
-    private var valorReserva: Double = 500.00
+    private var valorReserva: Double = 0.00
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +53,7 @@ class PainelDiarioActivity : AppCompatActivity() {
         val editText = EditText(this)
         editText.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
         editText.hint = "Digite o valor de reserva"
-        editText.setText("500.00")
+        editText.setText("0.00")
 
         AlertDialog.Builder(this)
             .setTitle("Valor de Reserva")
@@ -59,7 +61,7 @@ class PainelDiarioActivity : AppCompatActivity() {
             .setView(editText)
             .setPositiveButton("Continuar") { _, _ ->
                 val valorStr = editText.text.toString()
-                valorReserva = valorStr.toDoubleOrNull() ?: 500.00
+                valorReserva = valorStr.toDoubleOrNull() ?: 0.00
                 carregarDados()
             }
             .setNegativeButton("Cancelar") { _, _ ->
@@ -85,15 +87,47 @@ class PainelDiarioActivity : AppCompatActivity() {
             mostrarDialogReserva()
         }
 
+        binding.btnEnviarTelegram.setOnClickListener {
+            enviarRelatorioTelegram()
+        }
+
         binding.btnFechar.setOnClickListener {
             finish()
         }
     }
 
+    private fun enviarRelatorioTelegram() {
+        binding.btnEnviarTelegram.isEnabled = false
+        binding.btnEnviarTelegram.text = "Enviando..."
+
+        Thread {
+            try {
+                val texto = PainelDiarioRepository.gerarEFormatar(this, valorReserva)
+                val sucesso = TelegramService.sendMessage(this, texto, "HTML")
+
+                runOnUiThread {
+                    binding.btnEnviarTelegram.isEnabled = true
+                    binding.btnEnviarTelegram.text = "Enviar Telegram"
+                    Toast.makeText(
+                        this,
+                        if (sucesso) "✅ Relatório enviado ao Telegram!" else "❌ Falha ao enviar — verifique token/chat_id",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    binding.btnEnviarTelegram.isEnabled = true
+                    binding.btnEnviarTelegram.text = "Enviar Telegram"
+                    Toast.makeText(this, "Erro: ${e.message}", Toast.LENGTH_LONG).show()
+                    Log.e("PainelDiarioActivity", "Erro ao enviar Telegram", e)
+                }
+            }
+        }.start()
+    }
+
     private fun carregarDados() {
         try {
-            val dataHoje = dateFormat.format(Date())
-            val relatorio = dbHelper.gerarRelatorioDiario(dataHoje, valorReserva)
+            val relatorio = com.carlos.finas.repositories.PainelDiarioRepository.gerarRelatorio(this, valorReserva)
 
             binding.txtTitulo.text = getString(R.string.painel_diario) + " - " + dateFormatDisplay.format(Date())
 
