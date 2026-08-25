@@ -260,40 +260,300 @@ $totalRecursos = $stmt->fetchColumn();
     <div class="col-md-12">
         <div class="card">
             <div class="card-header"><i class="bi bi-pie-chart"></i> Saldo por Recurso</div>
-            <div class="card-body">
-                <canvas id="chartRecursos" height="200"></canvas>
+            <div class="card-body" style="height: 350px;">
+                            <canvas id="chartRecursos"></canvas>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Gráfico de Entradas -->
+<div class="row mt-2">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-graph-up text-success"></i> Composição de Entradas</div>
+            <div class="card-body">
+                <canvas id="chartEntradas" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-graph-down text-danger"></i> Composição de Saídas</div>
+            <div class="card-body">
+                <canvas id="chartSaidas" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico de Imobilizado (detalhamento) -->
+<div class="row mt-2">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-building"></i> Imobilizado - Detalhamento</div>
+            <div class="card-body" style="height: 300px;">
+                <canvas id="chartImobilizado"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include 'includes/footer.php'; ?>
+
 <script>
 $(document).ready(function() {
-    $.getJSON('utils/api_saldos.php', function(data) {
-        if (data && data.length) {
-            const labels = data.map(d => d.nomebco || d.vrecurso);
-            const values = data.map(d => parseFloat(d.Saldos) || 0);
-            const colors = values.map(v => v >= 0 ? '#198754' : '#dc3545');
-            new Chart(document.getElementById('chartRecursos'), {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: values,
-                        backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0', '#6f42c1', '#fd7e14', '#20c997'],
-                        borderWidth: 1
-                    }]
+    // Debug: verify Chart.js is loaded
+    console.log('Chart.js loaded:', typeof Chart !== 'undefined');
+    console.log('Canvas elements:', {
+        recursos: !!document.getElementById('chartRecursos'),
+        entradas: !!document.getElementById('chartEntradas'),
+        saidas: !!document.getElementById('chartSaidas')
+    });
+
+    // Gráfico existente: Saldo por Recurso (excluindo Imobilizado)
+        $.getJSON('utils/api_saldos.php', function(data) {
+            console.log('api_saldos data:', data);
+            if (data && data.length) {
+                // Filtrar fora Imobilizado (vrecurso começa com 1.006)
+                const filtered = data.filter(d => !String(d.vrecurso || '').startsWith('1.006'));
+                const labels = filtered.map(d => d.nomebco || d.vrecurso);
+                const values = filtered.map(d => parseFloat(d.Saldos) || 0);
+                try {
+                    new Chart(document.getElementById('chartRecursos'), {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Saldo (R$)',
+                                data: values,
+                                backgroundColor: values.map(v => v >= 0 ? '#198754' : '#dc3545'),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y',
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return 'Saldo: R$ ' + context.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return 'R$ ' + value.toLocaleString('pt-BR');
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    console.log('chartRecursos created');
+                } catch(e) {
+                    console.error('chartRecursos error:', e);
+                }
+            }
+        });
+
+    // Gráfico: Composição de Entradas
+    const entradasData = {
+        labels: ['Disponível', 'Investimentos', 'A Receber', 'Imobilizado'],
+        datasets: [{
+            label: 'Valor (R$)',
+            data: [
+                <?php echo $saldoDisponivel; ?>,
+                <?php echo $totalInvestimentos; ?>,
+                <?php echo $totalReceber; ?>,
+                <?php echo $totalImobilizado; ?>
+            ],
+            backgroundColor: [
+                'rgba(13, 110, 253, 0.8)',
+                'rgba(25, 135, 84, 0.8)',
+                'rgba(255, 193, 7, 0.8)',
+                'rgba(111, 66, 193, 0.8)'
+            ],
+            borderColor: [
+                'rgba(13, 110, 253, 1)',
+                'rgba(25, 135, 84, 1)',
+                'rgba(255, 193, 7, 1)',
+                'rgba(111, 66, 193, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+    
+    console.log('entradasData:', entradasData);
+    try {
+        new Chart(document.getElementById('chartEntradas'), {
+            type: 'bar',
+            data: entradasData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': R$ ' + context.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                            }
+                        }
+                    }
                 },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'R$ ' + value.toLocaleString('pt-BR');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        console.log('chartEntradas created');
+    } catch(e) {
+        console.error('chartEntradas error:', e);
+    }
+
+    // Gráfico: Composição de Saídas
+    const saidasData = {
+        labels: ['A Pagar', 'Cartões de Crédito'],
+        datasets: [{
+            label: 'Valor (R$)',
+            data: [
+                <?php echo abs($totalPagar); ?>,
+                <?php echo abs($totalCartoes); ?>
+            ],
+            backgroundColor: [
+                'rgba(220, 53, 69, 0.8)',
+                'rgba(253, 126, 20, 0.8)'
+            ],
+            borderColor: [
+                'rgba(220, 53, 69, 1)',
+                'rgba(253, 126, 20, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+    
+    console.log('saidasData:', saidasData);
+        try {
+            new Chart(document.getElementById('chartSaidas'), {
+                type: 'bar',
+                data: saidasData,
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
                     plugins: {
-                        legend: { position: 'bottom', labels: { font: { size: 11 } } }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': R$ ' + context.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
                     }
                 }
             });
+            console.log('chartSaidas created');
+        } catch(e) {
+            console.error('chartSaidas error:', e);
+        }
+
+        // Gráfico: Imobilizado - Detalhamento
+        const imobilizadoData = {
+            labels: [
+                <?php foreach ($imobilizadoDetalhe as $item): ?>
+                    '<?= htmlspecialchars($item['nomebco']) ?>',
+                <?php endforeach; ?>
+            ],
+            datasets: [{
+                label: 'Valor (R$)',
+                data: [
+                    <?php foreach ($imobilizadoDetalhe as $item): ?>
+                        <?= $item['total'] ?>,
+                    <?php endforeach; ?>
+                ],
+                backgroundColor: [
+                    'rgba(253, 126, 20, 0.8)',
+                    'rgba(255, 193, 7, 0.8)',
+                    'rgba(111, 66, 193, 0.8)',
+                    'rgba(13, 110, 253, 0.8)',
+                    'rgba(25, 135, 84, 0.8)',
+                    'rgba(32, 201, 151, 0.8)',
+                    'rgba(108, 117, 125, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(253, 126, 20, 1)',
+                    'rgba(255, 193, 7, 1)',
+                    'rgba(111, 66, 193, 1)',
+                    'rgba(13, 110, 253, 1)',
+                    'rgba(25, 135, 84, 1)',
+                    'rgba(32, 201, 151, 1)',
+                    'rgba(108, 117, 125, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+    
+        console.log('imobilizadoData:', imobilizadoData);
+        try {
+            new Chart(document.getElementById('chartImobilizado'), {
+                type: 'bar',
+                data: imobilizadoData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': R$ ' + context.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            console.log('chartImobilizado created');
+        } catch(e) {
+            console.error('chartImobilizado error:', e);
         }
     });
-});
-</script>
-
-<?php include 'includes/footer.php'; ?>
+    </script>
