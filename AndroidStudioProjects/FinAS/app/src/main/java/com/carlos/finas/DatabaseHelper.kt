@@ -103,19 +103,26 @@ class DatabaseHelper(private val context: Context) :
         private const val COL_BDATE = "Bdate"
 
         // Tabela tb_plano_diretor
-        const val TABLE_PLANO_DIRETOR = "tb_plano_diretor"
-        private const val COL_PD_ID = "id"
-        private const val COL_PD_ANO_REFERENCIA = "ano_referencia"
-        private const val COL_PD_MES = "mes"
-        private const val COL_PD_CLASSIFICACAO = "classificacao"
-        private const val COL_PD_CONTA = "conta"
-        private const val COL_PD_VALOR_PLANEJADO = "valor_planejado"
-        private const val COL_PD_INFLACAO_PREMISSA = "inflacao_premissa"
-        private const val COL_PD_DATA_SNAPSHOT = "data_snapshot"
-    }
+                const val TABLE_PLANO_DIRETOR = "tb_plano_diretor"
+                private const val COL_PD_ID = "id"
+                private const val COL_PD_ANO_REFERENCIA = "ano_referencia"
+                private const val COL_PD_MES = "mes"
+                private const val COL_PD_CLASSIFICACAO = "classificacao"
+                private const val COL_PD_CONTA = "conta"
+                private const val COL_PD_VALOR_PLANEJADO = "valor_planejado"
+                private const val COL_PD_INFLACAO_PREMISSA = "inflacao_premissa"
+                private const val COL_PD_DATA_SNAPSHOT = "data_snapshot"
 
-    override fun onCreate(db: SQLiteDatabase) {
-        Log.d("DatabaseHelper", "Iniciando criação do banco de dados")
+                // Tabela tb_tarefas (Calendário To Do)
+                const val TABLE_TAREFAS = "tb_tarefas"
+                const val COL_TAREFA_ID = "id"
+                const val COL_TAREFA_DATA = "data"
+                const val COL_TAREFA_DESCRICAO = "descricao"
+                const val COL_TAREFA_CONCLUIDA = "concluida"
+            }
+
+            override fun onCreate(db: SQLiteDatabase) {
+                Log.d("DatabaseHelper", "Iniciando criação do banco de dados")
         try {
             // === CRIAR TABELAS ===
             val createUsuarioTable = """
@@ -222,6 +229,17 @@ class DatabaseHelper(private val context: Context) :
             db.execSQL(createTestbirthTable)
             db.execSQL(createPlanoDiretorTable)
 
+            val createTarefasTable = """
+            CREATE TABLE $TABLE_TAREFAS (
+                $COL_TAREFA_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COL_TAREFA_DATA TEXT NOT NULL,
+                $COL_TAREFA_DESCRICAO TEXT NOT NULL,
+                $COL_TAREFA_CONCLUIDA INTEGER DEFAULT 0
+            )
+        """.trimIndent()
+
+            db.execSQL(createTarefasTable)
+
             // === ÍNDICES ===
             db.execSQL("CREATE INDEX idx_tbrecursos_nomebco ON $TABLE_RECURSOS($COL_NOMEBCO)")
             db.execSQL("CREATE INDEX idx_tbmovimento_recurso ON $TABLE_LANCAMENTOS($COL_RECURSO)")
@@ -315,6 +333,7 @@ class DatabaseHelper(private val context: Context) :
             db.execSQL("DROP TABLE IF EXISTS $TABLE_GPPRINCIPAL")
             db.execSQL("DROP TABLE IF EXISTS $TABLE_TESTBIRTH")
             db.execSQL("DROP TABLE IF EXISTS $TABLE_PLANO_DIRETOR")
+            db.execSQL("DROP TABLE IF EXISTS $TABLE_TAREFAS")
 
             onCreate(db)
         } catch (e: SQLiteException) {
@@ -3194,13 +3213,127 @@ Log.d("DatabaseHelper", "Relatório diário gerado para $data")
         return 0.0
     }
 
-}
+    // === MÉTODOS PARA TB_TAREFAS (Calendário To Do) ===
+    fun addTarefa(data: String, descricao: String): Long {
+        val db = writableDatabase
+        try {
+            val values = ContentValues().apply {
+                put(COL_TAREFA_DATA, data)
+                put(COL_TAREFA_DESCRICAO, descricao)
+                put(COL_TAREFA_CONCLUIDA, 0)
+            }
+            return db.insert(TABLE_TAREFAS, null, values)
+        } catch (e: SQLiteException) {
+            Log.e("DatabaseHelper", "Erro ao adicionar tarefa: ${e.message}")
+            return -1
+        } finally {
+            db.close()
+        }
+    }
 
-data class PlanoDiretorRecord(
-    val anoReferencia: Int,
-    val mes: Int,
-    val classificacao: String,
-    val conta: String,
-    val valorPlanejado: Double,
-    val inflacaoPremissa: Double
-)
+    fun getTarefasByData(data: String): List<Tarefa> {
+        val tarefas = mutableListOf<Tarefa>()
+        val db = readableDatabase
+        try {
+            val cursor = db.query(
+                TABLE_TAREFAS,
+                arrayOf(COL_TAREFA_ID, COL_TAREFA_DATA, COL_TAREFA_DESCRICAO, COL_TAREFA_CONCLUIDA),
+                "$COL_TAREFA_DATA = ?",
+                arrayOf(data),
+                null,
+                null,
+                null
+            )
+            cursor.use {
+                while (it.moveToNext()) {
+                    tarefas.add(
+                        Tarefa(
+                            id = it.getInt(it.getColumnIndexOrThrow(COL_TAREFA_ID)),
+                            data = it.getString(it.getColumnIndexOrThrow(COL_TAREFA_DATA)) ?: "",
+                            descricao = it.getString(it.getColumnIndexOrThrow(COL_TAREFA_DESCRICAO)) ?: "",
+                            concluida = it.getInt(it.getColumnIndexOrThrow(COL_TAREFA_CONCLUIDA)) == 1
+                        )
+                    )
+                }
+            }
+        } catch (e: SQLiteException) {
+            Log.e("DatabaseHelper", "Erro ao listar tarefas: ${e.message}")
+        } finally {
+            db.close()
+        }
+        return tarefas
+    }
+
+    fun getAllDateKeysWithTasks(): Set<String> {
+        val keys = mutableSetOf<String>()
+        val db = readableDatabase
+        try {
+            val cursor = db.query(
+                TABLE_TAREFAS,
+                arrayOf(COL_TAREFA_DATA),
+                null,
+                null,
+                COL_TAREFA_DATA,
+                null,
+                null
+            )
+            cursor.use {
+                while (it.moveToNext()) {
+                    it.getString(it.getColumnIndexOrThrow(COL_TAREFA_DATA))?.let { d ->
+                        keys.add(d)
+                    }
+                }
+            }
+        } catch (e: SQLiteException) {
+            Log.e("DatabaseHelper", "Erro ao obter chaves de data: ${e.message}")
+        } finally {
+            db.close()
+        }
+        return keys
+    }
+
+    fun updateTarefaConcluida(id: Int, concluida: Boolean): Boolean {
+        val db = writableDatabase
+        try {
+            val values = ContentValues().apply {
+                put(COL_TAREFA_CONCLUIDA, if (concluida) 1 else 0)
+            }
+            val result = db.update(TABLE_TAREFAS, values, "$COL_TAREFA_ID = ?", arrayOf(id.toString()))
+            return result > 0
+        } catch (e: SQLiteException) {
+            Log.e("DatabaseHelper", "Erro ao atualizar tarefa: ${e.message}")
+            return false
+        } finally {
+            db.close()
+        }
+    }
+
+    fun deleteTarefa(id: Int): Boolean {
+            val db = writableDatabase
+            try {
+                val result = db.delete(TABLE_TAREFAS, "$COL_TAREFA_ID = ?", arrayOf(id.toString()))
+                return result > 0
+            } catch (e: SQLiteException) {
+                Log.e("DatabaseHelper", "Erro ao excluir tarefa: ${e.message}")
+                return false
+            } finally {
+                db.close()
+            }
+        }
+    }
+
+    data class Tarefa(
+        val id: Int,
+        val data: String,
+        val descricao: String,
+        val concluida: Boolean
+    )
+
+    data class PlanoDiretorRecord(
+        val anoReferencia: Int,
+        val mes: Int,
+        val classificacao: String,
+        val conta: String,
+        val valorPlanejado: Double,
+        val inflacaoPremissa: Double
+    )

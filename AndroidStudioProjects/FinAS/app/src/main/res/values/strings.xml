@@ -252,4 +252,13 @@
     <string name="atualizar">Atualizar</string>
     <string name="descricao">Descrição</string>
     <string name="nenhum_registro">Nenhum registro</string>
+
+    <!-- Calendário To Do -->
+    <string name="anterior">Anterior</string>
+    <string name="proximo">Próximo</string>
+    <string name="tarefas_do_dia">Tarefas do dia</string>
+    <string name="hint_nova_tarefa">Nova tarefa…</string>
+    <string name="adicionar">Adicionar</string>
+    <string name="sem_tarefas">Sem tarefas neste dia</string>
+    <string name="alternar_concluida">Alternar concluída</string>
 </resources>

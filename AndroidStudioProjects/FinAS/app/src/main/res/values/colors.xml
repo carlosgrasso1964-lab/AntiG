@@ -66,4 +66,11 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+
+    <!-- Calendário To Do -->
+    <color name="day_text">#1E293B</color>
+    <color name="day_text_disabled">#94A3B8</color>
+    <color name="today_border">#1A56DB</color>
+    <color name="task_day_bg">#1A56DB</color>
+    <color name="completed_text">#94A3B8</color>
 </resources>
