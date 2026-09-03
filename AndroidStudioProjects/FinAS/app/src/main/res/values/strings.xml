@@ -39,7 +39,7 @@
     <string name="fluxo_prompt">Fluxo de Caixa</string>
     <string name="status_prompt">Status</string>
     <string name="plano_contas_prompt">Conta Vinculada</string>
-    <string name="prompt_tipo">Informe o tipo desejado: CLI para Cliente, FOR para Fornecedor, BCO para Banco, CAR para Cartão, PER para Permanente</string>
+    <string name="prompt_tipo">Informe o tipo desejado: CLI para Cliente, FOR para Fornecedor, BCO para Banco, CAR para Cartão, PER para Permanente, INV para Investimento</string>
     <string name="prompt_vinculo">Selecione a conta para Vínculo</string>
     <string name="filtro_recurso">Filtro Recurso</string>
     <string name="recurso">Recurso</string>
@@ -126,6 +126,10 @@
         <item>Selecione o tipo</item>
         <item>CLI - Cliente</item>
         <item>FOR - Fornecedor</item>
+        <item>BCO - Banco</item>
+        <item>CAR - Cartão</item>
+        <item>PER - Permanente</item>
+        <item>INV - Investimento</item>
     </string-array>
 
     <string name="hint_descricao">Descrição</string>

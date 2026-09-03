@@ -70,7 +70,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
     }
 
     private void adicionarListeners() {
-        // Sugere código automático ao mudar tipo (só quando NÃO está editando)
+        // Sugere cï¿½digo automï¿½tico ao mudar tipo (sï¿½ quando Nï¿½O estï¿½ editando)
         jCbxTipo.addItemListener(e -> {
             if (e.getStateChange() == 1 && editingCodCliFor == null) {
                 String tipo = (String) jCbxTipo.getSelectedItem();
@@ -181,7 +181,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("       Cadastro de Clientes e Fornecedores");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Ações"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Aï¿½ï¿½es"));
 
         btSalvar.setText("Salvar");
         btSalvar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -270,7 +270,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
 
         jLabel6.setText("Contato");
 
-        jLabel7.setText("Observação");
+        jLabel7.setText("Observaï¿½ï¿½o");
 
         jLabel4.setText("Vinculo");
 
@@ -313,9 +313,9 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
             ex.printStackTrace();
         }
 
-        jLabel13.setText("Endereço:");
+        jLabel13.setText("Endereï¿½o:");
 
-        jLabel14.setText("Número:");
+        jLabel14.setText("Nï¿½mero:");
 
         jLabel15.setText("Bairro :");
 
@@ -502,7 +502,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Cod", "Tipo", "Razão Social", "Nome Fantasia", "E-mail", "Celular", "Telefone", "CEP", "Endereço", "Numero", "Bairro", "Complemento", "Cidade", "UF", "RG/IE", "CPF/CNPJ", "Contato", "Observação", "Vinculo"
+                "Cod", "Tipo", "Razï¿½o Social", "Nome Fantasia", "E-mail", "Celular", "Telefone", "CEP", "Endereï¿½o", "Numero", "Bairro", "Complemento", "Cidade", "UF", "RG/IE", "CPF/CNPJ", "Contato", "Observaï¿½ï¿½o", "Vinculo"
             }
         ));
         tbDadosCliFor.setSelectionBackground(new java.awt.Color(0, 0, 0));
@@ -595,14 +595,14 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
 
     private void btSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvarActionPerformed
         if (tfCodCliFor.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Código obrigatório!");
+            JOptionPane.showMessageDialog(this, "Cï¿½digo obrigatï¿½rio!");
             return;
         }
 
         CliFor c = montarObjeto();
         Placon gp = buscarGrupoPrincipal(tfConta.getText().trim());
         if (gp == null && !tfConta.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Grupo Principal inválido!");
+            JOptionPane.showMessageDialog(this, "Grupo Principal invï¿½lido!");
             return;
         }
         c.setFkCliForGp(gp);
@@ -620,7 +620,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
     private void btAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAbrirActionPerformed
         String cod = tfBusca.getText().trim();
         if (cod.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite um código para buscar.");
+            JOptionPane.showMessageDialog(this, "Digite um cï¿½digo para buscar.");
             return;
         }
         try {
@@ -630,7 +630,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
                 editingCodCliFor = c.getCodCliFor();
                 btSalvar.setEnabled(false);
             } else {
-                JOptionPane.showMessageDialog(this, "Registro não encontrado!");
+                JOptionPane.showMessageDialog(this, "Registro nï¿½o encontrado!");
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Erro na busca: " + ex.getMessage());
@@ -650,7 +650,12 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
 
         CliFor c = montarObjeto();
         c.setCodCliFor(editingCodCliFor);
-        c.setFkCliForGp(buscarGrupoPrincipal(tfConta.getText().trim()));
+        Placon gp = buscarGrupoPrincipal(tfConta.getText().trim());
+        if (gp == null && !tfConta.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Grupo Principal invÃ¡lido!");
+            return;
+        }
+        c.setFkCliForGp(gp);
 
         try {
             dao.atualizar(c);
@@ -670,11 +675,11 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
             return;
         }
 
-        int resp = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir?", "Confirmação", JOptionPane.YES_NO_OPTION);
+        int resp = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir?", "Confirmaï¿½ï¿½o", JOptionPane.YES_NO_OPTION);
         if (resp == JOptionPane.YES_OPTION) {
             try {
                 dao.excluir(editingCodCliFor);
-                JOptionPane.showMessageDialog(this, "Excluído com sucesso!");
+                JOptionPane.showMessageDialog(this, "Excluï¿½do com sucesso!");
                 limparCampos();
                 listar();
             } catch (SQLException ex) {
@@ -707,7 +712,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tfContaActionPerformed
 
-    // ===================== MÉTODOS AUXILIARES =====================
+    // ===================== Mï¿½TODOS AUXILIARES =====================
     private CliFor montarObjeto() {
         CliFor c = new CliFor();
         c.setCodCliFor(tfCodCliFor.getText().trim());
@@ -810,7 +815,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
                 });
             }
 
-            // 2. SÓ REATIVA O SORTER DEPOIS DE TERMINAR TUDO
+            // 2. Sï¿½ REATIVA O SORTER DEPOIS DE TERMINAR TUDO
             tbDadosCliFor.setRowSorter(new TableRowSorter<>(model));
 
         } catch (SQLException ex) {
@@ -821,7 +826,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
     private void jButtonImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonImprimirActionPerformed
         try {
             RelCliFor CliFor = new RelCliFor();
-            JOptionPane.showMessageDialog(null, "Relatório de Favorecidos gerado com sucesso!");
+            JOptionPane.showMessageDialog(null, "Relatï¿½rio de Favorecidos gerado com sucesso!");
             dispose();
             //new Tela_de_CliFor().setVisible(true);
         } catch (FileNotFoundException ex) {

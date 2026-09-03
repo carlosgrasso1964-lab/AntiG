@@ -88,7 +88,7 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Principal", "Grupo", "Conta", "Nome", "Total", "Acumulado"
+                "Principal", "Grupo", "Cabeça", "Conta", "Nome", "Total", "Acumulado"
             }
         ));
         jTablePesquisa.setSelectionBackground(new java.awt.Color(255, 255, 204));
@@ -107,10 +107,10 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
         jRadioButtonVcto.setText("Vencimento");
 
         buttonGroupRegime.add(jRadioButtonEmissao);
-        jRadioButtonEmissao.setText("Emissão");
+        jRadioButtonEmissao.setText("EmissÕo");
 
         buttonGroupRegime.add(jRadioButtonApresent);
-        jRadioButtonApresent.setText("Apresentação");
+        jRadioButtonApresent.setText("ApresentaÇÕo");
 
         javax.swing.GroupLayout jPanelRegimeLayout = new javax.swing.GroupLayout(jPanelRegime);
         jPanelRegime.setLayout(jPanelRegimeLayout);
@@ -300,11 +300,11 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
         if (jFormattedTextFieldDataIni.getText().trim().length() == 4) {
 
-            JOptionPane.showMessageDialog(null, "Atenção! Favor preencher o campo de data inicial.");
+            JOptionPane.showMessageDialog(null, "AtenÇÕo! Favor preencher o campo de data inicial.");
 
         } else if (jFormattedTextFieldDataFim.getText().trim().length() == 4) {
 
-            JOptionPane.showMessageDialog(null, "Atenção! Favor preencher o campo de data final.");
+            JOptionPane.showMessageDialog(null, "AtenÇÕo! Favor preencher o campo de data final.");
 
         } else {
 
@@ -322,9 +322,9 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 DecimalFormat d = new DecimalFormat("00");
 
-                conexao.abrirConexao(); // Abre a conexão
+                conexao.abrirConexao(); // Abre a conexÕo
 
-                Connection con = conexao.getConexao(); // Obtém a conexão
+                Connection con = conexao.getConexao(); // Obtém a conexÕo
 
                 String sql = """
                 SELECT
@@ -419,10 +419,10 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 jTablePesquisa.getColumnModel().getColumn(5).setCellRenderer(tab);
 
-                // na configuração da tabela
+                // na configuraÇÕo da tabela
                 //jTablePesquisa.getColumnModel().getColumn(indiceDaColunaTexto).setCellRenderer(new MultiLineCellRenderer());
                 // ou mais simples (se não quiser classe customizada):
-                //tabela.setRowHeight(índiceDaLinha, 50); // ajuste a altura manualmente
+                //tabela.setRowHeight(ÍndiceDaLinha, 50); // ajuste a altura manualmente
                 String prin = "a";
 
                 String sub = " ";
@@ -443,6 +443,30 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 // Criar o HashMap para armazenar os totais das contas
                 HashMap<String, Double> contaTotais = new HashMap<>();
+                HashMap<String, Double> subTotais = new HashMap<>();
+
+                // Mapa de grupos para a coluna Cabeca (cod_Geral terminando em .000)
+                HashMap<String, String> grupoNome = new HashMap<>();
+                try {
+                    PreparedStatement psGrupo = con.prepareStatement(
+                        "SELECT SUBSTRING(TRIM(cod_Geral), 1, 5) AS pfx, nome_C FROM gpprincipal " +
+                        "WHERE TRIM(cod_Geral) LIKE '%.000' AND TRIM(cod_Geral) NOT LIKE '%.000.000'"
+                    );
+                    ResultSet rsGrupo = psGrupo.executeQuery();
+                    while (rsGrupo.next()) {
+                        String pfxG = rsGrupo.getString("pfx");
+                        String nomeG = rsGrupo.getString("nome_C");
+                        if (pfxG != null && nomeG != null) {
+                            grupoNome.put(pfxG.trim(), nomeG.trim());
+                        }
+                    }
+                    rsGrupo.close();
+                    psGrupo.close();
+                } catch (Exception ex) {
+                    Logger.getLogger(Tela_Consulta_Balance.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                String prefixoAtual = "";
 
                 while (rs.next()) {
 
@@ -456,11 +480,11 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                     if (titulo.equals("s")) {
 
-                        modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                        modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                        modelo.addRow(new Object[]{"", "", "BALANÇO PATRIMONIAL", "REALIZADO EM " + jFormattedTextFieldDataFim.getText(), "", ""});
+                        modelo.addRow(new Object[]{"", "", "", "BALANÇO PATRIMONIAL", "REALIZADO EM " + jFormattedTextFieldDataFim.getText(), "", ""});
 
-                        modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                        modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
                         titulo = "n";
 
@@ -468,9 +492,9 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                     if (!cta.equals(currentConta) && !cta.equals(" ")) {
 
-                        modelo.addRow(new Object[]{"", "", "", "TOTAL DA CONTA " + cta, df.format(totalConta), df.format(sa)});
+                        modelo.addRow(new Object[]{"", "", "", "", "TOTAL DA CONTA " + cta, df.format(totalConta), df.format(sa)});
 
-                        modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                        modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
                         contaTotais.put(cta.replace(" ", "_").toUpperCase(), Math.round(totalConta * 100.0) / 100.0);
 
@@ -482,11 +506,12 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                         if (!sub.equals(" ")) {
 
-                            modelo.addRow(new Object[]{"", "", "", "TOTAL DO GRUPO " + sub, df.format(totalGrupo), df.format(sa)});
+                            modelo.addRow(new Object[]{"", "", "", "", "TOTAL DO GRUPO " + sub, df.format(totalGrupo), df.format(sa)});
 
                             subPrincipal = totalGrupo;
+                            subTotais.put(sub, totalGrupo);
 
-                            modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                            modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
                         }
 
@@ -506,9 +531,9 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                             }
 
-                            modelo.addRow(new Object[]{"", "", "", "TOTAL DO " + prin, "", df.format(sa)});
+                            modelo.addRow(new Object[]{"", "", "", "", "TOTAL DO " + prin, "", df.format(sa)});
 
-                            modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                            modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
                         }
 
@@ -526,13 +551,17 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                     totalConta += valor;
 
-                    modelo.addRow(new Object[]{
-                        prin.equals(currentPrincipal) ? "" : currentPrincipal,
-                        sub.equals(currentSub) ? "" : currentSub,
-                        cta.equals(currentConta) ? "" : currentConta,
-                        rs.getString("Nome"), df.format(valor), df.format(sa)
+                    // Cabeca do grupo na 7a coluna
+                    String vrecursoVal = rs.getString("vrecurso");
+                    String pfx = (vrecursoVal != null && vrecursoVal.length() >= 5) ? vrecursoVal.substring(0, 5) : "";
+                    String nomeGrupoAtual = "";
+                    if (!pfx.isEmpty() && !pfx.equals(prefixoAtual)) {
+                        nomeGrupoAtual = grupoNome.containsKey(pfx) ? grupoNome.get(pfx) : "-";
+                        prefixoAtual = pfx;
+                        modelo.insertRow(modelo.getRowCount(), new Object[]{"", "", "", "", "", "", ""});
+                    }
 
-                    });
+                    modelo.addRow(new Object[]{prin.equals(currentPrincipal) ? "" : currentPrincipal, sub.equals(currentSub) ? "" : currentSub, nomeGrupoAtual != null && !nomeGrupoAtual.equals("-") ? nomeGrupoAtual : "", cta.equals(currentConta) ? "" : currentConta, rs.getString("Nome"), df.format(valor), df.format(sa)});
 
                     prin = currentPrincipal;
 
@@ -546,10 +575,10 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
                 // Isso garante que a última conta vinda do SQL (como Empréstimos) seja totalizada
                 if (!cta.equals(" ") && !cta.equals("Contas à Pagar")) {
 
-                    modelo.addRow(new Object[]{"", "", "", "TOTAL DA CONTA " + cta, df.format(totalConta), df.format(sa)});
+                    modelo.addRow(new Object[]{"", "", "", "", "TOTAL DA CONTA " + cta, df.format(totalConta), df.format(sa)});
 
-                    //modelo.addRow(new Object[]{"", "", "", "", "", ""});
-                    // Salva o total dessa última conta no HashMap (importante para as análises)
+                    //modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
+                    // Salva o total dessa última conta no HashMap (importante para as anãlises)
                     contaTotais.put(cta.replace(" ", "_").toUpperCase(), Math.round(totalConta * 100.0) / 100.0);
 
                     // Zera o totalConta para não somar lixo no próximo passo
@@ -581,7 +610,7 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 }
 
-                // 2. ATUALIZA OS ACUMULADOS (Crucial para o balanço bater)
+                // 2. ATUALIZA OS ACUMULADOS (Crucial para o balanão bater)
                 sa += saldoContasPagarCorreto;
 
                 totalGrupo += saldoContasPagarCorreto;
@@ -589,36 +618,29 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
                 totalPrincipal += saldoContasPagarCorreto;
 
                 // 3. Adiciona a linha visual do Contas à Pagar
-                //modelo.addRow(new Object[]{"", "", "", "", "", ""});
-                modelo.addRow(new Object[]{
-                    "",
-                    "",
-                    "Contas à Pagar",
-                    "CONTAS À PAGAR",
-                    df.format(saldoContasPagarCorreto),
-                    df.format(sa)
-
-                });
+                //modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "Contas à Pagar", "CONTAS À PAGAR", df.format(saldoContasPagarCorreto), df.format(sa)});
 
                 // === MOSTRAR O TOTAL DA CONTA ===
-                modelo.addRow(new Object[]{"", "", "", "TOTAL DA CONTA Contas à Pagar", df.format(saldoContasPagarCorreto), df.format(sa)});
+                modelo.addRow(new Object[]{"", "", "", "", "TOTAL DA CONTA Contas à Pagar", df.format(saldoContasPagarCorreto), df.format(sa)});
 
-                //modelo.addRow(new Object[]{"", "", "", "", "", ""}); // Linha em branco para separar
+                //modelo.addRow(new Object[]{"", "", "", "", "", "", ""}); // Linha em branco para separar
                 // 4. Salva no HashMap para as Análises (Fleuriet/ROE/ROA)
                 contaTotais.put("CONTAS_À_PAGAR", saldoContasPagarCorreto);
 
                 // 5. FECHAMENTOS DE GRUPO (Agora com os valores somados corretamente)
                 // Fechamento do Grupo (PASSIVO CIRCULANTE)
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "", "", "TOTAL DO GRUPO " + sub, df.format(totalGrupo), df.format(sa)});
+                subTotais.put(sub, totalGrupo);
+                modelo.addRow(new Object[]{"", "", "", "", "TOTAL DO GRUPO " + sub, df.format(totalGrupo), df.format(sa)});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
                 // Fechamento do Principal (PASSIVO)
-                modelo.addRow(new Object[]{"", "", "", "SUB DO " + prin, "", df.format(sa)});
+                modelo.addRow(new Object[]{"", "", "", "", "SUB DO " + prin, "", df.format(sa)});
 
-                //modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                //modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
                 // 6. Atualiza a variável global do Passivo para os cálculos de ROE/ROA
                 Passivo = totalPrincipal;
 
@@ -683,24 +705,24 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 PatrLiq = -(sa);
 
-                // Exibição Final (PL e Resultados)
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                // ExibiÇÕo Final (PL e Resultados)
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "PATRIMÔNIO_LÍQUIDO", "Patrimônio_Acumulado", "", df.format(PatrLiq), ""});
+                modelo.addRow(new Object[]{"", "PATRIMÔNIO_LÍQUIDO", "", "Patrimônio_Acumulado", "", df.format(PatrLiq), ""});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "", "", "RECEITAS NO PERÍODO", df.format(Receitas), ""});
+                modelo.addRow(new Object[]{"", "", "", "", "RECEITAS NO PERÍODO", df.format(Receitas), ""});
 
-                modelo.addRow(new Object[]{"", "", "", "DESPESAS NO PERÍODO", df.format(Despesas), ""});
+                modelo.addRow(new Object[]{"", "", "", "", "DESPESAS NO PERÍODO", df.format(Despesas), ""});
 
-                modelo.addRow(new Object[]{"", "", "", "RESULTADO DO PERÍODO", df.format(-Resultado), ""});
+                modelo.addRow(new Object[]{"", "", "", "", "RESULTADO DO PERÍODO", df.format(-Resultado), ""});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "", "", "TOTAL DO PASSIVO", "", df.format(SubPassivo)});
+                modelo.addRow(new Object[]{"", "", "", "", "TOTAL DO PASSIVO", "", df.format(SubPassivo)});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
                 // Bloco de Análises (Usando os nomes que você já tinha)
                 double atCiclico = contaTotais.getOrDefault("CONTAS_À_RECEBER", 0.0);
@@ -715,8 +737,8 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
                         + contaTotais.getOrDefault("CRIPTO_MOEDAS", 0.0)
                         + contaTotais.getOrDefault("COFRINHO_MERCADO_PAGO", 0.0)
                         + contaTotais.getOrDefault("PORQUINHO_INTER_US$", 0.0);
-                
-                double pasCiclico = contaTotais.getOrDefault("CARTÕES_DE_CRÉDITO", 0.0) + contaTotais.getOrDefault("CONTAS_À_PAGAR", 0.0);
+
+                double pasCiclico = subTotais.getOrDefault("PASSIVO CIRCULANTE", 0.0);
 
                 double CDG = -PatrLiq - contaTotais.getOrDefault("IMOBILIZADO", 0.0);
 
@@ -729,16 +751,7 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 //                        + contaTotais.getOrDefault("CAIXA", 0.0)
 //                        + contaTotais.getOrDefault("CONTAS_À_RECEBER", 0.0)
 //                        + contaTotais.getOrDefault("CONTA_APLICAÇÕES_C._PRAZO", 0.0);
-                double atCirculante = contaTotais.getOrDefault("BANCOS", 0.0)
-                        + contaTotais.getOrDefault("CAIXA", 0.0)
-                        + contaTotais.getOrDefault("CONTAS_À_RECEBER", 0.0)
-                        + contaTotais.getOrDefault("CONTA_POUPANÇA", 0.0)
-                        + contaTotais.getOrDefault("EMPRÉSTIMOS_CONCEDIDOS_CURTO_PRAZO", 0.0)
-                        + contaTotais.getOrDefault("CDB_LIQUIDEZ_DIÁRIA", 0.0)
-                        + contaTotais.getOrDefault("TESOURO_SELIC_PRÉ_FIXADO", 0.0)
-                        + contaTotais.getOrDefault("CRIPTO_MOEDAS", 0.0)
-                        + contaTotais.getOrDefault("COFRINHO_MERCADO_PAGO", 0.0)
-                        + contaTotais.getOrDefault("PORQUINHO_INTER_US$", 0.0);
+                double atCirculante = subTotais.getOrDefault("ATIVO CIRCULANTE", 0.0);
                 
 
                 double pasNaoCiclico = contaTotais.getOrDefault("EMPREST.DE_LONGO_PRAZO_(+_DE_1_ANO)", 0.0);
@@ -780,7 +793,7 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 String poupanca = Receitas != 0 ? dp.format(-Resultado / Receitas) : "N/A";
 
-                //                // Logs para depuração
+                //                // Logs para depuraÇÕo
                 //                System.out.println("contaTotais: " + contaTotais);
                 //                System.out.println("pasCiclico: " + pasCiclico);
                 //                System.out.println("pasNaoCiclico: " + pasNaoCiclico);
@@ -793,76 +806,76 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
                 //                System.out.println("CDG: " + CDG + " (" + sinalCDG + ")");
                 //                System.out.println("NCG: " + NCG + " (" + sinalNCG + ")");
                 //                System.out.println("ST: " + ST + " (" + sinalST + ")");
-                //                System.out.println("Situação Financeira: " + situacaoFinanceira);
-                modelo.addRow(new Object[]{"", " A N Á L I S E S ", "", "", "", ""});
+                //                System.out.println("SituaÇÕo Financeira: " + situacaoFinanceira);
+                modelo.addRow(new Object[]{"", " A N Á L I S E S ", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", " ========== ", "", "", "", ""});
+                modelo.addRow(new Object[]{"", " ========== ", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "ROE(Return on Common Equity)", "RETORNO SOBRE CAPITAL PRÓPRIO", "Resultado(Lucro ou Prejuízo)/Patrimônio Liq.", "", dp.format((Resultado / PatrLiq))});
+                modelo.addRow(new Object[]{"", "ROE(Return on Common Equity)", "", "RETORNO SOBRE CAPITAL PRÓPRIO", "Resultado(Lucro ou Prejuízo)/Patrimônio Liq.", "", dp.format((Resultado / PatrLiq))});
 
-                modelo.addRow(new Object[]{"", "ROA(Rentab.Op.do Ativo ou TIR))", "RETORNO SOBRE O ATIVO", "Resultado/Ativo Total", "", dp.format((Resultado / (SubPassivo + subPrincipal)))});
+                modelo.addRow(new Object[]{"", "ROA(Rentab.Op.do Ativo ou TIR))", "", "RETORNO SOBRE O ATIVO", "Resultado/Ativo Total", "", dp.format((Resultado / (SubPassivo + subPrincipal)))});
 
-                modelo.addRow(new Object[]{"", "CONSUMO SOBRE A RECEITA", "TAXA DE CONSUMO", "Despesas/Receitas", "", consumo});
+                modelo.addRow(new Object[]{"", "CONSUMO SOBRE A RECEITA", "", "TAXA DE CONSUMO", "Despesas/Receitas", "", consumo});
 
-                modelo.addRow(new Object[]{"", "USO DO CAPITAL DE TERCEIROS", "PCT-PARTICIPAÇÃO DO CAPITAL DE TERCEIROS", "Passivo Circulante e não Circulante/Passivo Total", "", pct});
+                modelo.addRow(new Object[]{"", "USO DO CAPITAL DE TERCEIROS", "", "PCT-PARTICIPAÇÓO DO CAPITAL DE TERCEIROS", "Passivo Circulante e não Circulante/Passivo Total", "", pct});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "ATIVO E PASSIVO CÍCLICO", "AC - ATIVO CÍCLICO", "Ctas.à Receber + Empréstimos C.Prazo", "", df.format(atCiclico)});
+                modelo.addRow(new Object[]{"", "ATIVO E PASSIVO CÍCLICO", "", "AC - ATIVO CÍCLICO", "Ctas.à Receber + Empréstimos C.Prazo", "", df.format(atCiclico)});
 
-                modelo.addRow(new Object[]{"", "", "PC - PASSIVO CÍCLICO", "Ctas.à Pagar + Cartões + Fornecedores", "", df.format(-pasCiclico)});
+                modelo.addRow(new Object[]{"", "", "", "PC - PASSIVO CÍCLICO", "Ctas.à Pagar + CartÕes + Fornecedores", "", df.format(-pasCiclico)});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "ATIVO E PASSIVO NÃO CÍCLICOS", "ANC - ATIVO NÃO CÍCLICO", "Realiz. Longo Prazo + Imobilizado", "", df.format(anCiclico)});
+                modelo.addRow(new Object[]{"", "ATIVO E PASSIVO NÃO CÍCLICOS", "", "ANC - ATIVO NÃO CÍCLICO", "Realiz. Longo Prazo + Imobilizado", "", df.format(anCiclico)});
 
-                modelo.addRow(new Object[]{"", "", "PNC - PASSIVO NÃO CÍCLICO", "Financ.Longo Prazo + Capital Social", "", df.format(-pnCiclico)});
+                modelo.addRow(new Object[]{"", "", "", "PNC - PASSIVO NÃO CÍCLICO", "Financ.Longo Prazo + Capital Social", "", df.format(-pnCiclico)});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "ATIVO E PASSIVO ERRÁTICOS", "AE - ATIVO ERRÁTICO", "Caixa + Equiv. de caixa", "", df.format(atErratico)});
+                modelo.addRow(new Object[]{"", "ATIVO E PASSIVO ERRÁTICOS", "", "AE - ATIVO ERRÁTICO", "Caixa + Equiv. de caixa", "", df.format(atErratico)});
 
-                modelo.addRow(new Object[]{"", "", "PE - PASSIVO ERRÁTICO", "Outros Financiamentos de Curto Prazo", "", df.format(-paErratico)});
+                modelo.addRow(new Object[]{"", "", "", "PE - PASSIVO ERRÁTICO", "Outros Financiamentos de Curto Prazo", "", df.format(-paErratico)});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "ANÁLISE FINANCEIRA (Fleuriet)", "CDG", "PNC - ANC", "", df.format(CDG)});
+                modelo.addRow(new Object[]{"", "ANÁLISE FINANCEIRA (Fleuriet)", "", "CDG", "PNC - ANC", "", df.format(CDG)});
 
-                modelo.addRow(new Object[]{"", "", "NCG", "AC - PC", "", df.format(NCG)});
+                modelo.addRow(new Object[]{"", "", "", "NCG", "AC - PC", "", df.format(NCG)});
 
-                modelo.addRow(new Object[]{"", "", "ST -Situação de Tesouraria", "AE - PE", "", df.format(atErratico + paErratico)});
+                modelo.addRow(new Object[]{"", "", "", "ST -SituaÇÕo de Tesouraria", "AE - PE", "", df.format(atErratico + paErratico)});
 
-                modelo.addRow(new Object[]{"", "", "Situação Financeira", sinalCDG + " " + sinalNCG + " " + sinalST, "", situacaoFinanceira});
+                modelo.addRow(new Object[]{"", "", "", "SituaÇÕo Financeira", sinalCDG + " " + sinalNCG + " " + sinalST, "", situacaoFinanceira});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "Í N D I C E S", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "Í N D I C E S", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "------------------", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "------------------", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "ÍNDICE DE LIQUIDEZ", "Ideal > 1", "Ativo C.Prazo/Passivo C.Prazo", liquidez, ""});
+                modelo.addRow(new Object[]{"", "ÍNDICE DE LIQUIDEZ", "", "Ideal > 1", "Ativo C.Prazo/Passivo C.Prazo", liquidez, ""});
 
-                modelo.addRow(new Object[]{"", "ÍNDICE DE COBERTURA DESPESAS", "Ideal > 6", "Ativo C.Prazo/Despesas Mensais", cobertura, coberturaDias});
+                modelo.addRow(new Object[]{"", "ÍNDICE DE COBERTURA DESPESAS", "", "Ideal > 6", "Ativo C.Prazo/Despesas Mensais", cobertura, coberturaDias});
 
-                modelo.addRow(new Object[]{"", "ÍNDICE DE ENDIVIDAMENTO", "Ideal próximo a 0", "Passivo Exigível/Ativo Total", di.format(-pasCiclico / -(SubPassivo + subPrincipal)), ""});
+                modelo.addRow(new Object[]{"", "ÍNDICE DE ENDIVIDAMENTO", "", "Ideal próximo a 0", "Passivo Exigível/Ativo Total", di.format(-pasCiclico / -(SubPassivo + subPrincipal)), ""});
 
-                modelo.addRow(new Object[]{"", "ÍNDICE DE POUPANÇA", "Ideal > 10%", "Resultado Disponível p/Investir/Receitas", poupanca, ""});
+                modelo.addRow(new Object[]{"", "ÍNDICE DE POUPANÇA", "", "Ideal > 10%", "Resultado Disponãvel p/Investir/Receitas", poupanca, ""});
 
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "PLANEJAMENTO FINANCEIRO", "", "", "", " %Atingido "});
+                modelo.addRow(new Object[]{"", "PLANEJAMENTO FINANCEIRO", "", "", "", "", " %Atingido "});
 
-                modelo.addRow(new Object[]{"", "-----------------------------------------", "", "", "", "-------------"});
+                modelo.addRow(new Object[]{"", "-----------------------------------------", "", "", "", "", "-------------"});
 
-                modelo.addRow(new Object[]{"", "PMS", "Patrimônio Mínimo de Sobrevivência", "6 x Valor Desp.Mensais", df.format(-Despesas * 6), Despesas != 0 ? dp.format(atCirculante / (-Despesas * 6)) : "N/A"});
+                modelo.addRow(new Object[]{"", "PMS", "", "Patrimônio MÍnimo de Sobrevivência", "6 x Valor Desp.Mensais", df.format(-Despesas * 6), Despesas != 0 ? dp.format(atCirculante / (-Despesas * 6)) : "N/A"});
 
-                modelo.addRow(new Object[]{"", "PMR", "Patrimônio Mínimo Recomendado", "20 x Valor Desp.Mensais", df.format(-Despesas * 20), Despesas != 0 ? dp.format(atCirculante / (-Despesas * 20)) : "N/A"});
+                modelo.addRow(new Object[]{"", "PMR", "", "Patrimônio MÍnimo Recomendado", "20 x Valor Desp.Mensais", df.format(-Despesas * 20), Despesas != 0 ? dp.format(atCirculante / (-Despesas * 20)) : "N/A"});
 
-                modelo.addRow(new Object[]{"", "PI", "Patrimônio Ideal", "12 x Vr.Desp.Mensais x 10% x Idade", df.format((-Despesas * 12 * 0.1 * 60)), Despesas != 0 ? dp.format(atCirculante / ((-Despesas * 12 * 0.1) * 60)) : "N/A"});
+                modelo.addRow(new Object[]{"", "PI", "", "Patrimônio Ideal", "12 x Vr.Desp.Mensais x 10% x Idade", df.format((-Despesas * 12 * 0.1 * 60)), Despesas != 0 ? dp.format(atCirculante / ((-Despesas * 12 * 0.1) * 60)) : "N/A"});
 
-                modelo.addRow(new Object[]{"", "PNIF", "Patrim.Nec.p/Indep.Financeira", "12 x Desp.Mensais / Menor % Rentabilidade a.a.", df.format(-Despesas * 12 / 0.06), Despesas != 0 ? dp.format(atCirculante / (-Despesas * 12 / 0.06)) : "N/A"});
+                modelo.addRow(new Object[]{"", "PNIF", "", "Patrim.Nec.p/Indep.Financeira", "12 x Desp.Mensais / Menor % Rentabilidade a.a.", df.format(-Despesas * 12 / 0.06), Despesas != 0 ? dp.format(atCirculante / (-Despesas * 12 / 0.06)) : "N/A"});
 
-                // Renderização
+                // RenderizaÇÓo
                 jTablePesquisa.getColumnModel().getColumn(0).setCellRenderer(new CustomTableCellRenderer(0, 16, false));
 
                 jTablePesquisa.getColumnModel().getColumn(1).setCellRenderer(new CustomTableCellRenderer(1, 14, false));
@@ -902,15 +915,15 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
                 });
 
                 // === QUADRO DE DIAGNÓSTICO E CONSULTORIA FINANCEIRA ===
-                modelo.addRow(new Object[]{"", "", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", " D I A G N Ó S T I C O   D O   S I S T E M A ", "", "", "", ""});
+                modelo.addRow(new Object[]{"", " D I A G N Ó S T I C O   D O   S I S T E M A ", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "-----------------------------------------", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "-----------------------------------------", "", "", "", "", ""});
 
-                modelo.addRow(new Object[]{"", "", "--- Análise Consultiva ---", "", "", ""});
+                modelo.addRow(new Object[]{"", "", "", "--- Análise Consultiva ---", "", "", ""});
 
-                // 1. Diagnóstico de Liquidez (já está bom, só ajustei ordem das colunas para ficar consistente)
+                // 1. Diagnãstico de Liquidez (já está bom, só ajustei ordem das colunas para ficar consistente)
                 double liqValor = 0; // ? substitua pelo cálculo real
 
                 String labelLiq = "";
@@ -937,9 +950,9 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 }
 
-                modelo.addRow(new Object[]{"", "SAÚDE FINANCEIRA:", labelLiq, descLiq, "", ""});
+                modelo.addRow(new Object[]{"", "SAÃDE FINANCEIRA:", "", labelLiq, descLiq, "", ""});
 
-                // 2. Diagnóstico de Capital de Giro (Fleuriet) ? agora separado
+                // 2. Diagnãstico de Capital de Giro (Fleuriet) ? agora separado
                 String labelCG = "";
 
                 String descCG = "";
@@ -948,11 +961,11 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                     labelCG = "ESTRATÉGIA:";
 
-                    descCG = "Posição sólida. Momento ideal para investimentos ou novos aportes.";
+                    descCG = "PosiÇÓo sólida. Momento ideal para investimentos ou novos aportes.";
 
                 } else if (ST < 0) {
 
-                    labelCG = "ATENÇÃO:";
+                    labelCG = "ATENÇÓO:";
 
                     descCG = "Sua tesouraria está negativa. Cuidado com juros de cheque especial/cartão.";
 
@@ -960,13 +973,13 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                     labelCG = "REVISÃO:";
 
-                    descCG = "Verifique se seus prazos de pagamento estão muito curtos em relação aos recebimentos.";
+                    descCG = "Verifique se seus prazos de pagamento estáo muito curtos em relaÇÓo aos recebimentos.";
 
                 }
 
-                modelo.addRow(new Object[]{"", "CAPITAL DE GIRO:", labelCG, descCG, "", ""});
+                modelo.addRow(new Object[]{"", "CAPITAL DE GIRO:", "", labelCG, descCG, "", ""});
 
-                // 3. Diagnóstico de Poupança (Rentabilidade)
+                // 3. Diagnãstico de PoupanÇa (Rentabilidade)
                 double poupValor = 0;
 
                 try {
@@ -986,13 +999,13 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                     labelPoup = "ALTA PERFORMANCE:";
 
-                    descPoup = "Você retém uma excelente fatia da sua receita.";
+                    descPoup = "Você retêm uma excelente fatia da sua receita.";
 
                 } else if (poupValor >= 10) {
 
                     labelPoup = "DENTRO DA META:";
 
-                    descPoup = "Sua taxa de poupança está saudável (acima de 10%).";
+                    descPoup = "Sua taxa de poupanãa está saudável (acima de 10%).";
 
                 } else {
 
@@ -1002,10 +1015,10 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 }
 
-                modelo.addRow(new Object[]{"", "CAPACIDADE DE ACÚMULO:", labelPoup, descPoup, "", ""});
+                modelo.addRow(new Object[]{"", "CAPACIDADE DE ACÚmMULO:", "", labelPoup, descPoup, "", ""});
 
                 // 4. Dica de Gestão (Baseado no Endividamento)
-                // Aqui tem só duas situações, então fica mais simples
+                // Aqui tem só duas situaÇÕes, então fica mais simples
                 double endivValor = 0;
 
                 try {
@@ -1021,12 +1034,12 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 String descDica = (endivValor < 0.3)
                         ? "Baixo endividamento. Tem espaço para alavancar projetos com capital de terceiros."
-                        : "Foque na redução de custos fixos e quitação de dívidas de curto prazo.";
+                        : "Foque na reduÇÓo de custos fixos e quitaÇÕo de dívidas de curto prazo.";
 
-                modelo.addRow(new Object[]{"", "DICA DO CONSULTOR:", labelDica, descDica, "", ""});
+                modelo.addRow(new Object[]{"", "DICA DO CONSULTOR:", "", labelDica, descDica, "", ""});
 
                 // Linha separadora (pode manter ou usar borda na tabela)
-                modelo.addRow(new Object[]{"", "-----------------------------------------", "", "", "", ""});
+                modelo.addRow(new Object[]{"", "-----------------------------------------", "", "", "", "", ""});
 
                 // Logo após adicionar todas as linhas de diagnóstico:
                 //jTablePesquisa.getColumnModel().getColumn(2).setPreferredWidth(600); // Aumenta para 600 pixels ou o necessário
@@ -1036,7 +1049,7 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
             } finally {
 
-                conexao.fecharConexao(); // Fecha a conexão no final
+                conexao.fecharConexao(); // Fecha a conexÕo no final
 
             }
 
@@ -1118,7 +1131,7 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
         // Cabeçalho com as datas do período
         MessageFormat cabecalho = new MessageFormat(
-                "Balanço - Período: " + dataInicial + " a " + dataFinal);
+                "BalanÇo - Período: " + dataInicial + " a " + dataFinal);
 
         //MessageFormat rodape = new MessageFormat("Página {0,number,integer}");
         MessageFormat rodape = new MessageFormat(

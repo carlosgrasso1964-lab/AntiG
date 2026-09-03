@@ -1842,8 +1842,8 @@ class DatabaseHelper(private val context: Context) :
         val cursor = db.query(
             TABLE_CLIFOR,
             null,
-            "$COL_TIPO = ?",
-            arrayOf("CLI"),
+            "$COL_TIPO IN (?, ?, ?)",
+            arrayOf("CLI", "BCO", "INV"),
             null,
             null,
             "$COL_NOME_CLIFOR ASC"
@@ -1886,8 +1886,8 @@ class DatabaseHelper(private val context: Context) :
         val cursor = db.query(
             TABLE_CLIFOR,
             null,
-            "$COL_TIPO = ?",
-            arrayOf("FOR"),
+            "$COL_TIPO IN (?, ?, ?)",
+            arrayOf("FOR", "CAR", "PER"),
             null,
             null,
             "$COL_NOME_CLIFOR ASC"

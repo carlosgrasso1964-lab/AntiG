@@ -159,13 +159,15 @@ class CadastroClientesActivity : AppCompatActivity() {
                 return@launch
             }
 
-            // Validar faixa do código
-            if (tipo == "FOR" && (codeInt < 0 || codeInt > 999)) {
-                Toast.makeText(this@CadastroClientesActivity, "Código de fornecedor deve estar entre 0000 e 0999", Toast.LENGTH_SHORT).show()
-                return@launch
-            } else if (tipo == "CLI" && codeInt < 1000) {
-                Toast.makeText(this@CadastroClientesActivity, "Código de cliente deve ser maior ou igual a 1000", Toast.LENGTH_SHORT).show()
-                return@launch
+            // Validar faixa do código (apenas na inclusão, não na edição)
+            if (editingCodCliFor == null) {
+                if (tipo == "FOR" && (codeInt < 0 || codeInt > 999)) {
+                    Toast.makeText(this@CadastroClientesActivity, "Código de fornecedor deve estar entre 0000 e 0999", Toast.LENGTH_SHORT).show()
+                    return@launch
+                } else if (tipo == "CLI" && codeInt < 1000) {
+                    Toast.makeText(this@CadastroClientesActivity, "Código de cliente deve ser maior ou igual a 1000", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
             }
 
             // Validar unicidade (exceto se for edição do mesmo código)

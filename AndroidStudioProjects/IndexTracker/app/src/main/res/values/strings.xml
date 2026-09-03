@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IndexTracker</string>
+    <string name="titulo">📈 Índices &amp; Moedas + ₿ Bitcoin</string>
+    <string name="adicionar_indice">➕ Novo índice</string>
+    <string name="atualizar">🔄 Atualizar</string>
+    <string name="arquivar">📦 Arquivar > 1 ano</string>
+    <string name="ultima_atualizacao">última atualização: %1$s</string>
+    <string name="sem_dados">Nenhum índice cadastrado.\nToque em ➕ para adicionar.</string>
+    <string name="form_nome">Nome (ex: Dólar, Bitcoin, IBOVESPA)</string>
+    <string name="form_ativo">Ativo (símbolo/ticker)</string>
+    <string name="form_fonte">Fonte da cotação</string>
+    <string name="form_sufixo">Sufixo (ex: R$, pts, $)</string>
+    <string name="form_cor">Cor (hex)</string>
+    <string name="form_salvar">Salvar</string>
+    <string name="form_cancelar">Cancelar</string>
+    <string name="confirmar_excluir">Excluir este índice e todo seu histórico?</string>
+    <string name="confirmar_arquivar">Remover registros com mais de 1 ano?</string>
+</resources>
