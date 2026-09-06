@@ -28,7 +28,7 @@ public class Form_Planeja_Auditoria extends JFrame {
     public Form_Planeja_Auditoria(String dataIni, String dataFim) {
         this.dataIni = dataIni;
         this.dataFim = dataFim;
-        
+
         try {
             conexao = new Conexao().getConexao();
             setTitle("Gerenciar Planejamento - Plano Diretor");
@@ -44,14 +44,14 @@ public class Form_Planeja_Auditoria extends JFrame {
 
     private void initComponents() {
         txtConta = new JTextField(25);
-        
+
         spnAno = new JSpinner(new SpinnerNumberModel(2026, 2020, 2030, 1));
-        
+
         cmbMes = new JComboBox<>();
         for (int i = 1; i <= 12; i++) {
             cmbMes.addItem(i);
         }
-        
+
         txtValor = new JTextField(15);
         txtInflacao = new JTextField(10);
         txtInflacao.setText("5.0");
@@ -61,16 +61,19 @@ public class Form_Planeja_Auditoria extends JFrame {
         btnExcluir = new JButton("Excluir");
         btnFechar = new JButton("Fechar");
 
-        modelo = new DefaultTableModel(new Object[]{"id", "Conta", "Ano", "MÃªs", "Valor Planejado", "InflaÃ§Ã£o"}, 0);
+        modelo = new DefaultTableModel(new Object[]{"id", "Conta", "Ano", "Mês", "Valor Planejado", "Inflação"}, 0);
         tabela = new JTable(modelo);
         tabela.getColumnModel().getColumn(0).setMinWidth(0);
         tabela.getColumnModel().getColumn(0).setMaxWidth(0);
         tabela.getColumnModel().getColumn(0).setPreferredWidth(0);
         tabela.getColumnModel().getColumn(0).setWidth(0);
         tabela.getColumnModel().getColumn(0).setResizable(false);
-        
+
+        //tabela.setSelectionBackground(new java.awt.Color(255, 255, 204));
+        // Configuração das cores de seleção (fundo e texto)
         tabela.setSelectionBackground(new java.awt.Color(255, 255, 204));
-        
+        tabela.setSelectionForeground(new java.awt.Color(51, 51, 51));
+
         JScrollPane scrollPane = new JScrollPane(tabela);
 
         JPanel panelCampos = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -78,11 +81,11 @@ public class Form_Planeja_Auditoria extends JFrame {
         panelCampos.add(txtConta);
         panelCampos.add(new JLabel("Ano:"));
         panelCampos.add(spnAno);
-        panelCampos.add(new JLabel("Mï¿½s:"));
+        panelCampos.add(new JLabel("Mês:"));
         panelCampos.add(cmbMes);
         panelCampos.add(new JLabel("Valor:"));
         panelCampos.add(txtValor);
-        panelCampos.add(new JLabel("Inflaï¿½ï¿½o %:"));
+        panelCampos.add(new JLabel("Inflação%:"));
         panelCampos.add(txtInflacao);
 
         JPanel panelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -115,33 +118,37 @@ public class Form_Planeja_Auditoria extends JFrame {
     }
 
     private int getMesFromDate(String data) {
-        if (data == null || data.length() < 5) return 1;
+        if (data == null || data.length() < 5) {
+            return 1;
+        }
         return Integer.parseInt(data.substring(3, 5));
     }
-    
+
     private int getAnoFromDate(String data) {
-        if (data == null || data.length() < 10) return 2026;
+        if (data == null || data.length() < 10) {
+            return 2026;
+        }
         return Integer.parseInt(data.substring(6, 10));
     }
 
     private void carregarPlanejamento() {
         modelo.setRowCount(0);
-        
+
         String sql;
         PreparedStatement stmt;
-        
+
         if (dataIni != null && !dataIni.isEmpty() && dataFim != null && !dataFim.isEmpty()) {
             int mesIni = getMesFromDate(dataIni);
             int mesFim = getMesFromDate(dataFim);
             int anoIni = getAnoFromDate(dataIni);
             int anoFim = getAnoFromDate(dataFim);
-            
+
             sql = "SELECT id, conta, ano_referencia, mes, valor_planejado, inflacao_premissa "
-                + "FROM tb_plano_diretor "
-                + "WHERE ((ano_referencia = ? AND mes >= ?) OR (ano_referencia > ?)) "
-                + "AND ((ano_referencia = ? AND mes <= ?) OR (ano_referencia < ?)) "
-                + "ORDER BY ano_referencia DESC, mes DESC, conta";
-            
+                    + "FROM tb_plano_diretor "
+                    + "WHERE ((ano_referencia = ? AND mes >= ?) OR (ano_referencia > ?)) "
+                    + "AND ((ano_referencia = ? AND mes <= ?) OR (ano_referencia < ?)) "
+                    + "ORDER BY ano_referencia DESC, mes DESC, conta";
+
             try {
                 stmt = conexao.prepareStatement(sql);
                 stmt.setInt(1, anoIni);
@@ -156,8 +163,8 @@ public class Form_Planeja_Auditoria extends JFrame {
             }
         } else {
             sql = "SELECT id, conta, ano_referencia, mes, valor_planejado, inflacao_premissa "
-                + "FROM tb_plano_diretor ORDER BY ano_referencia DESC, mes DESC, conta";
-            
+                    + "FROM tb_plano_diretor ORDER BY ano_referencia DESC, mes DESC, conta";
+
             try {
                 stmt = conexao.prepareStatement(sql);
             } catch (SQLException e) {
@@ -165,7 +172,7 @@ public class Form_Planeja_Auditoria extends JFrame {
                 return;
             }
         }
-        
+
         try (ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 modelo.addRow(new Object[]{
@@ -187,24 +194,24 @@ public class Form_Planeja_Auditoria extends JFrame {
         String conta = txtConta.getText().trim();
         int ano = (int) spnAno.getValue();
         int mes = (int) cmbMes.getSelectedItem();
-        
+
         if (conta.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Informe o nome da Conta!");
             return;
         }
-        
+
         double valor;
         double inflacao;
         try {
             valor = Double.parseDouble(txtValor.getText().replace(".", "").replace(",", "."));
             inflacao = Double.parseDouble(txtInflacao.getText().replace(",", "."));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Valor ou Inflaï¿½ï¿½o invï¿½lidos!");
+            JOptionPane.showMessageDialog(this, "Valor ou Inflação inválidos!");
             return;
         }
 
         String sql = "INSERT INTO tb_plano_diretor (ano_referencia, mes, conta, valor_planejado, inflacao_premissa) "
-                   + "VALUES (?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, ano);
             stmt.setInt(2, mes);
@@ -226,30 +233,30 @@ public class Form_Planeja_Auditoria extends JFrame {
             JOptionPane.showMessageDialog(this, "Selecione um registro na tabela!");
             return;
         }
-        
+
         int idRegistro = (int) modelo.getValueAt(row, 0);
-        
+
         String contaNova = txtConta.getText().trim();
         int anoNovo = (int) spnAno.getValue();
         int mesNovo = (int) cmbMes.getSelectedItem();
-        
+
         if (contaNova.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Informe o nome da Conta!");
             return;
         }
-        
+
         double valor;
         double inflacao;
         try {
             valor = Double.parseDouble(txtValor.getText().replace(".", "").replace(",", "."));
             inflacao = Double.parseDouble(txtInflacao.getText().replace(",", "."));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Valor ou Inflaï¿½ï¿½o invï¿½lidos!");
+            JOptionPane.showMessageDialog(this, "Valor ou Inflação inválidos!");
             return;
         }
 
         String sql = "UPDATE tb_plano_diretor SET conta=?, ano_referencia=?, mes=?, valor_planejado=?, inflacao_premissa=? "
-                   + "WHERE id=?";
+                + "WHERE id=?";
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, contaNova);
             stmt.setInt(2, anoNovo);
@@ -272,19 +279,19 @@ public class Form_Planeja_Auditoria extends JFrame {
             JOptionPane.showMessageDialog(this, "Selecione um registro na tabela!");
             return;
         }
-        
-        int confirm = JOptionPane.showConfirmDialog(this, 
-            "Deseja realmente excluir o registro?", "Confirmar Exclusï¿½o", 
-            JOptionPane.YES_NO_OPTION);
-        
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Deseja realmente excluir o registro?", "Confirmar Exclusão",
+                JOptionPane.YES_NO_OPTION);
+
         if (confirm == JOptionPane.YES_OPTION) {
             int id = (int) modelo.getValueAt(row, 0);
-            
+
             String sql = "DELETE FROM tb_plano_diretor WHERE id=?";
             try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
                 stmt.setInt(1, id);
                 stmt.execute();
-                JOptionPane.showMessageDialog(this, "Registro excluï¿½do com sucesso!");
+                JOptionPane.showMessageDialog(this, "Registro excluído com sucesso!");
                 carregarPlanejamento();
                 limparCampos();
             } catch (SQLException e) {
@@ -292,7 +299,7 @@ public class Form_Planeja_Auditoria extends JFrame {
             }
         }
     }
-    
+
     private void limparCampos() {
         txtConta.setText("");
         txtValor.setText("");

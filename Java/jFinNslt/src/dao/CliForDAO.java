@@ -148,8 +148,6 @@ public class CliForDAO {
 
     public void Editar(CliFor obj) throws ParseException {
         try {
-            conexao.abrirConexao();
-            Connection conn = conexao.getConexao();
             // Validar formato do código
             try {
                 int codeInt = Integer.parseInt(obj.getCodCliFor());
@@ -174,6 +172,9 @@ public class CliForDAO {
                 JOptionPane.showMessageDialog(null, "Código inválido, use apenas dígitos!");
                 return;
             }
+            // Abrir conexao APOS a validacao (BuscarCliFor fecha a conexao compartilhada)
+            conexao.abrirConexao();
+            Connection conn = conexao.getConexao();
             String sql = "UPDATE tbclifor SET Tipo=?, nomeCliFor=?, apelidoCliFor=?, email=?, celular=?, telefone=?, "
                     + "cep=?, endereco=?, numero=?, complemento=?, bairro=?, cidade=?, estado=?, "
                     + "rg=?, cpf=?, contatoCliFor=?, obs=?, fkCliForGp=? WHERE codCliFor=?";

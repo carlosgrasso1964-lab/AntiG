@@ -103,25 +103,7 @@ public class CliForDAO {
 
     // ==================== ATUALIZAR ====================
     public void atualizar(CliFor c) throws SQLException {
-//        String sql = """
-//            UPDATE tbclifor SET
-//                tipo=?, nomeclifor=?, apelidoclifor=?, email=?, celular=?, telefone=?,
-//                cep=?, endereco=?, numero=?, complemento=?, bairro=?, cidade=?, estado=?,
-//                rg=?, cpf=?, contatoclifor=?, obs=?, fkcliforgp=?
-//            WHERE codclifor=?
-//            """;
-//
-//        try (Connection con = Conexao.faz_conexao(); PreparedStatement ps = con.prepareStatement(sql)) {
-//
-//            preencherStatement(ps, c);
-//            ps.setString(19, c.getCodCliFor());
-//            ps.executeUpdate();
-//            JOptionPane.showMessageDialog(null, "Favorecido atualizado com sucesso!");
-//
-//        } catch (SQLException e) {
-//            JOptionPane.showMessageDialog(null, "Erro ao atualizar: " + e.getMessage());
-//            throw e;
-//        }
+
         String sql = """
         UPDATE tbclifor SET
             tipo=?, nomeclifor=?, apelidoclifor=?, email=?, celular=?, telefone=?,
