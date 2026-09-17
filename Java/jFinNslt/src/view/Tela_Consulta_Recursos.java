@@ -460,7 +460,7 @@ public class Tela_Consulta_Recursos extends javax.swing.JFrame {
 
                 } else {
 
-                    sql = "SELECT * FROM tbmovimento WHERE dtVcto BETWEEN ? AND ? AND recurso = ? ORDER BY dtVcto";
+                    sql = "SELECT * FROM tbmovimento WHERE dtVcto BETWEEN ? AND ? AND recurso = ? AND statusMov <> 'PG' ORDER BY dtVcto";
 
                 }
 
@@ -738,35 +738,30 @@ public class Tela_Consulta_Recursos extends javax.swing.JFrame {
 
                 int idAtual = Integer.parseInt(model.getValueAt(row, 0).toString().trim());
 
+                // So baixa registros cujo vencimento seja <= data de baixa digitada.
+                // Impede que compras futuras (ex: fatura que vence em 25/09) sejam marcadas como
+                // pagas na data da transferencia/baixa do cartao (ex: 20/08, 25/08).
+                String vctoTexto = model.getValueAt(row, 7).toString().trim();
+                if (vctoTexto.isEmpty()) {
+                    continue; // sem vencimento: ignora (ex.: SALDO INICIAL)
+                }
+                java.util.Date dataVctoTemp;
+                try {
+                    dataVctoTemp = formato_data.parse(vctoTexto);
+                } catch (java.text.ParseException pe) {
+                    continue; // data invalida: ignora a linha
+                }
+                if (dataVctoTemp.after(data_v)) {
+                    continue; // vencimento depois da data de baixa: NAO baixa
+                }
 
-
-                // Atualiza o registro do cartão selecionado
+                // Atualiza APENAS este registro (linha da tabela)
 
                 pstmtUpdate.setString(1, formato_ISO.format(tdtApr));
 
                 pstmtUpdate.setInt(2, idAtual);
 
                 pstmtUpdate.addBatch();
-
-
-
-                // Atualiza os dois anteriores
-
-                for (int offset = 1; offset <= 2; offset++) {
-
-                    int idAnt = idAtual - offset;
-
-                    if (idAnt > 0) {
-
-                        pstmtUpdate.setString(1, formato_ISO.format(tdtApr));
-
-                        pstmtUpdate.setInt(2, idAnt);
-
-                        pstmtUpdate.addBatch();
-
-                    }
-
-                }
 
                 idsProcessados++;
 
@@ -793,15 +788,9 @@ public class Tela_Consulta_Recursos extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,
 
                     "Baixa realizada com sucesso!\n"
-
-                    + "Data utilizada: " + formato_ISO.format(tdtApr) + "\n"
-
+                    + "Data de baixa: " + formato_ISO.format(tdtApr) + "\n"
                     + "Registros atualizados: " + totalAtualizados + "\n"
-
-                    + "Novo registro de pagamento do cartão criado.\n"
-
-                    + "Processadas " + idsProcessados + " linha(s) da tabela.",
-
+                    + "Linhas processadas: " + idsProcessados,
                     "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
 

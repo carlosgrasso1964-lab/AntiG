@@ -2,7 +2,7 @@ package view;
 
 import utilitarios.AgCompr.Alart_Body;
 import utilitarios.BlocNotas;
-import utilitarios.MCalendar.MainCalendApp;
+import Mcalendar.MainCalendApp;
 import utilitarios.Conexao;
 import utilitarios.ConfTelaPrincipal;
 import utilitarios.ImageDBHandler;
@@ -43,7 +43,7 @@ public class Tela_Principal extends JFrame {
         lblfondo.setHorizontalAlignment(JLabel.CENTER);
         lblfondo.setVerticalAlignment(JLabel.CENTER);
         lblfondo.setOpaque(false);  // permite ver os componentes por cima
-        // Adiciona como fundo (índice 0)
+        // Adiciona como fundo (ï¿½ndice 0)
         getContentPane().add(lblfondo, 0);
         // Recupera do banco e aplica
         ImageDBHandler.retrieveImageFromDatabase(tempImagePath);
@@ -63,7 +63,7 @@ public class Tela_Principal extends JFrame {
         });
         setVisible(true);
 
-        // ? Aqui: agenda a primeira atualização DEPOIS da tela aparecer
+        // ? Aqui: agenda a primeira atualização depois da tela aparecer
         SwingUtilities.invokeLater(() -> {
             atualizarImagemDeFundo();
         });
@@ -313,7 +313,7 @@ public class Tela_Principal extends JFrame {
         jMenuMovimentacao.add(jMenuItemMovParcelamentos);
 
         jMenuItemMovParcelamCart.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jMenuItemMovParcelamCart.setText("Parcelam.Cartões");
+        jMenuItemMovParcelamCart.setText("Parecelamento de Cartões");
         jMenuItemMovParcelamCart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemMovParcelamCartActionPerformed(evt);
@@ -576,6 +576,7 @@ public class Tela_Principal extends JFrame {
         jMenuBar1.add(jMenuRelatorios);
 
         jMenuManutencao.setText("Manutenção");
+        jMenuManutencao.setToolTipText("");
         jMenuManutencao.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
 
         jMenuItemBackups.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -641,6 +642,7 @@ public class Tela_Principal extends JFrame {
         jMenuBar1.add(jMenu5);
 
         jMenuUtilitarios.setText("Utilitários");
+        jMenuUtilitarios.setToolTipText("");
         jMenuUtilitarios.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
 
         jMenuItemAbrirPDF.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -654,6 +656,7 @@ public class Tela_Principal extends JFrame {
 
         jMenuItemCalendario.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jMenuItemCalendario.setText("Calendário");
+        jMenuItemCalendario.setToolTipText("");
         jMenuItemCalendario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemCalendarioActionPerformed(evt);
@@ -1114,15 +1117,14 @@ public class Tela_Principal extends JFrame {
 
 
     private void jMenuItemCalendarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCalendarioActionPerformed
-
-        MainCalendApp exibir = null;
-
-        exibir = new MainCalendApp();
-
-        exibir.setVisible(true);
-
-        setVisible(false);
-
+        try {
+            MainCalendApp exibir = new MainCalendApp();
+            exibir.setVisible(true);
+            this.setExtendedState(ICONIFIED); // Minimiza ao invÃ©s de esconder
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao abrir calendário: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_jMenuItemCalendarioActionPerformed
 
 
@@ -1723,7 +1725,7 @@ public class Tela_Principal extends JFrame {
 
         try {
 
-            int retries = 5; // nï¿½mero de tentativas
+            int retries = 5; // número de tentativas
 
             while (retries > 0) {
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package utilitarios.MCalendar;
+package Mcalendar;
 
 import java.awt.Component;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class MainCalendApp extends javax.swing.JFrame {
     /**
      * Creates new form MainCalendApp
      */
-    private final String[] MONTHS = {"Janeiro", "Fevereiro", "Março", "Abril",
+    private final String[] MONTHS = {"Janeiro", "Fevereiro", "Marï¿½o", "Abril",
         "Maio", "Junho", "Julho", "Agosto", "Setembro",
         "Outubro", "Novembro", "Dezembro"
     };
@@ -139,6 +139,7 @@ public class MainCalendApp extends javax.swing.JFrame {
         clockView.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 1, 2));
 
         jToolBar3.setBorder(null);
+        jToolBar3.setFloatable(false);
         jToolBar3.setRollover(true);
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Arrows-Left-Round-icon.png"))); // NOI18N
@@ -153,6 +154,7 @@ public class MainCalendApp extends javax.swing.JFrame {
         jToolBar3.add(jButton2);
 
         jToolBar1.setBorder(null);
+        jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Arrows-Right-Round-icon.png"))); // NOI18N
@@ -171,7 +173,7 @@ public class MainCalendApp extends javax.swing.JFrame {
         topDAte.setBackground(new java.awt.Color(102, 204, 255));
         topDAte.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         topDAte.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        topDAte.setText("Mês");
+        topDAte.setText("Mï¿½s");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, new java.awt.Color(204, 255, 255), new java.awt.Color(51, 51, 51)), "Saltar para", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Consolas", 1, 14), new java.awt.Color(102, 102, 102))); // NOI18N
 
@@ -187,7 +189,7 @@ public class MainCalendApp extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Mês");
+        jLabel2.setText("Mï¿½s");
         jLabel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         month.setEditable(true);
@@ -249,7 +251,7 @@ public class MainCalendApp extends javax.swing.JFrame {
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel1, jLabel2, month, yearCombo});
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, new java.awt.Color(204, 255, 255), new java.awt.Color(51, 51, 51)), "Calendário", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Consolas", 1, 14), new java.awt.Color(102, 102, 102))); // NOI18N
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, new java.awt.Color(204, 255, 255), new java.awt.Color(51, 51, 51)), "Calendï¿½rio", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Consolas", 1, 14), new java.awt.Color(102, 102, 102))); // NOI18N
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Gregoriano" }));
         jComboBox2.setEnabled(false);

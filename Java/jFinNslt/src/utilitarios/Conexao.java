@@ -7,22 +7,23 @@ import java.sql.SQLException;
 public class Conexao {
     private Connection conexao;
 
-    // Método para abrir a conexão
+    // Método para abrir a conexï¿½o
     public void abrirConexao() throws SQLException {
         if (conexao == null || conexao.isClosed()) {
-            conexao = DriverManager.getConnection("jdbc:sqlite:jfinslt.db");
+            String caminhoDb = System.getProperty("user.dir") + System.getProperty("file.separator") + "jfinslt.db";
+            conexao = DriverManager.getConnection("jdbc:sqlite:" + caminhoDb);
         }
     }
 
-    // Método para retornar a conexão
+    // Método para retornar a conexï¿½o
     public Connection getConexao() throws SQLException {
         if (conexao == null || conexao.isClosed()) {
-            abrirConexao(); // Garante que a conexão está aberta antes de retornar
+            abrirConexao(); // Garante que a conexï¿½o estï¿½ aberta antes de retornar
         }
         return conexao;
     }
 
-    // Método para fechar a conexão
+    // Método para fechar a conexï¿½o
     public void fecharConexao() {
         if (conexao != null) {
             try {
