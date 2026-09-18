@@ -28,6 +28,12 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -52,7 +58,7 @@ public class CalenderPage extends  JPanel{
     private final int month;
     private int year;
     private GregorianCalendar   calendar;
-    private final String[] MONTHS = {"Janeiro","Fevereiro","Março","Abril",
+    private final String[] MONTHS = {"Janeiro","Fevereiro","Marï¿½o","Abril",
                                   "Maio","Junho","Julho","Agosto","Setembro",
                                   "Outubro","Novembro","Dezembro"
                                   };
@@ -64,6 +70,10 @@ private final int[] DAYS_IN_MONTH = {
 };
 private JLabel dateview;
 Font  digitalClock  =null;
+    private JPanel headerPane;
+    private JSeparator separator;
+    private final Set<Integer> daysWithTasks = new HashSet<>();
+    private Runnable onTaskAddedCallback;
 
 /**
  * 
@@ -85,11 +95,11 @@ Font  digitalClock  =null;
         setBackground(Color.WHITE);
         setFont(parrent.getFont());
       
-       JPanel  headderPAne  =  new JPanel(new GridLayout(1, 7, 10, 5));
+       this.headerPane  =  new JPanel(new GridLayout(1, 7, 10, 5));
        BevelBorder  bb =new BevelBorder(BevelBorder.RAISED, Color.lightGray, Color.DARK_GRAY);
         EmptyBorder eb =  new EmptyBorder(20, 20, 20, 20);
        setBorder(new CompoundBorder(bb, eb));
-       headderPAne.setBackground(Color.WHITE);
+       headerPane.setBackground(Color.WHITE);
         
          String[] weekDays  ={"Dom","Seg","Ter","Qua","Qui","Sex","Sab"}; 
          for(int i = 0; i < weekDays.length; ++i){
@@ -98,21 +108,70 @@ Font  digitalClock  =null;
          dayName.setForeground(Color.red);
          }
          dayName.setFont(getFont());
-         headderPAne.add(dayName);
+         headerPane.add(dayName);
      }
-        JSeparator separator =  new JSeparator(JSeparator.HORIZONTAL);
+        this.separator =  new JSeparator(JSeparator.HORIZONTAL);
         
-        headderPAne.add(separator);
+        headerPane.add(separator);
         separator.setBorder(new LineBorder(Color.BLUE, 3));
          
-        JPanel page  =  printPage();
+        carregarDiasComTarefas();
+       JPanel page  =  printPage();
         page.setOpaque(false);    
-        add(headderPAne); 
+        add(headerPane); 
         add(separator); 
         add(Box.createVerticalStrut(10));
         add(page);
     }
   
+    /** Callback para atualizar tarefas apos adicionar/excluir. */
+    public void setOnTaskAddedCallback(Runnable callback) {
+        this.onTaskAddedCallback = callback;
+    }
+
+    private void carregarDiasComTarefas() {
+        try {
+            String dataIni = String.format("%04d-%02d-01", year, month + 1);
+            int diasNoMes = DAYS_IN_MONTH[month];
+            if (month == Calendar.FEBRUARY && calendar.isLeapYear(year)) {
+                diasNoMes++;
+            }
+            String dataFim = String.format("%04d-%02d-%02d", year, month + 1, diasNoMes);
+            dao.TarefaDAO dao = new dao.TarefaDAO();
+            Map<String, List<model.Tarefa>> porDia = dao.listarMes(dataIni, dataFim);
+            daysWithTasks.clear();
+            for (String data : porDia.keySet()) {
+                try {
+                    String[] partes = data.split("-");
+                    daysWithTasks.add(Integer.parseInt(partes[2]));
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** Atualiza o calendario mantendo o mes atual. */
+    public void repaintPage() {
+        removeAll();
+        add(headerPane);
+        add(separator);
+        add(Box.createVerticalStrut(10));
+        add(printPage());
+        revalidate();
+        repaint();
+    }
+
+    private void abrirTarefasDoDia(int dia) {
+        String data = String.format("%04d-%02d-%02d", year, month + 1, dia);
+        TarefasDoDiaDialog dlg = new TarefasDoDiaDialog(null, data, () -> {
+            carregarDiasComTarefas();
+            repaintPage();
+        });
+        dlg.setVisible(true);
+    }
+ 
   private void checkParameters(int y ,int m,JLabel dateview,Container parrent)
           throws  IllegalArgumentException{
    
@@ -184,9 +243,25 @@ for(int i = 1; i <= daysInMoth; i++){
        l.setForeground(Color.BLUE);
        l.setBorder(new CompoundBorder(new LineBorder(Color.BLUE), eb));
        }
-         
-
-}//end  for loop  
+       
+       // Badge visual para dias com tarefas
+       if (daysWithTasks.contains(i)) {
+           l.setText(i + " \u25cf");
+           l.setForeground(Color.red);
+           l.setFont(getFont().deriveFont(Font.BOLD));
+       }
+       // Clique para abrir tarefas do dia
+       final int dia = i;
+       l.addMouseListener(new MouseAdapter() {
+           @Override
+           public void mouseClicked(MouseEvent e) {
+               if (SwingUtilities.isLeftMouseButton(e)) {
+                   abrirTarefasDoDia(dia);
+               }
+           }
+       });
+       l.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//end  for loop
  
    
   JLabel  l = null;
@@ -312,10 +387,10 @@ return new Color(r,g,b);
         date.setFont(dateview.getFont());
         dateview.add(Box.createHorizontalStrut(200));
         dateview.add(date);
-         JSeparator separator =  new JSeparator(JSeparator.HORIZONTAL);
-          separator.setBorder(new LineBorder(Color.LIGHT_GRAY, 4));
+         JSeparator sep =  new JSeparator(JSeparator.HORIZONTAL);
+          sep.setBorder(new LineBorder(Color.LIGHT_GRAY, 4));
           dateview.add(Box.createVerticalStrut(7));
-          dateview.add(separator);
+          dateview.add(sep);
         
    
     
