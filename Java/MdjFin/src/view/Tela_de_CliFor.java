@@ -2,15 +2,12 @@ package view;
 
 import utilitarios.Conexao;
 import dao.CliForDAO;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JComboBox;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 import model.CliFor;
 import model.Placon;
@@ -70,7 +66,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
     }
 
     private void adicionarListeners() {
-        // Sugere cï¿½digo automï¿½tico ao mudar tipo (sï¿½ quando Nï¿½O estï¿½ editando)
+        // Sugere código automático ao mudar tipo (só quando Não está editando)
         jCbxTipo.addItemListener(e -> {
             if (e.getStateChange() == 1 && editingCodCliFor == null) {
                 String tipo = (String) jCbxTipo.getSelectedItem();
@@ -181,7 +177,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("       Cadastro de Clientes e Fornecedores");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Aï¿½ï¿½es"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Ações"));
 
         btSalvar.setText("Salvar");
         btSalvar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -270,7 +266,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
 
         jLabel6.setText("Contato");
 
-        jLabel7.setText("Observaï¿½ï¿½o");
+        jLabel7.setText("Observação:");
 
         jLabel4.setText("Vinculo");
 
@@ -313,9 +309,9 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
             ex.printStackTrace();
         }
 
-        jLabel13.setText("Endereï¿½o:");
+        jLabel13.setText("Endereço:");
 
-        jLabel14.setText("Nï¿½mero:");
+        jLabel14.setText("Número:");
 
         jLabel15.setText("Bairro :");
 
@@ -424,7 +420,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
                             .addComponent(tfContato, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cbxConta, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel18))
-                .addGap(129, 133, Short.MAX_VALUE))
+                .addGap(129, 130, Short.MAX_VALUE))
         );
         jPanelCadFavLayout.setVerticalGroup(
             jPanelCadFavLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -502,7 +498,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Cod", "Tipo", "Razï¿½o Social", "Nome Fantasia", "E-mail", "Celular", "Telefone", "CEP", "Endereï¿½o", "Numero", "Bairro", "Complemento", "Cidade", "UF", "RG/IE", "CPF/CNPJ", "Contato", "Observaï¿½ï¿½o", "Vinculo"
+                "Cod", "Tipo", "Razão Social", "Nome Fantasia", "E-mail", "Celular", "Telefone", "CEP", "Endereço", "Numero", "Bairro", "Complemento", "Cidade", "UF", "RG/IE", "CPF/CNPJ", "Contato", "Observação", "Vinculo"
             }
         ));
         tbDadosCliFor.setSelectionBackground(new java.awt.Color(0, 0, 0));
@@ -595,14 +591,14 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
 
     private void btSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvarActionPerformed
         if (tfCodCliFor.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Cï¿½digo obrigatï¿½rio!");
+            JOptionPane.showMessageDialog(this, "Código obrigatório!");
             return;
         }
 
         CliFor c = montarObjeto();
         Placon gp = buscarGrupoPrincipal(tfConta.getText().trim());
         if (gp == null && !tfConta.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Grupo Principal invï¿½lido!");
+            JOptionPane.showMessageDialog(this, "Grupo Principal inválido!");
             return;
         }
         c.setFkCliForGp(gp);
@@ -620,7 +616,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
     private void btAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAbrirActionPerformed
         String cod = tfBusca.getText().trim();
         if (cod.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite um cï¿½digo para buscar.");
+            JOptionPane.showMessageDialog(this, "Digite um código para buscar.");
             return;
         }
         try {
@@ -630,7 +626,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
                 editingCodCliFor = c.getCodCliFor();
                 btSalvar.setEnabled(false);
             } else {
-                JOptionPane.showMessageDialog(this, "Registro nï¿½o encontrado!");
+                JOptionPane.showMessageDialog(this, "Registro não encontrado!");
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Erro na busca: " + ex.getMessage());
@@ -652,7 +648,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
         c.setCodCliFor(editingCodCliFor);
         Placon gp = buscarGrupoPrincipal(tfConta.getText().trim());
         if (gp == null && !tfConta.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Grupo Principal invÃ¡lido!");
+            JOptionPane.showMessageDialog(this, "Grupo Principal inválido!");
             return;
         }
         c.setFkCliForGp(gp);
@@ -675,11 +671,11 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
             return;
         }
 
-        int resp = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir?", "Confirmaï¿½ï¿½o", JOptionPane.YES_NO_OPTION);
+        int resp = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir?", "Confirmação", JOptionPane.YES_NO_OPTION);
         if (resp == JOptionPane.YES_OPTION) {
             try {
                 dao.excluir(editingCodCliFor);
-                JOptionPane.showMessageDialog(this, "Excluï¿½do com sucesso!");
+                JOptionPane.showMessageDialog(this, "Excluído com sucesso!");
                 limparCampos();
                 listar();
             } catch (SQLException ex) {
@@ -712,7 +708,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tfContaActionPerformed
 
-    // ===================== Mï¿½TODOS AUXILIARES =====================
+    // ===================== MÉTODOS AUXILIARES =====================
     private CliFor montarObjeto() {
         CliFor c = new CliFor();
         c.setCodCliFor(tfCodCliFor.getText().trim());
@@ -815,7 +811,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
                 });
             }
 
-            // 2. Sï¿½ REATIVA O SORTER DEPOIS DE TERMINAR TUDO
+            // 2. Só REATIVA O SORTER DEPOIS DE TERMINAR TUDO
             tbDadosCliFor.setRowSorter(new TableRowSorter<>(model));
 
         } catch (SQLException ex) {
@@ -826,7 +822,7 @@ public class Tela_de_CliFor extends javax.swing.JFrame {
     private void jButtonImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonImprimirActionPerformed
         try {
             RelCliFor CliFor = new RelCliFor();
-            JOptionPane.showMessageDialog(null, "Relatï¿½rio de Favorecidos gerado com sucesso!");
+            JOptionPane.showMessageDialog(null, "Relatório de Favorecidos gerado com sucesso!");
             dispose();
             //new Tela_de_CliFor().setVisible(true);
         } catch (FileNotFoundException ex) {
