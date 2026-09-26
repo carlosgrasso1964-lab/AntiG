@@ -173,6 +173,7 @@ public class Tela_Principal extends JFrame {
         jMenuManutencao = new javax.swing.JMenu();
         jMenuItemBackups = new javax.swing.JMenuItem();
         jMenuItemConfTela = new javax.swing.JMenuItem();
+        jMenuItemImportarSQL = new javax.swing.JMenuItem();
         jMenu5 = new javax.swing.JMenu();
         jMenu7 = new javax.swing.JMenu();
         jMenuItemProjtos = new javax.swing.JMenuItem();
@@ -597,6 +598,15 @@ public class Tela_Principal extends JFrame {
         });
         jMenuManutencao.add(jMenuItemConfTela);
 
+        jMenuItemImportarSQL.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jMenuItemImportarSQL.setText("Importar SQL (FinAS)");
+        jMenuItemImportarSQL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemImportarSQLActionPerformed(evt);
+            }
+        });
+        jMenuManutencao.add(jMenuItemImportarSQL);
+
         jMenuBar1.add(jMenuManutencao);
 
         jMenu5.setText("Projetos");
@@ -1004,6 +1014,11 @@ public class Tela_Principal extends JFrame {
         setVisible(false);
 
     }//GEN-LAST:event_jMenuItemBackupsActionPerformed
+
+    private void jMenuItemImportarSQLActionPerformed(java.awt.event.ActionEvent evt) {
+        Tela_ImportarSQL importarSQL = new Tela_ImportarSQL();
+        importarSQL.executarImportacao(this);
+    }
 
 
     private void jMenuItemPClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPClientesActionPerformed
@@ -1663,6 +1678,7 @@ public class Tela_Principal extends JFrame {
     private javax.swing.JMenuItem jMenuItemAgenda;
     private javax.swing.JMenuItem jMenuItemAuditoria;
     private javax.swing.JMenuItem jMenuItemBackups;
+    private javax.swing.JMenuItem jMenuItemImportarSQL;
     private javax.swing.JMenuItem jMenuItemBalance;
     private javax.swing.JMenuItem jMenuItemBlocoNotas;
     private javax.swing.JMenuItem jMenuItemCalendario;

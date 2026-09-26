@@ -305,15 +305,18 @@ public class Tela_Acesso extends javax.swing.JFrame {
 
         } catch (SQLException e) {
 
-            //LOGGER.log(Level.SEVERE, "Erro SQL durante o login", e);
+            JOptionPane.showMessageDialog(null, "Erro SQL: " + e.getMessage());
+            e.printStackTrace();
 
         } catch (IOException ex) {
 
-            //LOGGER.log(Level.SEVERE, "Erro de IO durante o login", ex);
+            JOptionPane.showMessageDialog(null, "Erro IO: " + ex.getMessage());
+            ex.printStackTrace();
 
         } catch (Exception ex) {
 
-            //LOGGER.log(Level.SEVERE, "Erro inesperado durante o login", ex);
+            JOptionPane.showMessageDialog(null, "Erro: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+            ex.printStackTrace();
 
         } finally {
 
