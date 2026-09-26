@@ -37,6 +37,11 @@ class UtilitariosActivity : AppCompatActivity() {
             startActivity(Intent(this, BlocoNotasActivity::class.java))
         }
 
+        // Botão para Gerar Lançamentos
+        binding.btnGerarLancamentos.setOnClickListener {
+            startActivity(Intent(this, GerarLancamentosActivity::class.java))
+        }
+
         // Botão para voltar ao Menu Principal
         binding.btnVoltar.setOnClickListener {
             finish()

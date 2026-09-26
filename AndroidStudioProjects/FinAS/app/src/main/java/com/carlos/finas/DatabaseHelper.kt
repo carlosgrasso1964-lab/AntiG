@@ -1743,6 +1743,17 @@ class DatabaseHelper(private val context: Context) :
     }
 
     // Métodos para tbclifor
+    fun cliforExists(codigo: String): Boolean {
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT 1 FROM $TABLE_CLIFOR WHERE $COL_COD_CLIFOR = ?",
+            arrayOf(codigo)
+        )
+        val exists = cursor.moveToFirst()
+        cursor.close()
+        return exists
+    }
+
     fun insertClifor(clifor: Clifor): Long {
         val db = writableDatabase
         val values = ContentValues().apply {

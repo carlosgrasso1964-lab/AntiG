@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="6dp"
+    android:gravity="center_vertical"
+    android:background="@color/surface_dark">
+
+    <!-- Tipo -->
+    <TextView
+        android:id="@+id/tvItemTipo"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:textColor="@android:color/white"
+        android:gravity="center" />
+
+    <!-- Data -->
+    <TextView
+        android:id="@+id/tvItemData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@android:color/white"
+        android:layout_marginStart="4dp"
+        android:maxLines="1" />
+
+    <!-- Vencimento -->
+    <TextView
+        android:id="@+id/tvItemVcto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@android:color/white"
+        android:layout_marginStart="4dp"
+        android:maxLines="1" />
+
+    <!-- Favorecido -->
+    <TextView
+        android:id="@+id/tvItemFavorecido"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="11sp"
+        android:textColor="@android:color/white"
+        android:layout_marginStart="4dp"
+        android:ellipsize="end"
+        android:maxLines="1" />
+
+    <!-- Documento -->
+    <TextView
+        android:id="@+id/tvItemDoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@android:color/white"
+        android:layout_marginStart="4dp"
+        android:maxLines="1" />
+
+    <!-- Classificação -->
+    <TextView
+        android:id="@+id/tvItemClassif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@android:color/white"
+        android:layout_marginStart="4dp"
+        android:maxLines="1" />
+
+    <!-- Valor -->
+    <TextView
+        android:id="@+id/tvItemValor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#FFD700"
+        android:textStyle="bold"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:maxLines="1" />
+
+    <!-- Botão Excluir -->
+    <ImageButton
+        android:id="@+id/btnItemDelete"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@android:drawable/ic_menu_delete"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Excluir"
+        android:scaleType="centerInside" />
+
+</LinearLayout>
