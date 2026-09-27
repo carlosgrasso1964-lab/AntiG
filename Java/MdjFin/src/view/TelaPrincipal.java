@@ -174,6 +174,7 @@ public class TelaPrincipal extends JFrame {
         jMenuManutencao = new javax.swing.JMenu();
         jMenuItemBackups = new javax.swing.JMenuItem();
         jMenuItemConfTela = new javax.swing.JMenuItem();
+        jMenuItemImportarSQL = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuPCadastros = new javax.swing.JMenu();
         jMenuItemProjetos = new javax.swing.JMenuItem();
@@ -517,6 +518,15 @@ public class TelaPrincipal extends JFrame {
             }
         });
         jMenuManutencao.add(jMenuItemConfTela);
+
+        jMenuItemImportarSQL.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jMenuItemImportarSQL.setText("Importar SQL (FinAS)");
+        jMenuItemImportarSQL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemImportarSQLActionPerformed(evt);
+            }
+        });
+        jMenuManutencao.add(jMenuItemImportarSQL);
 
         jMenuBar1.add(jMenuManutencao);
 
@@ -956,6 +966,11 @@ public class TelaPrincipal extends JFrame {
         setVisible(false);
     }//GEN-LAST:event_jMenuItemBackupsActionPerformed
 
+    private void jMenuItemImportarSQLActionPerformed(java.awt.event.ActionEvent evt) {
+        Tela_ImportarSQL importarSQL = new Tela_ImportarSQL();
+        importarSQL.executarImportacao(this);
+    }
+
     private void jMenuItemPClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPClientesActionPerformed
         Tela_de_Consulta_Clientes pesqf = null;
         try {
@@ -1322,6 +1337,7 @@ public class TelaPrincipal extends JFrame {
     private javax.swing.JMenuItem jMenuItemCEstq;
     private javax.swing.JMenuItem jMenuItemCalendario;
     private javax.swing.JMenuItem jMenuItemConfTela;
+    private javax.swing.JMenuItem jMenuItemImportarSQL;
     private javax.swing.JMenuItem jMenuItemConsClassificacao;
     private javax.swing.JMenuItem jMenuItemConsRecursos;
     private javax.swing.JMenuItem jMenuItemEtapas;
