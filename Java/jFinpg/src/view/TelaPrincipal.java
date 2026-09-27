@@ -182,6 +182,7 @@ public class TelaPrincipal extends JFrame {
         jMenuItemMovTransf = new javax.swing.JMenuItem();
         jMenuItemMovParcelamentos = new javax.swing.JMenuItem();
         jMenuItemMovParcelamCart = new javax.swing.JMenuItem();
+        jMenuItemImportarSQL = new javax.swing.JMenuItem();
         jMenuConsultas = new javax.swing.JMenu();
         jMenuItemConsRecursos = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
@@ -366,6 +367,15 @@ public class TelaPrincipal extends JFrame {
             }
         });
         jMenuMovimentacao.add(jMenuItemMovParcelamCart);
+
+        jMenuItemImportarSQL.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        jMenuItemImportarSQL.setText("Importar SQL");
+        jMenuItemImportarSQL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemImportarSQLActionPerformed(evt);
+            }
+        });
+        jMenuMovimentacao.add(jMenuItemImportarSQL);
 
         jMenuBar1.add(jMenuMovimentacao);
 
@@ -1265,6 +1275,11 @@ public class TelaPrincipal extends JFrame {
         }
     }//GEN-LAST:event_jMenuItemAuditoriaActionPerformed
 
+    private void jMenuItemImportarSQLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemImportarSQLActionPerformed
+        Tela_ImportarSQL importar = new Tela_ImportarSQL();
+        importar.setVisible(true);
+    }//GEN-LAST:event_jMenuItemImportarSQLActionPerformed
+
     // Método para carregar uma imagem de fundo na JLabel lblfondo
     public void carregarImagemFundo(String imagePath) {
         try {
@@ -1380,6 +1395,7 @@ public class TelaPrincipal extends JFrame {
     private javax.swing.JMenuItem jMenuItemFavorecidos;
     private javax.swing.JMenuItem jMenuItemFlxD;
     private javax.swing.JMenuItem jMenuItemHComp;
+    private javax.swing.JMenuItem jMenuItemImportarSQL;
     private javax.swing.JMenuItem jMenuItemHVendas;
     private javax.swing.JMenuItem jMenuItemMovLancamentos;
     private javax.swing.JMenuItem jMenuItemMovParcelamCart;
