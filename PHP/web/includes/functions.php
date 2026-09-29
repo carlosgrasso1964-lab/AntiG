@@ -198,3 +198,51 @@ function calcularAlgarismo() {
     return $soma;
 }
 
+// ====== Parse de SQL em statements individuais (espelha Tela_ImportarSQL.parseStatements) ======
+function parseSQLStatements(string $conteudo): array {
+    // Remove comentários SQL
+    $limpo = preg_replace('/--[^\\n]*/', '', $conteudo);
+    $limpo = preg_replace('#/\\*[\\s\\S]*?\\*/#', '', $limpo);
+
+    $statements = [];
+    $atual = '';
+    $dentroAspas = false;
+    $aspaChar = '';
+    $len = strlen($limpo);
+
+    for ($i = 0; $i < $len; $i++) {
+        $c = $limpo[$i];
+
+        if (!$dentroAspas && ($c === "'" || $c === '"')) {
+            $dentroAspas = true;
+            $aspaChar = $c;
+        } elseif ($dentroAspas && $c === $aspaChar) {
+            // Check escaped quotes ('')
+            if ($i + 1 < $len && $limpo[$i + 1] === $aspaChar) {
+                $atual .= $c;
+                $i++;
+            } else {
+                $dentroAspas = false;
+            }
+        }
+
+        if ($c === ';' && !$dentroAspas) {
+            $stmt = trim($atual);
+            if (!empty($stmt)) {
+                $statements[] = $stmt;
+            }
+            $atual = '';
+        } else {
+            $atual .= $c;
+        }
+    }
+
+    // Último statement (sem ; no final)
+    $ultimo = trim($atual);
+    if (!empty($ultimo)) {
+        $statements[] = $ultimo;
+    }
+
+    return $statements;
+}
+

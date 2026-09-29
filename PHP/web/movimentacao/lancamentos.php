@@ -208,8 +208,8 @@ if ($action === 'pagar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect(buildRedirect());
 }
 
-// SAVE (add / edit)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action !== 'delete_multiple') {
+// SAVE (add / edit) — skip se for importação ou exclusão múltipla
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action !== 'delete_multiple' && ($_POST['acao'] ?? '') !== 'importar_sql') {
     try {
         $db->beginTransaction();
         // Tipo (Entrada/Saída/Nulo) define o sinal — igual ao jCbxTipo do Java (VMov.java).
@@ -331,6 +331,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action !== 'delete_multiple') {
     }
 }
 
+// ====== IMPORTAR LANÇAMENTOS (.sql) via PDO ======
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao'] ?? '') === 'importar_sql') {
+    if (!isset($_FILES['arquivo_sql']) || $_FILES['arquivo_sql']['error'] === UPLOAD_ERR_NO_FILE) {
+        flashMessage('warning', 'Selecione um arquivo .sql para importar!');
+    } elseif ($_FILES['arquivo_sql']['error'] !== UPLOAD_ERR_OK) {
+        flashMessage('danger', 'Erro no envio do arquivo (código ' . $_FILES['arquivo_sql']['error'] . ').');
+    } else {
+        $ext = strtolower(pathinfo($_FILES['arquivo_sql']['name'], PATHINFO_EXTENSION));
+        if ($ext !== 'sql') {
+            flashMessage('danger', 'O arquivo deve ter extensão .sql!');
+        } else {
+            $conteudo = @file_get_contents($_FILES['arquivo_sql']['tmp_name']);
+            if ($conteudo === false) {
+                flashMessage('danger', 'Erro ao ler o arquivo enviado!');
+            } else {
+                if (!mb_check_encoding($conteudo, 'UTF-8')) {
+                    $conteudo = mb_convert_encoding($conteudo, 'UTF-8', 'ISO-8859-1');
+                }
+                $statements = parseSQLStatements($conteudo);
+                if (empty($statements)) {
+                    flashMessage('warning', 'Nenhuma instrução SQL encontrada no arquivo.');
+                } else {
+                    $inseridos = 0;
+                    $erros = 0;
+                    $errosDetalhe = [];
+                    try {
+                        $db->beginTransaction();
+                        foreach ($statements as $sql) {
+                            try {
+                                $db->exec($sql);
+                                $inseridos++;
+                            } catch (PDOException $e) {
+                                $erros++;
+                                $errosDetalhe[] = $e->getMessage();
+                            }
+                        }
+                        $db->commit();
+                        $msg = 'Importação concluída! Inseridos: ' . $inseridos;
+                        $msgType = 'success';
+                        if ($erros > 0) {
+                            $msg .= ' | Erros: ' . $erros;
+                            if ($erros <= 5) {
+                                $msg .= '<br><small>' . implode('<br>', array_map('htmlspecialchars', $errosDetalhe)) . '</small>';
+                            } else {
+                                $msg .= '<br><small>Primeiro erro: ' . htmlspecialchars($errosDetalhe[0]) . '</small>';
+                            }
+                            $msgType = 'warning';
+                        }
+                        flashMessage($msgType, $msg);
+                    } catch (PDOException $e) {
+                        $db->rollBack();
+                        flashMessage('danger', 'Erro na transação: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
+    }
+    redirect('lancamentos.php?filtro=importar');
+}
+
 // ====== RENDERIZAÇÃO ======
 
 $title = 'Lançamentos';
@@ -341,7 +401,9 @@ $tipo = $_GET['tipo'] ?? 'T';
 
 // Filtro de status
 $filtro = $_GET['filtro'] ?? 'abertos';
+$isImportar = ($filtro === 'importar');
 $where = "1=1";
+if (!$isImportar) {
 if ($filtro === 'abertos') {
     $where .= " AND m.statusMov NOT IN ('PG', 'RC', 'TD')";
 } elseif ($filtro === 'pagos') {
@@ -466,6 +528,11 @@ $planos = $db->query("SELECT cod_Geral, nome_C FROM gpprincipal ORDER BY cod_Ger
                     <li class="nav-item">
                         <a class="nav-link <?= $filtro === 'recentes' ? 'active' : '' ?>" href="?filtro=recentes<?= $filtroRecurso ? '&filtro_recurso='.$filtroRecurso : '' ?>" title="Últimos registros cadastrados">
                             <i class="bi bi-clock-history"></i> Recentes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $filtro === 'importar' ? 'active' : '' ?>" href="?filtro=importar" title="Importar lançamentos de arquivo .sql">
+                            <i class="bi bi-file-earmark-arrow-up"></i> Importar .SQL
                         </a>
                     </li>
                 </ul>
@@ -608,6 +675,37 @@ $planos = $db->query("SELECT cod_Geral, nome_C FROM gpprincipal ORDER BY cod_Ger
         </div>
     </div>
 </div>
+
+<?php } // !$isImportar ?>
+
+<?php if ($isImportar): ?>
+<div class="card">
+    <div class="card-body">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-primary">
+                    <div class="card-body text-center">
+                        <i class="bi bi-file-earmark-code fs-1 text-primary"></i>
+                        <h5 class="mt-2">Importar Lançamentos (.sql)</h5>
+                        <p class="text-muted mb-3">Selecione um arquivo <code>.sql</code> para importar lançamentos no banco de dados.</p>
+
+                        <form method="POST" enctype="multipart/form-data" id="formImportarSQL">
+                            <input type="hidden" name="acao" value="importar_sql">
+                            <div class="mb-3">
+                                <label for="arquivo_sql" class="form-label">Arquivo .sql</label>
+                                <input type="file" class="form-control" id="arquivo_sql" name="arquivo_sql" accept=".sql" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-upload"></i> Importar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <?php if (!empty($filtroRecurso) && $totalPages > 1): ?>
 <div class="d-flex justify-content-between align-items-center mb-3">

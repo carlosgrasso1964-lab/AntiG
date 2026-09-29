@@ -225,7 +225,7 @@ include '../includes/header.php';
         </div>
     </div>
 
-    <!-- ===== IMPORTAR ===== -->
+    <!-- ===== IMPORTAR (Restore) ===== -->
     <div class="col-md-6">
         <div class="card">
             <div class="card-header"><i class="bi bi-box-arrow-up"></i> Importar (Restore)</div>
@@ -244,6 +244,7 @@ include '../includes/header.php';
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <!-- ===== LISTA DE BACKUPS ===== -->
