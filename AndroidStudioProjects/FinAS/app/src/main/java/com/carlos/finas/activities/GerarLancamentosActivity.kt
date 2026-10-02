@@ -506,7 +506,7 @@ class GerarLancamentosActivity : AppCompatActivity() {
                 // === LANÇAMENTO NORMAL (1 INSERT) ===
                 sb.appendLine(
                     "INSERT INTO tbmovimento (recurso,vrecurso,clifor,vCliFor,dtlancto,dtEmi,dtVcto,documento,classif,Descr,Valor,dtApr,statusMov,Prev) " +
-                    "VALUES ('${item.recursoCodigo}','${item.recursoFkGpprinc}','${item.cliforCodigo}','${item.classifCodigo}','${item.dtLancto}','${item.dtEmi}','${item.dtVcto}','${escapedDoc}','${item.classifCodigo}','${escapedDescr}',${String.format(Locale.US, "%.2f", item.valor)},NULL,'A','N');"
+                    "VALUES ('${item.recursoCodigo}','${item.recursoFkGpprinc}','${item.cliforCodigo}','${item.classifCodigo}','${item.dtLancto}','${item.dtEmi}','${item.dtVcto}','${escapedDoc}','${item.classifCodigo}','${escapedDescr}',${String.format(Locale.US, "%.2f", if (item.tipo == "S") -Math.abs(item.valor) else Math.abs(item.valor))},NULL,'','V');"
                 )
             }
         }
