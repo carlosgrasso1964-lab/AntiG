@@ -146,7 +146,7 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1282, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1448, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -407,13 +407,13 @@ public class Tela_Consulta_Balance extends javax.swing.JFrame {
 
                 jTablePesquisa.getColumn(jTablePesquisa.getColumnName(0)).setPreferredWidth(80); // Princ
 
-                jTablePesquisa.getColumn(jTablePesquisa.getColumnName(1)).setPreferredWidth(160); // Grupo
+                jTablePesquisa.getColumn(jTablePesquisa.getColumnName(1)).setPreferredWidth(300); // Grupo
 
                 jTablePesquisa.getColumn(jTablePesquisa.getColumnName(2)).setPreferredWidth(165); // Cabeça
 
                 jTablePesquisa.getColumn(jTablePesquisa.getColumnName(3)).setPreferredWidth(250); // Conta
 
-                jTablePesquisa.getColumn(jTablePesquisa.getColumnName(4)).setPreferredWidth(405); // Nome
+                jTablePesquisa.getColumn(jTablePesquisa.getColumnName(4)).setPreferredWidth(430); // Nome
 
                 jTablePesquisa.getColumn(jTablePesquisa.getColumnName(5)).setPreferredWidth(100); // Total
 
