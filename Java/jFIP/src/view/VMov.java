@@ -25,6 +25,8 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.MaskFormatter;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 /**
  *
@@ -49,6 +51,9 @@ public class VMov extends javax.swing.JInternalFrame {
             System.out.println("Ocorreu um erro ao criar máscara para Apresentação");
         }
         initComponents();
+
+        tfDescricao.setFocusTraversalKeysEnabled(false);
+
         // Defina o título conforme o tipo de conexão
         String tipoConexao = Conexao.tipoDeConexao;
         if ("N".equals(tipoConexao)) {
@@ -96,6 +101,23 @@ public class VMov extends javax.swing.JInternalFrame {
         jComboBoxBancoDestino.setVisible(false);
         tfNrBancoDestino.setVisible(false);
         tfBancoDestino.setVisible(false);
+        // Passo 1: Pre-selecionar cbxClass com base no favorecido
+        cbxClass.addPopupMenuListener(new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                if (cbxClass.getSelectedIndex() == 0 && tfFavorecidos != null && !tfFavorecidos.getText().trim().isEmpty()) {
+                    selecionarCbxClassPorCodigo(tfFavorecidos.getText().trim());
+                }
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+            }
+        });
     }
 
     public static String textoidMov = "";
@@ -1135,8 +1157,90 @@ public class VMov extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_tfValorKeyTyped
 
     private void tfDescricaoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfDescricaoKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            cbxClass.requestFocus();
+//        if (evt.getKeyCode() == KeyEvent.VK_ENTER
+//                || evt.getKeyCode() == KeyEvent.VK_TAB) {
+//            // Impede o TAB de pular o foco naturalmente;
+//            // o foco vai para o combo via requestFocusInWindow().
+//            evt.consume();
+//
+//            String sugestao = tfFavorecidos.getText();
+//            if (sugestao != null && !sugestao.trim().isEmpty()) {
+//                boolean encontrou = false;
+//                for (int i = 0; i < cbxClass.getItemCount(); i++) {
+//                    Object item = cbxClass.getItemAt(i);
+//                    if (item != null && item.toString().equalsIgnoreCase(sugestao.trim())) {
+//                        cbxClass.setSelectedIndex(i);
+//                        encontrou = true;
+//                        break;
+//                    }
+//                }
+//                if (!encontrou && cbxClass.isEditable()) {
+//                    cbxClass.getEditor().setItem(sugestao);
+//                }
+//            }
+//            // Abre o popup apos a transferencia de foco ser concluida.
+//            // requestFocusInWindow() dentro do keyPressed nao conclui a
+//            // troca de foco antes do proximo invokeLater - o popup abria e
+//            // era fechado pelo LAF. O Timer roda depois de todos os eventos
+//            // pendentes, entao o foco ja esta no combo.
+//            cbxClass.requestFocusInWindow();
+//            javax.swing.Timer popupTimer = new javax.swing.Timer(50, new java.awt.event.ActionListener() {
+//                @Override
+//                public void actionPerformed(java.awt.event.ActionEvent e) {
+//                    ((javax.swing.Timer) e.getSource()).stop();
+//                    cbxClass.setPopupVisible(true);
+//                }
+//            });
+//            popupTimer.setRepeats(false);
+//            popupTimer.start();
+//        }
+
+        // Se o usuário apertar SHIFT+TAB, deixa o Swing navegar para trás normalmente
+        if (evt.getKeyCode() == KeyEvent.VK_TAB && evt.isShiftDown()) {
+            tfDescricao.transferFocusBackward();
+            return;
+        }
+
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_TAB) {
+
+            evt.consume(); // Impede a ação padrão da tecla
+
+            String sugestao = tfFavorecidos.getText();
+
+            if (sugestao != null && !sugestao.trim().isEmpty()) {
+
+                boolean encontrou = false;
+
+                // Percorre todos os itens da cbxClass procurando um que coincida
+                for (int i = 0; i < cbxClass.getItemCount(); i++) {
+                    Object item = cbxClass.getItemAt(i);
+
+                    if (item != null && item.toString().equalsIgnoreCase(sugestao.trim())) {
+                        cbxClass.setSelectedIndex(i);
+                        encontrou = true;
+                        break;
+                    }
+                }
+
+                // Se for editável e não encontrou no combo, define o texto direto
+                if (!encontrou && cbxClass.isEditable()) {
+                    cbxClass.getEditor().setItem(sugestao);
+                }
+            }
+
+            // Passa o foco explicitamente para o combo
+            cbxClass.requestFocusInWindow();
+
+            // Timer para abrir o popup logo após o LookAndFeel estabilizar a troca de foco
+            javax.swing.Timer popupTimer = new javax.swing.Timer(50, new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    ((javax.swing.Timer) e.getSource()).stop();
+                    cbxClass.setPopupVisible(true);
+                }
+            });
+            popupTimer.setRepeats(false);
+            popupTimer.start();
         }
     }//GEN-LAST:event_tfDescricaoKeyPressed
 
@@ -1760,6 +1864,7 @@ public class VMov extends javax.swing.JInternalFrame {
                         tfVencimento.setText(sdf.format(rs.getDate("dtVcto")));
                         tfDocumento.setText(rs.getString("documento"));
                         tfClass.setText(rs.getString("classif"));
+                        selecionarCbxClassPorCodigo(tfClass.getText().trim());
                         tfDescricao.setText(rs.getString("Descr"));
                         tfValor.setText(rs.getString(String.valueOf("Valor")));
                         Double ver = 0.00;
@@ -2153,6 +2258,7 @@ public class VMov extends javax.swing.JInternalFrame {
                     tfVencimento.setText(sdf.format(rs.getDate("dtVcto")));
                     tfDocumento.setText(rs.getString("documento"));
                     tfClass.setText(rs.getString("classif"));
+                    selecionarCbxClassPorCodigo(tfClass.getText().trim());
                     tfDescricao.setText(rs.getString("Descr"));
                     tfValor.setText(rs.getString(String.valueOf("Valor")));
                     double valor = rs.getDouble("Valor");
@@ -2185,6 +2291,21 @@ public class VMov extends javax.swing.JInternalFrame {
         } catch (SQLException ex) {
             Logger.getLogger(VMov.class
                     .getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void selecionarCbxClassPorCodigo(String codGeral) {
+        codGeral = codGeral == null ? "" : codGeral.trim();
+        if (codGeral.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < cbxClass.getItemCount(); i++) {
+            Object item = cbxClass.getItemAt(i);
+            if (item != null && item.toString().endsWith("-" + codGeral)) {
+                cbxClass.setSelectedIndex(i);
+                return;
+            }
         }
     }
 

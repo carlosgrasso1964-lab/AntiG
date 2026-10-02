@@ -299,49 +299,11 @@ public class VConsRecursos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_tfRecNomeActionPerformed
 
     private void jButtonAtualizaAprActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtualizaAprActionPerformed
-
-//        DefaultTableModel model = (DefaultTableModel) jTablePesquisa.getModel();
-//        SimpleDateFormat formato_data = new SimpleDateFormat("dd/MM/yyyy");
-//        try {
-//            Connection con;
-//            con = Conexao.faz_conexao();
-//            Statement st = con.createStatement();
-//            for (int i = 0; i < model.getRowCount(); i++) {
-//                int tid = Integer.valueOf(model.getValueAt(i, 0).toString());
-//                java.util.Date data_v = formato_data.parse(jFormattedTextFieldBxCart.getText());
-//                java.sql.Date tdtApr = new java.sql.Date(data_v.getTime());
-//                String tstatusMov = model.getValueAt(i, 13).toString();
-//                if (tstatusMov == "") {
-//                    tstatusMov = "PG";
-//                } else if (tstatusMov.isBlank()) {
-//                    tstatusMov = "PG";
-//                } else if (tstatusMov.isEmpty()) {
-//                    tstatusMov = "PG";
-//                }
-//                String sql = "UPDATE tbmovimento SET dtApr ='" + tdtApr + "' , statusMov ='" + tstatusMov + "' WHERE idMov = " + tid;
-//                st.addBatch(sql);
-//            }
-//            int[] updatedRow = st.executeBatch();
-//            JOptionPane.showMessageDialog(null, "Lançamento de cartões baixados com sucesso!");
-//            tfNrRecurso.setText("");
-//            tfRecurso.setText("");
-//            jFormattedTextFieldDataIni.setText("");
-//            jFormattedTextFieldDataFim.setText("");
-//            jTextFieldSaldoAnterior.setText("0");
-//            jComboBoxPesq.setSelectedIndex(0);
-//            jButtonAtualizaApr.setVisible(false);
-//            jFormattedTextFieldBxCart.setVisible(false);
-//            tfRecNome.setText("");
-//
-//        } catch (SQLException | ParseException ex) {
-//            Logger.getLogger(VConsRecursos.class.getName()).log(Level.SEVERE, null, ex);
-//        }
         DefaultTableModel model = (DefaultTableModel) jTablePesquisa.getModel();
         SimpleDateFormat formato_data = new SimpleDateFormat("dd/MM/yyyy");
 
         Connection con = null;
-        PreparedStatement stmtCartao = null;
-        PreparedStatement stmtAnteriores = null;
+        PreparedStatement pstmtUpdate = null;
 
         try {
             con = Conexao.faz_conexao();
@@ -352,53 +314,41 @@ public class VConsRecursos extends javax.swing.JInternalFrame {
                 throw new IllegalArgumentException("Informe a data de pagamento (dd/MM/yyyy)");
             }
 
-            java.util.Date dataUtil = formato_data.parse(textoData);
-            java.sql.Date dataSql = new java.sql.Date(dataUtil.getTime());
+            java.util.Date data_v = formato_data.parse(textoData);
+            java.sql.Date tdtApr = new java.sql.Date(data_v.getTime());
 
-            // Atualiza o registro do cartão (data + status 'PG')
-            String sqlCartao = "UPDATE tbmovimento SET dtApr = ?, statusMov = 'PG' WHERE idMov = ?";
-            stmtCartao = con.prepareStatement(sqlCartao);
+            pstmtUpdate = con.prepareStatement(
+                    "UPDATE tbmovimento SET dtApr = ?, statusMov = 'PG' WHERE idMov = ?");
 
-            // Atualiza anteriores (apenas data)
-            String sqlAnteriores = "UPDATE tbmovimento SET dtApr = ? WHERE idMov = ?";
-            stmtAnteriores = con.prepareStatement(sqlAnteriores);
-
-            int cartoesBaixados = 0;
             int totalAtualizados = 0;
+            int idsProcessados = 0;
 
-            for (int i = 0; i < model.getRowCount(); i++) {
-                String idStr = model.getValueAt(i, 0).toString().trim();
-                int idCartao = Integer.parseInt(idStr);
+            for (int row = 0; row < model.getRowCount(); row++) {
+                int idAtual = Integer.parseInt(model.getValueAt(row, 0).toString().trim());
 
-                // 1. Registro do cartão
-                stmtCartao.setDate(1, dataSql);
-                stmtCartao.setInt(2, idCartao);
-                stmtCartao.addBatch();
-
-                // 2. Dois anteriores (se existirem)
-                for (int offset = 1; offset <= 2; offset++) {
-                    int idAnt = idCartao - offset;
-                    if (idAnt > 0) {
-                        stmtAnteriores.setDate(1, dataSql);
-                        stmtAnteriores.setInt(2, idAnt);
-                        stmtAnteriores.addBatch();
-                    }
+                // So baixa registros cujo vencimento seja <= data de baixa digitada.
+                String vctoTexto = model.getValueAt(row, 7).toString().trim();
+                if (vctoTexto.isEmpty()) {
+                    continue;
+                }
+                java.util.Date dataVctoTemp;
+                try {
+                    dataVctoTemp = formato_data.parse(vctoTexto);
+                } catch (java.text.ParseException pe) {
+                    continue;
+                }
+                if (dataVctoTemp.after(data_v)) {
+                    continue;
                 }
 
-                cartoesBaixados++;
+                pstmtUpdate.setDate(1, tdtApr);
+                pstmtUpdate.setInt(2, idAtual);
+                pstmtUpdate.addBatch();
+                idsProcessados++;
             }
 
-            // Executa batches
-            int[] resCartao = stmtCartao.executeBatch();
-            int[] resAnteriores = stmtAnteriores.executeBatch();
-
-            // Conta atualizações (MySQL retorna 1 por linha atualizada)
-            for (int r : resCartao) {
-                if (r > 0) {
-                    totalAtualizados += r;
-                }
-            }
-            for (int r : resAnteriores) {
+            int[] updResults = pstmtUpdate.executeBatch();
+            for (int r : updResults) {
                 if (r > 0) {
                     totalAtualizados += r;
                 }
@@ -407,14 +357,12 @@ public class VConsRecursos extends javax.swing.JInternalFrame {
             con.commit();
 
             JOptionPane.showMessageDialog(null,
-                    "Baixa / pagamento antecipado realizado com sucesso!\n\n"
-                    + "Data utilizada: " + formato_data.format(dataUtil) + "\n"
-                    + "Cartões processados: " + cartoesBaixados + "\n"
-                    + "Registros atualizados no total: " + totalAtualizados + "\n\n"
-                    + "Data de pagamento sobrescrita nos registros relacionados.",
+                    "Baixa realizada com sucesso!\n"
+                    + "Data de baixa: " + formato_data.format(data_v) + "\n"
+                    + "Registros atualizados: " + totalAtualizados + "\n"
+                    + "Linhas processadas: " + idsProcessados,
                     "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
-            // Limpeza da tela
             tfNrRecurso.setText("");
             tfRecurso.setText("");
             jFormattedTextFieldDataIni.setText("");
@@ -426,9 +374,9 @@ public class VConsRecursos extends javax.swing.JInternalFrame {
             tfRecNome.setText("");
 
         } catch (ParseException ex) {
-            JOptionPane.showMessageDialog(null, "Data inválida. Use dd/MM/yyyy.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Data invalida. Use dd/MM/yyyy.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(null, "ID inválido na tabela.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ID invalido na tabela.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             Logger.getLogger(VConsRecursos.class.getName()).log(Level.SEVERE, null, ex);
             if (con != null) {
@@ -438,18 +386,12 @@ public class VConsRecursos extends javax.swing.JInternalFrame {
                 }
             }
             JOptionPane.showMessageDialog(null,
-                    "Erro ao registrar o pagamento:\n" + ex.getMessage(),
+                    "Erro ao processar a baixa:\n" + ex.getMessage(),
                     "Erro", JOptionPane.ERROR_MESSAGE);
         } finally {
             try {
-                if (stmtCartao != null) {
-                    stmtCartao.close();
-                }
-            } catch (SQLException ignored) {
-            }
-            try {
-                if (stmtAnteriores != null) {
-                    stmtAnteriores.close();
+                if (pstmtUpdate != null) {
+                    pstmtUpdate.close();
                 }
             } catch (SQLException ignored) {
             }
@@ -461,7 +403,6 @@ public class VConsRecursos extends javax.swing.JInternalFrame {
             } catch (SQLException ignored) {
             }
         }
-
     }//GEN-LAST:event_jButtonAtualizaAprActionPerformed
 
     private void jButtonPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPesquisarActionPerformed
