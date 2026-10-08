@@ -547,56 +547,6 @@ public class Tela_Consulta_Saldos extends javax.swing.JFrame {
             }
 
 
-//            Double sa = 0.00;
-//            String prin = "";
-//            String sub = "";
-//            String cta = "";
-//
-//            // Preencher tabela com saldos por recurso
-//            while (rs.next()) {
-//                sa += rs.getDouble("saldos");
-//
-//                // Captura os valores reais da linha atual
-//                String vPrincipal = rs.getString("principal");
-//                String vSubprincipal = rs.getString("subprincipal");
-//                String vConta = rs.getString("conta");
-//
-//                // DESCOMENTE A LINHA ABAIXO se quiser ocultar o registro zerado do banco:
-//                // if (rs.getDouble("saldos") == 0.0) { continue; }
-//                // NOVIDADE: Se mudou a conta (e não for a primeira linha), adiciona uma linha em branco
-//                if (!cta.equals("") && !cta.equals(vConta)) {
-//                    modelo.addRow(new Object[]{"", "", "", "", "", "", "", ""});
-//
-//                    // Opcional: Como pulou a linha, queremos forçar o nome da categoria 
-//                    // principal e subprincipal a reaparecerem na próxima linha para não perder o contexto?
-//                    // Se quiser que eles reapareçam, deixe as linhas abaixo. Se preferir manter oculto, apague-as:
-//                    prin = "";
-//                    sub = "";
-//                }
-//
-//                // Lógica visual: Se for igual ao anterior, exibe vazio "", senão exibe o nome
-//                String exibePrin = vPrincipal.equals(prin) ? "" : vPrincipal;
-//                String exibeSub = vSubprincipal.equals(sub) ? "" : vSubprincipal;
-//                String exibeCta = vConta.equals(cta) ? "" : vConta;
-//
-//                // Adiciona a linha REAL com os dados
-//                modelo.addRow(new Object[]{
-//                    exibePrin,
-//                    exibeSub,
-//                    exibeCta,
-//                    rs.getString("Fonte"),
-//                    rs.getString("vrecurso"),
-//                    rs.getString("recurso"),
-//                    df.format(rs.getDouble("saldos")),
-//                    df.format(sa)
-//                });
-//
-//                // Atualiza as variáveis de controle para a próxima volta
-//                prin = vPrincipal;
-//                sub = vSubprincipal;
-//                cta = vConta;
-//            }
-
             // Adicionar linha em branco
             modelo.addRow(new Object[]{"", "", "", "", "", "", "", ""});
 
