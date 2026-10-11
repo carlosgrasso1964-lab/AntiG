@@ -32,6 +32,7 @@ import com.github.mikephil.charting.utils.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.FileOutputStream
 import java.text.DecimalFormat
@@ -41,6 +42,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import kotlin.text.iterator
+import kotlin.coroutines.resume
 import androidx.core.content.ContextCompat
 import java.util.*
 
@@ -162,8 +164,7 @@ class ConsultaFluxoCaixaActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val saldoAnterior = withContext(Dispatchers.IO) { pegaSaldoAnterior(dataIniStr) }
-                binding.txtSaldoAnterior.text = decimalFormat.format(saldoAnterior)
+                var saldoAnterior = withContext(Dispatchers.IO) { pegaSaldoAnterior(dataIniStr) }
 
                 // ----------------- Lógica de Realizado vs Projeção -----------------
                 val formatoEntrada = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
@@ -177,6 +178,26 @@ class ConsultaFluxoCaixaActivity : AppCompatActivity() {
                 }.time
 
                 val isRealizado = dataInicio.before(hoje)  // < hoje → Realizado
+
+                // -------- Títulos vencidos pendentes (somente na Projeção de Caixa) --------
+                if (!isRealizado) {
+                    val vencidos = withContext(Dispatchers.IO) {
+                        totalizaTitulosVencidos(formatarDataInputParaBanco(dataIniStr))
+                    }
+                    if (vencidos.quantidade > 0) {
+                        val considerarVencidos = perguntarSobreVencidos(vencidos)
+                        if (considerarVencidos) {
+                            saldoAnterior += vencidos.liquido
+                            Toast.makeText(
+                                this@ConsultaFluxoCaixaActivity,
+                                "Títulos vencidos incluídos no saldo anterior",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+
+                binding.txtSaldoAnterior.text = decimalFormat.format(saldoAnterior)
 
                 // Atualiza o título/tipo de consulta (opcional - só executa se o TextView existir)
                 binding.txtTipoConsulta?.let { txt ->
@@ -323,6 +344,69 @@ class ConsultaFluxoCaixaActivity : AppCompatActivity() {
             0.0
         }
     }
+
+    /** Títulos pendentes (não baixados) com vencimento anterior ao início da projeção. */
+    private data class TitulosVencidos(val quantidade: Int, val receber: Double, val pagar: Double) {
+        val liquido: Double get() = receber + pagar
+    }
+
+    /**
+     * Totaliza títulos à receber e à pagar pendentes (statusMov vazio) cujo vencimento
+     * é anterior à data inicial da projeção. Usa os mesmos filtros da projeção de caixa.
+     */
+    @SuppressLint("LongLogTag")
+    private fun totalizaTitulosVencidos(dataInicioBanco: String): TitulosVencidos {
+        var resultado = TitulosVencidos(0, 0.0, 0.0)
+        try {
+            val db = dbHelper.readableDatabase
+            val query = """
+                SELECT COUNT(*),
+                       COALESCE(SUM(CASE WHEN Valor > 0 THEN Valor ELSE 0 END), 0),
+                       COALESCE(SUM(CASE WHEN Valor < 0 THEN Valor ELSE 0 END), 0)
+                FROM tbmovimento
+                WHERE dtVcto < ?
+                  AND vrecurso IN ('1.001.001', '1.001.002', '1.002.001', '1.003.001', '2.001.002', '2.001.003', '2.001.004')
+                  AND statusMov = ''
+                  AND recurso <> '0080'
+            """.trimIndent()
+            db.rawQuery(query, arrayOf(dataInicioBanco)).use { cursor ->
+                if (cursor.moveToFirst()) {
+                    resultado = TitulosVencidos(
+                        quantidade = cursor.getInt(0),
+                        receber = cursor.getDouble(1),
+                        pagar = cursor.getDouble(2)
+                    )
+                }
+            }
+            db.close()
+        } catch (e: Exception) {
+            Log.e("ConsultaFluxoCaixaActivity", "Erro em totalizaTitulosVencidos: ${e.message}", e)
+        }
+        return resultado
+    }
+
+    /** Pergunta ao usuário se os títulos vencidos devem entrar no saldo anterior da projeção. */
+    private suspend fun perguntarSobreVencidos(vencidos: TitulosVencidos): Boolean =
+        suspendCancellableCoroutine { cont ->
+            val mensagem = "Foram encontrados ${vencidos.quantidade} título(s) pendente(s) " +
+                "com vencimento anterior ao início da projeção:\n\n" +
+                "A receber: ${decimalFormat.format(vencidos.receber)}\n" +
+                "A pagar: ${decimalFormat.format(vencidos.pagar)}\n" +
+                "Saldo líquido: ${decimalFormat.format(vencidos.liquido)}\n\n" +
+                "Deseja considerar estes valores na Projeção de Caixa?"
+
+            AlertDialog.Builder(this@ConsultaFluxoCaixaActivity)
+                .setTitle("Títulos Vencidos Pendentes")
+                .setMessage(mensagem)
+                .setCancelable(false)
+                .setPositiveButton("Sim, considerar") { _, _ ->
+                    if (cont.isActive) cont.resume(true)
+                }
+                .setNegativeButton("Não, desconsiderar") { _, _ ->
+                    if (cont.isActive) cont.resume(false)
+                }
+                .show()
+        }
 
     private fun formatarDataInputParaBanco(data: String): String {
         return try {
