@@ -7,13 +7,40 @@
          });
 
     $('.datatable').DataTable({
-        language: {
-            url: '//cdn.datatables.net/plug-ins/2.2.2/i18n/pt-BR.json'
-        },
-        pageLength: 25,
-        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-        ordering: false
-    });
+            language: {
+                emptyTable: "Nenhum registro encontrado",
+                info: "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                infoEmpty: "Mostrando 0 até 0 de 0 registros",
+                infoFiltered: "(Filtrados de _MAX_ registros)",
+                infoPostFix: "",
+                thousands: ".",
+                lengthMenu: "_MENU_ resultados por página",
+                loadingRecords: "Carregando...",
+                processing: "Processando...",
+                zeroRecords: "Nenhum registro encontrado",
+                search: "Pesquisar:",
+                paginate: {
+                    next: "Próximo",
+                    previous: "Anterior",
+                    first: "Primeiro",
+                    last: "Último"
+                },
+                aria: {
+                    sortAscending: ": Ordenar colunas de forma ascendente",
+                    sortDescending: ": Ordenar colunas de forma descendente"
+                },
+                select: {
+                    rows: {
+                        _: "Selecionado %d linhas",
+                        0: "Nenhuma linha selecionada",
+                        1: "Selecionado 1 linha"
+                    }
+                }
+            },
+            pageLength: 25,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            ordering: false
+        });
 
     $('.money').on('input', function() {
         let value = $(this).val().replace(/\D/g, '');

@@ -58,19 +58,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ORDER BY dtApr";
                 $campoData = 'dtApr';
             } else {
-                // PROJEÇÃO — verifica títulos vencidos em aberto (vencimento < hoje)
-                // Só mostra diálogo se NÃO for o segundo POST (confirmação)
-                if (!isset($_POST['vencidos_confirmado'])) {
-                    $vencidos = totalizaTitulosVencidos($db, $hoje);
-                    if ($vencidos['qtd'] > 0) {
-                        // Monta mensagem para JS confirm (espelha JOptionPane do Java)
-                        $msgVencidos = "Foram encontrados {$vencidos['qtd']} título(s) pendente(s) vencido(s) em aberto (vencimento anterior a hoje):\n\n"
-                                     . "A receber: " . formatMoeda($vencidos['receber']) . "\n"
-                                     . "A pagar: " . formatMoeda($vencidos['pagar']) . "\n"
-                                     . "Saldo líquido: " . formatMoeda($vencidos['receber'] + $vencidos['pagar']) . "\n\n"
-                                     . "Deseja considerar estes valores na Projeção de Caixa?";
-                    }
-                }
+                            // PROJEÇÃO — verifica títulos vencidos em aberto (vencimento < hoje)
+                            // Só mostra diálogo se NÃO for o segundo POST (confirmação)
+                            if (!isset($_POST['vencidos_confirmado'])) {
+                                                            $vencidos = totalizaTitulosVencidos($db, $hoje);
+                                                            if ($vencidos['qtd'] > 0) {
+                                    // Monta mensagem para JS confirm (espelha JOptionPane do Java)
+                                    $msgVencidos = "Foram encontrados {$vencidos['qtd']} título(s) pendente(s) vencido(s) em aberto (vencimento anterior a hoje):\n\n"
+                                                 . "A receber: " . formatMoeda($vencidos['receber']) . "\n"
+                                                 . "A pagar: " . formatMoeda($vencidos['pagar']) . "\n"
+                                                 . "Saldo líquido: " . formatMoeda($vencidos['receber'] + $vencidos['pagar']) . "\n\n"
+                                                 . "Deseja considerar estes valores na Projeção de Caixa?";
+                                }
+                            }
 
                 $tituloTipo = 'CONSULTA - PROJEÇÃO DE CAIXA';
                 // FILTRO COMPLETO (7 vrecursos, igual Java atualizado)
@@ -150,12 +150,12 @@ function fxDiaSemana($dataDDMMYYYY) {
         <button type="submit" class="btn btn-primary w-100">Pesquisar</button>
     </div>
     <!-- Hidden fields para confirmação de títulos vencidos (projeção) -->
-    <?php if ($msgVencidos && $vencidos): ?>
-    <input type="hidden" name="vencidos_confirmado" id="vencidos_confirmado" value="0">
-    <input type="hidden" name="vencidos_receber" id="vencidos_receber" value="<?= $vencidos['receber'] ?>">
-    <input type="hidden" name="vencidos_pagar" id="vencidos_pagar" value="<?= $vencidos['pagar'] ?>">
-    <?php endif; ?>
-</form>
+        <?php if ($msgVencidos): ?>
+        <input type="hidden" name="vencidos_confirmado" id="vencidos_confirmado" value="0">
+        <input type="hidden" name="vencidos_receber" id="vencidos_receber" value="<?= $vencidos['receber'] ?? 0 ?>">
+        <input type="hidden" name="vencidos_pagar" id="vencidos_pagar" value="<?= $vencidos['pagar'] ?? 0 ?>">
+        <?php endif; ?>
+    </form>
 
 <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro)): ?>
 <div class="card">
@@ -323,16 +323,16 @@ function exportarFluxoCaixa() {
     }
 
     // Handler para confirmação de títulos vencidos na projeção
-    document.addEventListener('DOMContentLoaded', function() {
-        var vencidosConfirmado = document.getElementById('vencidos_confirmado');
-        if (vencidosConfirmado) {
-            var msg = "<?= addslashes($msgVencidos ?? '') ?>";
-            if (msg && confirm(msg)) {
-                vencidosConfirmado.value = '1';
-                document.getElementById('formFluxoCaixa').submit();
+        document.addEventListener('DOMContentLoaded', function() {
+            var vencidosConfirmado = document.getElementById('vencidos_confirmado');
+            if (vencidosConfirmado) {
+                var msg = <?= json_encode($msgVencidos ?? '') ?>;
+                if (msg && confirm(msg)) {
+                    vencidosConfirmado.value = '1';
+                    document.getElementById('formFluxoCaixa').submit();
+                }
             }
-        }
-    });
+        });
     </script>
     <?php endif; ?>
 

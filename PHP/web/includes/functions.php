@@ -210,7 +210,7 @@ function totalizaTitulosVencidos($db, string $dataCorte): array {
     $ret = ['qtd' => 0, 'receber' => 0.0, 'pagar' => 0.0];
     try {
         // Entradas: Contas a Receber sem baixa (dtApr IS NULL) — igual Java
-        $sqlEntradas = "SELECT COUNT(*), COALESCE(SUM(`Valor`), 0) FROM `view_movimento`
+        $sqlEntradas = "SELECT COUNT(*) AS qtd, COALESCE(SUM(`Valor`), 0) AS total FROM `view_movimento`
             WHERE `dtVcto` < ?
               AND `nome_C` = 'Contas a Receber'
               AND `dtApr` IS NULL";
@@ -218,11 +218,11 @@ function totalizaTitulosVencidos($db, string $dataCorte): array {
         $st->execute([$dataCorte]);
         $row = $st->fetch();
         if ($row) {
-            $ret['qtd'] += (int)$row[0];
-            $ret['receber'] += (float)$row[1];
+            $ret['qtd'] += (int)$row['qtd'];
+            $ret['receber'] += (float)$row['total'];
         }
         // Saídas: Contas a Pagar sem baixa OU bancos/cartões, exceto baixados (PG/TD/SI)
-        $sqlSaidas = "SELECT COUNT(*), COALESCE(SUM(`Valor`), 0) FROM `view_movimento`
+        $sqlSaidas = "SELECT COUNT(*) AS qtd, COALESCE(SUM(`Valor`), 0) AS total FROM `view_movimento`
             WHERE `dtVcto` < ?
               AND ((`nome_C` = 'Contas a Pagar' AND `dtApr` IS NULL)
                    OR (`recurso` = '0079' OR `vrecurso` = '2.001.003'))
@@ -231,8 +231,8 @@ function totalizaTitulosVencidos($db, string $dataCorte): array {
         $st->execute([$dataCorte]);
         $row = $st->fetch();
         if ($row) {
-            $ret['qtd'] += (int)$row[0];
-            $ret['pagar'] += (float)$row[1];
+            $ret['qtd'] += (int)$row['qtd'];
+            $ret['pagar'] += (float)$row['total'];
         }
     } catch (Exception $e) {
         error_log("totalizaTitulosVencidos: " . $e->getMessage());
