@@ -201,18 +201,19 @@ function calcularAlgarismo() {
 /**
  * Totaliza títulos vencidos em aberto com vencimento ANTERIOR a HOJE
  * (data da consulta, independentemente da data inicial).
- * a receber = Contas a Receber sem baixa (dtApr vazio);
+ * a receber = Contas a Receber sem baixa (dtApr IS NULL);
  * a pagar = Contas a Pagar sem baixa ou bancos/cartões, exceto baixados (PG/TD/SI).
+ * Espelha VConsFlxCxDiario.java TotalizaTitulosVencidos (linhas 608-645).
  * Retorna array ['qtd'=>int, 'receber'=>float, 'pagar'=>float].
  */
 function totalizaTitulosVencidos($db, string $dataCorte): array {
     $ret = ['qtd' => 0, 'receber' => 0.0, 'pagar' => 0.0];
     try {
-        // Entradas: Contas a Receber sem baixa
-        $sqlEntradas = 'SELECT COUNT(*), COALESCE(SUM("Valor"), 0) FROM "view_movimento"
-            WHERE "dtVcto" < ?
-              AND "nome_C" = \'Contas a Receber\'
-              AND ("dtApr" IS NULL OR "dtApr" = \'\')';
+        // Entradas: Contas a Receber sem baixa (dtApr IS NULL) — igual Java
+        $sqlEntradas = "SELECT COUNT(*), COALESCE(SUM(`Valor`), 0) FROM `view_movimento`
+            WHERE `dtVcto` < ?
+              AND `nome_C` = 'Contas a Receber'
+              AND `dtApr` IS NULL";
         $st = $db->prepare($sqlEntradas);
         $st->execute([$dataCorte]);
         $row = $st->fetch();
@@ -220,12 +221,12 @@ function totalizaTitulosVencidos($db, string $dataCorte): array {
             $ret['qtd'] += (int)$row[0];
             $ret['receber'] += (float)$row[1];
         }
-        // Saídas: Contas a Pagar sem baixa OU bancos/cartões, exceto baixados
-        $sqlSaidas = 'SELECT COUNT(*), COALESCE(SUM("Valor"), 0) FROM "view_movimento"
-            WHERE "dtVcto" < ?
-              AND (("nome_C" = \'Contas a Pagar\' AND ("dtApr" IS NULL OR "dtApr" = \'\'))
-                   OR ("recurso" = \'0079\' OR "vrecurso" = \'2.001.003\'))
-              AND "statusMov" NOT IN (\'PG\', \'TD\', \'SI\')';
+        // Saídas: Contas a Pagar sem baixa OU bancos/cartões, exceto baixados (PG/TD/SI)
+        $sqlSaidas = "SELECT COUNT(*), COALESCE(SUM(`Valor`), 0) FROM `view_movimento`
+            WHERE `dtVcto` < ?
+              AND ((`nome_C` = 'Contas a Pagar' AND `dtApr` IS NULL)
+                   OR (`recurso` = '0079' OR `vrecurso` = '2.001.003'))
+              AND `statusMov` NOT IN ('PG', 'TD', 'SI')";
         $st = $db->prepare($sqlSaidas);
         $st->execute([$dataCorte]);
         $row = $st->fetch();
