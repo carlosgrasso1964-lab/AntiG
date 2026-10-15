@@ -182,7 +182,7 @@ class ConsultaFluxoCaixaActivity : AppCompatActivity() {
                 // -------- Títulos vencidos pendentes (somente na Projeção de Caixa) --------
                 if (!isRealizado) {
                     val vencidos = withContext(Dispatchers.IO) {
-                        totalizaTitulosVencidos(formatarDataInputParaBanco(dataIniStr))
+                        totalizaTitulosVencidos(dbDateFormat.format(hoje))
                     }
                     if (vencidos.quantidade > 0) {
                         val considerarVencidos = perguntarSobreVencidos(vencidos)
@@ -345,17 +345,18 @@ class ConsultaFluxoCaixaActivity : AppCompatActivity() {
         }
     }
 
-    /** Títulos pendentes (não baixados) com vencimento anterior ao início da projeção. */
+    /** Títulos vencidos em aberto (não baixados) com vencimento até ONTEM. */
     private data class TitulosVencidos(val quantidade: Int, val receber: Double, val pagar: Double) {
         val liquido: Double get() = receber + pagar
     }
 
     /**
      * Totaliza títulos à receber e à pagar pendentes (statusMov vazio) cujo vencimento
-     * é anterior à data inicial da projeção. Usa os mesmos filtros da projeção de caixa.
+     * é até ONTEM (data corte = hoje). Usa os mesmos filtros da projeção de caixa.
+     * Não considera títulos com vencimento futuro, mesmo anteriores ao início da projeção.
      */
     @SuppressLint("LongLogTag")
-    private fun totalizaTitulosVencidos(dataInicioBanco: String): TitulosVencidos {
+    private fun totalizaTitulosVencidos(dataHoje: String): TitulosVencidos {
         var resultado = TitulosVencidos(0, 0.0, 0.0)
         try {
             val db = dbHelper.readableDatabase
@@ -369,7 +370,7 @@ class ConsultaFluxoCaixaActivity : AppCompatActivity() {
                   AND statusMov = ''
                   AND recurso <> '0080'
             """.trimIndent()
-            db.rawQuery(query, arrayOf(dataInicioBanco)).use { cursor ->
+            db.rawQuery(query, arrayOf(dataHoje)).use { cursor ->
                 if (cursor.moveToFirst()) {
                     resultado = TitulosVencidos(
                         quantidade = cursor.getInt(0),
@@ -388,8 +389,8 @@ class ConsultaFluxoCaixaActivity : AppCompatActivity() {
     /** Pergunta ao usuário se os títulos vencidos devem entrar no saldo anterior da projeção. */
     private suspend fun perguntarSobreVencidos(vencidos: TitulosVencidos): Boolean =
         suspendCancellableCoroutine { cont ->
-            val mensagem = "Foram encontrados ${vencidos.quantidade} título(s) pendente(s) " +
-                "com vencimento anterior ao início da projeção:\n\n" +
+            val mensagem = "Foram encontrados ${vencidos.quantidade} título(s) vencido(s) em aberto " +
+                "(vencimento até ontem):\n\n" +
                 "A receber: ${decimalFormat.format(vencidos.receber)}\n" +
                 "A pagar: ${decimalFormat.format(vencidos.pagar)}\n" +
                 "Saldo líquido: ${decimalFormat.format(vencidos.liquido)}\n\n" +

@@ -897,7 +897,7 @@ private void executarInsert(Connection con, String dataEmi, String dataVcto,
     }//GEN-LAST:event_jTextFieldPrevFocusLost
 
     private void jTextFieldDocFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldDocFocusLost
-        // Se o usuï¿½rio saiu do campo usando TAB
+        // Se o usuério saiu do campo usando TAB
         jFormattedTextFieldEmissao.requestFocusInWindow();
     }//GEN-LAST:event_jTextFieldDocFocusLost
 

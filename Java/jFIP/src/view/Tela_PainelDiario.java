@@ -20,7 +20,7 @@ public class Tela_PainelDiario extends JFrame {
 
     private final PainelDiarioController controller = new PainelDiarioController();
     private Window parentWindow;
-    private BigDecimal valorReservaAtual = new BigDecimal("500.00"); // Padrão que você usa no MySQL
+    private BigDecimal valorReservaAtual = new BigDecimal("0.00"); // Padrão que você usa no MySQL
 
     public Tela_PainelDiario() {
         this(null);

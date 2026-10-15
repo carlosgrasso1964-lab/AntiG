@@ -170,13 +170,13 @@ public class Tela_Consulta_FlxCxD extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jFormattedTextFieldDataIni, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jFormattedTextFieldDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(131, 131, 131)
+                .addGap(119, 119, 119)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextFieldSaldoAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -429,6 +429,26 @@ public class Tela_Consulta_FlxCxD extends javax.swing.JFrame {
 
 
                     // SQL para o FUTURO (Projeção)
+
+                    // Títulos vencidos em aberto (vencimento anterior a hoje): pergunta se entram no saldo anterior
+                    double[] vencidos = TotalizaTitulosVencidos(con, formatoBanco.format(hoje));
+
+                    if (vencidos[0] > 0) {
+
+                        String msgVencidos = "Foram encontrados " + (int) vencidos[0] + " título(s) pendente(s) "
+                                + "vencido(s) em aberto (vencimento anterior a hoje):\n\n"
+                                + "A receber: " + dec.format(vencidos[1]) + "\n"
+                                + "A pagar: " + dec.format(vencidos[2]) + "\n"
+                                + "Saldo líquido: " + dec.format(vencidos[1] + vencidos[2]) + "\n\n"
+                                + "Deseja considerar estes valores na Projeção de Caixa?";
+
+                        int opcaoVencidos = JOptionPane.showConfirmDialog(null, msgVencidos, "Títulos Vencidos Pendentes", JOptionPane.YES_NO_OPTION);
+
+                        if (opcaoVencidos == JOptionPane.YES_OPTION) {
+                            sa = sa + vencidos[1] + vencidos[2];
+                            jTextFieldSaldoAnterior.setText(dec.format(sa));
+                        }
+                    }
 
                     sql = "SELECT * FROM tbmovimento WHERE dtVcto BETWEEN ? AND ? "
 
@@ -1117,6 +1137,50 @@ public class Tela_Consulta_FlxCxD extends javax.swing.JFrame {
     }
 
 
+
+    /**
+     * Totaliza títulos vencidos em aberto com vencimento ANTERIOR a HOJE
+     * (data da consulta, independentemente da data inicial). Usa as mesmas
+     * consultas do PainelDiarioController:
+     * a receber = Contas à Receber sem baixa (dtApr vazio); a pagar = Contas à
+     * Pagar sem baixa ou bancos/cartões, exceto baixados (PG/TD/SI).
+     * Retorna {quantidade, receber, pagar}.
+     */
+    private double[] TotalizaTitulosVencidos(Connection con, String dataCorte) {
+        double[] retorno = new double[]{0, 0, 0};
+        try {
+            String sqlEntradas = "SELECT COUNT(*), COALESCE(SUM(Valor), 0) FROM view_movimento "
+                    + "WHERE dtVcto < ? "
+                    + "AND nome_C = 'Contas à Receber' "
+                    + "AND (dtApr IS NULL OR dtApr = '')";
+            String sqlSaidas = "SELECT COUNT(*), COALESCE(SUM(Valor), 0) FROM view_movimento "
+                    + "WHERE dtVcto < ? "
+                    + "AND ((nome_C = 'Contas à Pagar' AND (dtApr IS NULL OR dtApr = '')) "
+                    + "OR (recurso = '0079' OR vrecurso = '2.001.003')) "
+                    + "AND statusMov NOT IN ('PG', 'TD', 'SI')";
+            try (PreparedStatement st = con.prepareStatement(sqlEntradas)) {
+                st.setString(1, dataCorte);
+                try (ResultSet rs = st.executeQuery()) {
+                    if (rs.next()) {
+                        retorno[0] += rs.getDouble(1);
+                        retorno[1] += rs.getDouble(2);
+                    }
+                }
+            }
+            try (PreparedStatement st = con.prepareStatement(sqlSaidas)) {
+                st.setString(1, dataCorte);
+                try (ResultSet rs = st.executeQuery()) {
+                    if (rs.next()) {
+                        retorno[0] += rs.getDouble(1);
+                        retorno[2] += rs.getDouble(2);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return retorno;
+    }
 
     private void PegaSaldoAnterior() {
 

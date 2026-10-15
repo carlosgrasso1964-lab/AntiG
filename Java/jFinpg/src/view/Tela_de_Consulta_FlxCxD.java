@@ -2,7 +2,6 @@ package view;
 
 import utilitarios.Conexao;
 import classes.CustomTableCellRenderer;
-import classes.ImprimirJTable;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -11,18 +10,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.attribute.standard.OrientationRequested;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -86,6 +80,7 @@ public class Tela_de_Consulta_FlxCxD extends javax.swing.JFrame {
         }
 
         jLabel3.setText("até");
+        jLabel3.setToolTipText("");
 
         try {
             jFormattedTextFieldDataFim.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
@@ -153,7 +148,7 @@ public class Tela_de_Consulta_FlxCxD extends javax.swing.JFrame {
         );
 
         jButtonPesquisar.setText("Pesquisar");
-        jButtonPesquisar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButtonPesquisar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButtonPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPesquisarActionPerformed(evt);
@@ -161,7 +156,7 @@ public class Tela_de_Consulta_FlxCxD extends javax.swing.JFrame {
         });
 
         jButtonPImprimir.setText("Imprimir");
-        jButtonPImprimir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButtonPImprimir.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButtonPImprimir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPImprimirActionPerformed(evt);
@@ -169,7 +164,7 @@ public class Tela_de_Consulta_FlxCxD extends javax.swing.JFrame {
         });
 
         jButtonPLimpar.setText("Limpar");
-        jButtonPLimpar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButtonPLimpar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButtonPLimpar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPLimparActionPerformed(evt);
@@ -177,7 +172,7 @@ public class Tela_de_Consulta_FlxCxD extends javax.swing.JFrame {
         });
 
         jButtonPFechar.setText("Fechar");
-        jButtonPFechar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButtonPFechar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButtonPFechar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPFecharActionPerformed(evt);
@@ -185,6 +180,7 @@ public class Tela_de_Consulta_FlxCxD extends javax.swing.JFrame {
         });
 
         jButtonGerarGrafico.setText("Gerar Gráfico");
+        jButtonGerarGrafico.setToolTipText("");
         jButtonGerarGrafico.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonGerarGraficoActionPerformed(evt);
@@ -276,105 +272,102 @@ public class Tela_de_Consulta_FlxCxD extends javax.swing.JFrame {
 
     private void jButtonPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPesquisarActionPerformed
 
-        if (jFormattedTextFieldDataIni.getText().trim().length() != 10) {
-            JOptionPane.showMessageDialog(null, "Atenção! Favor preencher corretamente a data inicial (dd/MM/yyyy).");
-            return;
-        }
-        if (jFormattedTextFieldDataFim.getText().trim().length() != 10) {
-            JOptionPane.showMessageDialog(null, "Atenção! Favor preencher corretamente a data final (dd/MM/yyyy).");
-            return;
-        }
-
-        PegaSaldoAnterior();
-
-        // Converte saldo anterior com segurança (caso venha formatado com . e ,)
-        String textoSaldo = jTextFieldSaldoAnterior.getText().trim();
-        double sa = 0.0;
-        if (!textoSaldo.isEmpty()) {
-            textoSaldo = textoSaldo.replace(".", "").replace(",", ".");
-            sa = Double.parseDouble(textoSaldo);
-        }
-        DecimalFormat dec = new DecimalFormat("#,##0.00");
-        jTextFieldSaldoAnterior.setText(dec.format(sa));
-
-        try {
-            SimpleDateFormat formatoEntrada = new SimpleDateFormat("dd/MM/yyyy");
-
-            Date dataInicioRelatorio = formatoEntrada.parse(jFormattedTextFieldDataIni.getText());
-            Date dataFimRelatorio = formatoEntrada.parse(jFormattedTextFieldDataFim.getText());
-
-            // Data de hoje zerada para comparação justa
-            Calendar calHoje = Calendar.getInstance();
-            calHoje.set(Calendar.HOUR_OF_DAY, 0);
-            calHoje.set(Calendar.MINUTE, 0);
-            calHoje.set(Calendar.SECOND, 0);
-            calHoje.set(Calendar.MILLISECOND, 0);
-            Date hoje = calHoje.getTime();
-
-            // Só considera "realizado" se a data inicial for ANTERIOR a hoje
-            boolean isRealizado = dataInicioRelatorio.before(hoje);
-
-            String sql;
-            String campoDataOrdenacao;
-
-            if (isRealizado) {
-                // FLUXO REALIZADO (período no passado)
-                sql = "SELECT * FROM \"tbmovimento\" "
-                        + "WHERE \"dtapr\" BETWEEN ? AND ? "
-                        + "  AND \"recurso\" IN ('0079', '0022', '0080') "
-                        + "  AND \"classif\" NOT IN ('9.001.000', '9.001.001', '9.001.002', '9.001.003') "
-                        + "ORDER BY \"dtapr\"";
-                campoDataOrdenacao = "dtapr";
-            } else {
-                // PROJEÇÃO (hoje ou futuro) - filtro original que funcionava
-                sql = "SELECT * FROM \"tbmovimento\" "
-                        + "WHERE \"dtvcto\" BETWEEN ? AND ? "
-                        + "  AND \"vrecurso\" IN ('1.002.001', '2.001.002', '2.001.003', '2.001.004') "
-                        + "  AND \"recurso\" <> '0080' "
-                        + "  AND \"statusmov\" = '' "
-                        + "ORDER BY \"dtvcto\", \"recurso\", \"dtemi\"";
-                campoDataOrdenacao = "dtvcto";
+            if (jFormattedTextFieldDataIni.getText().trim().length() != 10) {
+                JOptionPane.showMessageDialog(null, "Atenção! Favor preencher corretamente a data inicial (dd/MM/yyyy).");
+                return;
+            }
+            if (jFormattedTextFieldDataFim.getText().trim().length() != 10) {
+                JOptionPane.showMessageDialog(null, "Atenção! Favor preencher corretamente a data final (dd/MM/yyyy).");
+                return;
             }
 
-            Connection con = Conexao.faz_conexao();
-            PreparedStatement stmt = con.prepareStatement(sql);
+            PegaSaldoAnterior();
 
-            // Usa java.sql.Date ? funciona perfeitamente no PostgreSQL
-            stmt.setDate(1, new java.sql.Date(dataInicioRelatorio.getTime()));
-            stmt.setDate(2, new java.sql.Date(dataFimRelatorio.getTime()));
-
-            ResultSet rs = stmt.executeQuery();
-
-            // Atualiza label de tipo (se existir)
-            if (jLabelTipo != null) {
-                jLabelTipo.setText(isRealizado ? "CONSULTA - FLUXO DE CAIXA" : "CONSULTA - PROJEÇÃO DE CAIXA");
-                jLabelTipo.setForeground(isRealizado ? Color.BLUE : Color.DARK_GRAY);
+            // Converte saldo anterior com segurança (caso venha formatado com . e ,)
+            String textoSaldo = jTextFieldSaldoAnterior.getText().trim();
+            double sa = 0.0;
+            if (!textoSaldo.isEmpty()) {
+                textoSaldo = textoSaldo.replace(".", "").replace(",", ".");
+                sa = Double.parseDouble(textoSaldo);
             }
+            DecimalFormat dec = new DecimalFormat("#,##0.00");
+            jTextFieldSaldoAnterior.setText(dec.format(sa));
 
-//            DefaultTableModel modelo = (DefaultTableModel) jTablePesquisa.getModel();
-//            modelo.setNumRows(0);
-//
-//            // Configuração das colunas (ajustado ao seu layout)
-//            jTablePesquisa.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(0)).setPreferredWidth(40);  // idMov
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(1)).setPreferredWidth(60);  // recurso
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(2)).setPreferredWidth(0);   // vrecurso
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(3)).setPreferredWidth(70);  // clifor
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(4)).setPreferredWidth(0);   // vclifor
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(5)).setPreferredWidth(0);   // dtlancto
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(6)).setPreferredWidth(75);  // dtemi
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(7)).setPreferredWidth(75);  // dtvcto/dtapr
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(8)).setPreferredWidth(65);  // dia da semana
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(9)).setPreferredWidth(200); // documento
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(10)).setPreferredWidth(0);  // classif
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(11)).setPreferredWidth(430); // descr
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(12)).setPreferredWidth(90);  // valor
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(13)).setPreferredWidth(0);  // dtapr
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(14)).setPreferredWidth(0);  // statusmov
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(15)).setPreferredWidth(40);  // prev
-//            jTablePesquisa.getColumn(jTablePesquisa.getColumnName(16)).setPreferredWidth(100); // saldo
+            try {
+                SimpleDateFormat formatoEntrada = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat formatoBanco = new SimpleDateFormat("yyyy-MM-dd");
 
-DefaultTableModel modelo = (DefaultTableModel) jTablePesquisa.getModel();
+                Date dataInicioRelatorio = formatoEntrada.parse(jFormattedTextFieldDataIni.getText());
+                Date dataFimRelatorio = formatoEntrada.parse(jFormattedTextFieldDataFim.getText());
+
+                // Data de hoje zerada para comparação justa
+                Calendar calHoje = Calendar.getInstance();
+                calHoje.set(Calendar.HOUR_OF_DAY, 0);
+                calHoje.set(Calendar.MINUTE, 0);
+                calHoje.set(Calendar.SECOND, 0);
+                calHoje.set(Calendar.MILLISECOND, 0);
+                Date hoje = calHoje.getTime();
+
+                // Só considera "realizado" se a data inicial for ANTERIOR a hoje
+                boolean isRealizado = dataInicioRelatorio.before(hoje);
+
+                String sql;
+                String campoDataOrdenacao;
+
+                if (isRealizado) {
+                    // FLUXO REALIZADO (período no passado)
+                    sql = "SELECT * FROM \"tbmovimento\" "
+                            + "WHERE \"dtapr\" BETWEEN ? AND ? "
+                            + "  AND \"recurso\" IN ('0079', '0022', '0080') "
+                            + "  AND \"classif\" NOT IN ('9.001.000', '9.001.001', '9.001.002', '9.001.003') "
+                            + "ORDER BY \"dtapr\"";
+                    campoDataOrdenacao = "dtapr";
+                } else {
+                    // PROJECAO (hoje ou futuro) - verifica titulos vencidos em aberto
+                    Connection conTemp = Conexao.faz_conexao();
+                    double[] vencidos = TotalizaTitulosVencidos(conTemp, formatoBanco.format(hoje));
+                    try { conTemp.close(); } catch (Exception ignore) {}
+                
+                    if (vencidos[0] > 0) {
+                        String msgVencidos = "Foram encontrados " + (int) vencidos[0] + " titulo(s) pendente(s) "
+                                + "vencido(s) em aberto (vencimento anterior a hoje):\n\n"
+                                + "A receber: " + dec.format(vencidos[1]) + "\n"
+                                + "A pagar: " + dec.format(vencidos[2]) + "\n"
+                                + "Saldo liquido: " + dec.format(vencidos[1] + vencidos[2]) + "\n\n"
+                                + "Deseja considerar estes valores na Projecao de Caixa?";
+                        int opcaoVencidos = JOptionPane.showConfirmDialog(null, msgVencidos, "Titulos Vencidos Pendentes", JOptionPane.YES_NO_OPTION);
+                        if (opcaoVencidos == JOptionPane.YES_OPTION) {
+                            sa = sa + vencidos[1] + vencidos[2];
+                            jTextFieldSaldoAnterior.setText(dec.format(sa));
+                        }
+                    }
+                
+                    // PROJECAO - filtro completo
+                    sql = "SELECT * FROM \"tbmovimento\" "
+                            + "WHERE \"dtvcto\" BETWEEN ? AND ? "
+                            + "  AND \"vrecurso\" IN ('1.001.001', '1.001.002', '1.002.001', '1.003.001', '2.001.002', '2.001.003', '2.001.004') "
+                            + "  AND \"recurso\" <> '0080' "
+                            + "  AND \"statusmov\" = '' "
+                            + "ORDER BY \"dtvcto\", \"recurso\", \"dtemi\"";
+                    campoDataOrdenacao = "dtvcto";
+                }
+
+                Connection con = Conexao.faz_conexao();
+                PreparedStatement stmt = con.prepareStatement(sql);
+
+                // Usa java.sql.Date ? funciona perfeitamente no PostgreSQL
+                stmt.setDate(1, new java.sql.Date(dataInicioRelatorio.getTime()));
+                stmt.setDate(2, new java.sql.Date(dataFimRelatorio.getTime()));
+
+                ResultSet rs = stmt.executeQuery();
+
+                // Atualiza label de tipo (se existir)
+                if (jLabelTipo != null) {
+                    jLabelTipo.setText(isRealizado ? "CONSULTA - FLUXO DE CAIXA" : "CONSULTA - PROJECAO DE CAIXA");
+                    jLabelTipo.setForeground(isRealizado ? Color.BLUE : Color.DARK_GRAY);
+                }
+                
+                DefaultTableModel modelo = (DefaultTableModel) jTablePesquisa.getModel();
                 modelo.setNumRows(0);
                 jTablePesquisa.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
                 jTablePesquisa.getColumn(jTablePesquisa.getColumnName(0)).setPreferredWidth(40); //idMov
@@ -498,28 +491,6 @@ DefaultTableModel modelo = (DefaultTableModel) jTablePesquisa.getModel();
     }//GEN-LAST:event_jButtonPLimparActionPerformed
 
     private void jButtonPImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPImprimirActionPerformed
-//        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-//        Date date = new Date();
-//        String infDt = dateFormat.format(date);
-//        
-//        // Pegar as datas dos campos
-//        String dataInicial = jFormattedTextFieldDataIni.getText();
-//        String dataFinal = jFormattedTextFieldDataFim.getText();
-//
-//        PrintRequestAttributeSet set = new HashPrintRequestAttributeSet();
-//        set.add(OrientationRequested.LANDSCAPE);
-//
-//        MessageFormat cabecalho = new MessageFormat("Previsão de Caixa - " + infDt + " - Saldo Anterior: " + jTextFieldSaldoAnterior.getText());
-//        MessageFormat rodape = new MessageFormat("Página {0,number,integer}");
-//
-//        try {
-//
-//            jTablePesquisa.print(JTable.PrintMode.FIT_WIDTH, cabecalho, rodape, false, set, false);
-//
-//        } catch (java.awt.print.PrinterException e) {
-//            System.err.format("Erro ao imprimir!!! %s%n", e.getMessage());
-//        }
-
         java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm");
         String infDt = dateFormat.format(new java.util.Date());
         String dIni = jFormattedTextFieldDataIni.getText();
@@ -531,7 +502,7 @@ DefaultTableModel modelo = (DefaultTableModel) jTablePesquisa.getModel();
         javax.print.attribute.PrintRequestAttributeSet set = new javax.print.attribute.HashPrintRequestAttributeSet();
         set.add(javax.print.attribute.standard.OrientationRequested.LANDSCAPE);
 
-        final java.awt.print.Printable tabelaOriginal = jTablePesquisa.getPrintable(javax.swing.JTable.PrintMode.FIT_WIDTH, null, new java.text.MessageFormat("Pág. {0,number,integer} - " + infDt));
+        final java.awt.print.Printable tabelaOriginal = jTablePesquisa.getPrintable(javax.swing.JTable.PrintMode.FIT_WIDTH, null, new java.text.MessageFormat("Pég. {0,number,integer} - " + infDt));
 
         java.awt.print.Printable meuLayout = (graphics, pageFormat, pageIndex) -> {
             java.awt.Graphics2D g2d = (java.awt.Graphics2D) graphics;
@@ -556,7 +527,7 @@ DefaultTableModel modelo = (DefaultTableModel) jTablePesquisa.getModel();
             // 2. O SEGREDO: Criamos uma cópia para a tabela
             java.awt.Graphics2D g2dTabela = (java.awt.Graphics2D) g2d.create();
 
-            // Se for a página 0, empurramos APENAS a cópia da tabela para baixo
+            // Se for a pagina 0, empurramos APENAS a cópia da tabela para baixo
             if (pageIndex == 0) {
                 g2dTabela.translate(0, 35);
             }
@@ -684,6 +655,53 @@ DefaultTableModel modelo = (DefaultTableModel) jTablePesquisa.getModel();
         });
     }
 
+    /**
+     * Totaliza títulos vencidos em aberto com vencimento ANTERIOR a HOJE
+     * (data da consulta, independentemente da data inicial). Usa as mesmas
+     * consultas do PainelDiarioController:
+     * a receber = Contas a Receber sem baixa (dtApr vazio); a pagar = Contas a
+     * Pagar sem baixa ou bancos/cartões, exceto baixados (PG/TD/SI).
+     * Retorna {quantidade, receber, pagar}.
+     * PostgreSQL: usa aspas duplas para nomes de tabela/colunas.
+     */
+    private double[] TotalizaTitulosVencidos(Connection con, String dataCorte) {
+        double[] retorno = new double[]{0, 0, 0};
+        try {
+            // dtapr e colunas de data sao tipo DATE no PostgreSQL: comparar com '' gera
+            // o erro "sintaxe de entrada invalida para tipo date". Apenas IS NULL basta.
+            String sqlEntradas = "SELECT COUNT(*), COALESCE(SUM(\"valor\"), 0) FROM \"view_movimento\" "
+                    + "WHERE \"dtvcto\" < ?::date "
+                    + "AND \"nome_c\" = 'Contas a Receber' "
+                    + "AND \"dtapr\" IS NULL";
+            String sqlSaidas = "SELECT COUNT(*), COALESCE(SUM(\"valor\"), 0) FROM \"view_movimento\" "
+                    + "WHERE \"dtvcto\" < ?::date "
+                    + "AND ((\"nome_c\" = 'Contas a Pagar' AND \"dtapr\" IS NULL) "
+                    + "OR (\"recurso\" = '0079' OR \"vrecurso\" = '2.001.003')) "
+                    + "AND \"statusmov\" NOT IN ('PG', 'TD', 'SI')";
+            try (PreparedStatement st = con.prepareStatement(sqlEntradas)) {
+                st.setDate(1, java.sql.Date.valueOf(dataCorte));
+                try (ResultSet rs = st.executeQuery()) {
+                    if (rs.next()) {
+                        retorno[0] += rs.getDouble(1);
+                        retorno[1] += rs.getDouble(2);
+                    }
+                }
+            }
+            try (PreparedStatement st = con.prepareStatement(sqlSaidas)) {
+                st.setDate(1, java.sql.Date.valueOf(dataCorte));
+                try (ResultSet rs = st.executeQuery()) {
+                    if (rs.next()) {
+                        retorno[0] += rs.getDouble(1);
+                        retorno[2] += rs.getDouble(2);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return retorno;
+    }
+
     private void PegaSaldoAnterior() {
 
         try {
@@ -722,7 +740,7 @@ DefaultTableModel modelo = (DefaultTableModel) jTablePesquisa.getModel();
             jTextFieldSaldoAnterior.setText("0,00");
             Logger.getLogger(Tela_de_Consulta_FlxCxD.class.getName())
                     .log(Level.SEVERE, "Erro ao calcular saldo anterior", ex);
-            // Opcional: avisar o usuário
+            // Opcional: avisar o usuério
             // JOptionPane.showMessageDialog(null, "Erro ao carregar saldo anterior. Usando 0,00.");
         }
     }

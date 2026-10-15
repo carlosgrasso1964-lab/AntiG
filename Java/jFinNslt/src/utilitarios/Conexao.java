@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class Conexao {
     private Connection conexao;
 
-    // Método para abrir a conexï¿½o
+    // Método para abrir a conexéo
     public void abrirConexao() throws SQLException {
         if (conexao == null || conexao.isClosed()) {
             String caminhoDb = System.getProperty("user.dir") + System.getProperty("file.separator") + "jfinslt.db";
@@ -15,15 +15,15 @@ public class Conexao {
         }
     }
 
-    // Método para retornar a conexï¿½o
+    // Método para retornar a conexéo
     public Connection getConexao() throws SQLException {
         if (conexao == null || conexao.isClosed()) {
-            abrirConexao(); // Garante que a conexï¿½o estï¿½ aberta antes de retornar
+            abrirConexao(); // Garante que a conexéo está aberta antes de retornar
         }
         return conexao;
     }
 
-    // Método para fechar a conexï¿½o
+    // Método para fechar a conexéo
     public void fecharConexao() {
         if (conexao != null) {
             try {

@@ -2799,7 +2799,7 @@ public class Tela_Mov extends javax.swing.JFrame {
 
         }
 
-        // Validaï¿½ï¿½o: data de apresentação deve estar preenchida
+        // Validaééo: data de apresentação deve estar preenchida
         String dataApresentacao = tfApresentacao.getText().trim();
 
         if (dataApresentacao.isEmpty() || dataApresentacao.equals("  /  /    ")) {

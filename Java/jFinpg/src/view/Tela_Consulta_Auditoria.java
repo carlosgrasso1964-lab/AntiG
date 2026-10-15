@@ -425,7 +425,7 @@ private void jButtonAnalisarActionPerformed(java.awt.event.ActionEvent evt) {//G
         return Integer.parseInt(data.substring(6, 10));
     }
 
-    // Mï¿½todo auxiliar para converter dd/MM/yyyy para yyyy-MM-dd (Padrï¿½o SQLite)
+    // Método auxiliar para converter dd/MM/yyyy para yyyy-MM-dd (Padrão SQLite)
     private String formatarDataParaBanco(String dataBr) {
         try {
             String[] partes = dataBr.split("/");
@@ -529,7 +529,7 @@ private void jButtonAnalisarActionPerformed(java.awt.event.ActionEvent evt) {//G
         // --- LÓGICA DA INFLAÇÃO PROPORCIONAL ---
         double inflacaoAnual = buscarInflacaoPremissa();
 
-        // Calculamos quantos meses tem o perï¿½odo (simplificado)
+        // Calculamos quantos meses tem o período (simplificado)
         // Se DataIni é 01/04 e DataFim é 30/04, meses = 1
         // Se for o trimestre, meses = 3
         int mesInicio = Integer.parseInt(dataInicial.substring(3, 5));

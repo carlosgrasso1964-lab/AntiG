@@ -43,12 +43,12 @@ public class TelaPrincipal extends JFrame {
 
     public TelaPrincipal() throws IOException {
         initComponents();
-        // Configura lblfondo como fundo (sem ï¿½cone fixo!)
+        // Configura lblfondo como fundo (sem écone fixo!)
         lblfondo.setHorizontalAlignment(JLabel.CENTER);
         lblfondo.setVerticalAlignment(JLabel.CENTER);
         lblfondo.setOpaque(false);  // permite ver os componentes por cima
 
-        // Adiciona como fundo (ï¿½ndice 0)
+        // Adiciona como fundo (éndice 0)
         getContentPane().add(lblfondo, 0);
 
         // Recupera do banco e aplica
@@ -68,7 +68,7 @@ public class TelaPrincipal extends JFrame {
 
         setVisible(true);
 
-        // ? Aqui: agenda a primeira atualizaï¿½ï¿½o DEPOIS da tela aparecer
+        // ? Aqui: agenda a primeira atualizaééo DEPOIS da tela aparecer
         SwingUtilities.invokeLater(() -> {
             atualizarImagemDeFundo();
         });
@@ -114,7 +114,7 @@ public class TelaPrincipal extends JFrame {
                 return;
             }
 
-            // ? Garante tamanho mï¿½nimo caso o label ainda nï¿½o tenha sido renderizado
+            // ? Garante tamanho ménimo caso o label ainda não tenha sido renderizado
             int largura = lblfondo.getWidth() > 0 ? lblfondo.getWidth() : getContentPane().getWidth();
             int altura = lblfondo.getHeight() > 0 ? lblfondo.getHeight() : getContentPane().getHeight();
 
@@ -137,7 +137,7 @@ public class TelaPrincipal extends JFrame {
         }
     }
 
-    // Mï¿½todo chamado pela ConfTelaPrincipal apï¿½s copiar nova imagem
+    // Método chamado pela ConfTelaPrincipal apés copiar nova imagem
     public void definirTelaPrincipal(String caminhoSelecionado, String destinoPath) {
         try {
             // Copia para o caminho fixo que usamos sempre
@@ -816,7 +816,7 @@ public class TelaPrincipal extends JFrame {
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         Object[] options = {"Sim", "Não"};
         int i = JOptionPane.showOptionDialog(null, "Deseja sair do Sistema? !!", "Encerrar Sistema", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-        if (i == JOptionPane.YES_OPTION) { //opï¿½ao SIM selecionada !!}
+        if (i == JOptionPane.YES_OPTION) { //opéao SIM selecionada !!}
             Deslogado();
             System.exit(0);
         }
@@ -869,7 +869,7 @@ public class TelaPrincipal extends JFrame {
 
     private void jMenuItemRelPlanoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRelPlanoActionPerformed
         RelPlano gen = new RelPlano();
-        JOptionPane.showMessageDialog(null, "Relatï¿½rio Plano de Contas gerado com sucesso!");
+        JOptionPane.showMessageDialog(null, "Relatório Plano de Contas gerado com sucesso!");
         dispose();
         try {
             new TelaPrincipal().setVisible(true);
@@ -880,7 +880,7 @@ public class TelaPrincipal extends JFrame {
 
     private void jMenuItemRelRecursoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRelRecursoActionPerformed
         RelRecursos recur = new RelRecursos();
-        JOptionPane.showMessageDialog(null, "Relatï¿½rio de Recursos gerado com sucesso!");
+        JOptionPane.showMessageDialog(null, "Relatório de Recursos gerado com sucesso!");
         dispose();
         try {
             new TelaPrincipal().setVisible(true);
@@ -895,7 +895,7 @@ public class TelaPrincipal extends JFrame {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        JOptionPane.showMessageDialog(null, "Relatï¿½rio de Favorecidos gerado com sucesso!");
+        JOptionPane.showMessageDialog(null, "Relatório de Favorecidos gerado com sucesso!");
         dispose();
         try {
             new TelaPrincipal().setVisible(true);
@@ -906,7 +906,7 @@ public class TelaPrincipal extends JFrame {
 
     private void jMenuItemRelUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRelUsuariosActionPerformed
         RelUsers usu = new RelUsers();
-        JOptionPane.showMessageDialog(null, "Relatï¿½rio de Favorecidos gerado com sucesso!");
+        JOptionPane.showMessageDialog(null, "Relatório de Favorecidos gerado com sucesso!");
         dispose();
         try {
             new TelaPrincipal().setVisible(true);
@@ -1160,7 +1160,7 @@ public class TelaPrincipal extends JFrame {
 
     private void jMenuItemFCategActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFCategActionPerformed
         Form_Categoria fc = new Form_Categoria();
-        fc.setVisible(true);  // Exibe o formulï¿½rio de forma nï¿½o modal
+        fc.setVisible(true);  // Exibe o formulério de forma não modal
     }//GEN-LAST:event_jMenuItemFCategActionPerformed
 
     private void jMenuItemFProdsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFProdsActionPerformed

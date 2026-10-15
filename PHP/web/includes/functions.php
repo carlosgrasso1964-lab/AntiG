@@ -198,6 +198,47 @@ function calcularAlgarismo() {
     return $soma;
 }
 
+/**
+ * Totaliza títulos vencidos em aberto com vencimento ANTERIOR a HOJE
+ * (data da consulta, independentemente da data inicial).
+ * a receber = Contas a Receber sem baixa (dtApr vazio);
+ * a pagar = Contas a Pagar sem baixa ou bancos/cartões, exceto baixados (PG/TD/SI).
+ * Retorna array ['qtd'=>int, 'receber'=>float, 'pagar'=>float].
+ */
+function totalizaTitulosVencidos($db, string $dataCorte): array {
+    $ret = ['qtd' => 0, 'receber' => 0.0, 'pagar' => 0.0];
+    try {
+        // Entradas: Contas a Receber sem baixa
+        $sqlEntradas = 'SELECT COUNT(*), COALESCE(SUM("Valor"), 0) FROM "view_movimento"
+            WHERE "dtVcto" < ?
+              AND "nome_C" = \'Contas a Receber\'
+              AND ("dtApr" IS NULL OR "dtApr" = \'\')';
+        $st = $db->prepare($sqlEntradas);
+        $st->execute([$dataCorte]);
+        $row = $st->fetch();
+        if ($row) {
+            $ret['qtd'] += (int)$row[0];
+            $ret['receber'] += (float)$row[1];
+        }
+        // Saídas: Contas a Pagar sem baixa OU bancos/cartões, exceto baixados
+        $sqlSaidas = 'SELECT COUNT(*), COALESCE(SUM("Valor"), 0) FROM "view_movimento"
+            WHERE "dtVcto" < ?
+              AND (("nome_C" = \'Contas a Pagar\' AND ("dtApr" IS NULL OR "dtApr" = \'\'))
+                   OR ("recurso" = \'0079\' OR "vrecurso" = \'2.001.003\'))
+              AND "statusMov" NOT IN (\'PG\', \'TD\', \'SI\')';
+        $st = $db->prepare($sqlSaidas);
+        $st->execute([$dataCorte]);
+        $row = $st->fetch();
+        if ($row) {
+            $ret['qtd'] += (int)$row[0];
+            $ret['pagar'] += (float)$row[1];
+        }
+    } catch (Exception $e) {
+        error_log("totalizaTitulosVencidos: " . $e->getMessage());
+    }
+    return $ret;
+}
+
 // ====== Parse de SQL em statements individuais (espelha Tela_ImportarSQL.parseStatements) ======
 function parseSQLStatements(string $conteudo): array {
     // Remove comentários SQL

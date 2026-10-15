@@ -43,7 +43,7 @@ public class Tela_Principal extends JFrame {
         lblfondo.setHorizontalAlignment(JLabel.CENTER);
         lblfondo.setVerticalAlignment(JLabel.CENTER);
         lblfondo.setOpaque(false);  // permite ver os componentes por cima
-        // Adiciona como fundo (ï¿½ndice 0)
+        // Adiciona como fundo (éndice 0)
         getContentPane().add(lblfondo, 0);
         // Recupera do banco e aplica
         ImageDBHandler.retrieveImageFromDatabase(tempImagePath);

@@ -58,7 +58,7 @@ public class CalenderPage extends  JPanel{
     private final int month;
     private int year;
     private GregorianCalendar   calendar;
-    private final String[] MONTHS = {"Janeiro","Fevereiro","Marï¿½o","Abril",
+    private final String[] MONTHS = {"Janeiro","Fevereiro","Maréo","Abril",
                                   "Maio","Junho","Julho","Agosto","Setembro",
                                   "Outubro","Novembro","Dezembro"
                                   };

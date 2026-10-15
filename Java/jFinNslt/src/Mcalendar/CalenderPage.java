@@ -67,7 +67,7 @@ public class CalenderPage extends  JPanel{
     private Runnable onTaskAddedCallback;
     private JPanel headerPane;
     private JSeparator separator;
-    private final String[] MONTHS = {"Janeiro","Fevereiro","Marï¿½o","Abril",
+    private final String[] MONTHS = {"Janeiro","Fevereiro","Maréo","Abril",
                                   "Maio","Junho","Julho","Agosto","Setembro",
                                   "Outubro","Novembro","Dezembro"
                                   };

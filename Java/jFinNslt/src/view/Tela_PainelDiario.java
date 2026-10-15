@@ -28,7 +28,7 @@ public class Tela_PainelDiario extends JFrame {
     private JButton btnAtualizar;
     private JButton btnFechar;
     private Tela_Principal telaPrincipal;
-    private BigDecimal valorReservaAtual = new BigDecimal("500.00");
+    private BigDecimal valorReservaAtual = new BigDecimal("0.00");
 
     public Tela_PainelDiario() {
         this(null);

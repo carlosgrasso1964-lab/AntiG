@@ -31,7 +31,7 @@ public class PainelDiarioController {
         public List<MovimentoSimples> entradas = new ArrayList<>();
         public List<MovimentoSimples> saidas = new ArrayList<>();
         public BigDecimal saldoFinalDia = BigDecimal.ZERO;
-        public BigDecimal reserva = new BigDecimal("300.00");
+        public BigDecimal reserva = new BigDecimal("0.00");
         public BigDecimal sugestaoAplicar = BigDecimal.ZERO;
         public BigDecimal sugestaoResgate = BigDecimal.ZERO;
         public BigDecimal saldoPoupanca = BigDecimal.ZERO;

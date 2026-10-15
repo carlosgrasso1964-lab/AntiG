@@ -20,6 +20,7 @@ $saldoAnterior = 0;
 $movimentos = [];
 $isRealizado = null;
 $tituloTipo = 'CONSULTA - FLUXO DE CAIXA';
+$msgVencidos = null; // Para JS confirm
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$dataIni || !$dataFim || strlen($dataIni) != 10 || strlen($dataFim) != 10) {
@@ -42,6 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtSa->execute([$dataIniSQL]);
             $saldoAnterior = (float)$stmtSa->fetchColumn();
 
+            // Se usuário confirmou títulos vencidos na projeção (segundo POST)
+            if (!$isRealizado && isset($_POST['vencidos_confirmado']) && $_POST['vencidos_confirmado'] == '1') {
+                $saldoAnterior += (float)($_POST['vencidos_receber'] ?? 0) + (float)($_POST['vencidos_pagar'] ?? 0);
+            }
+
             // === Consulta (VConsFlxCxDiario.java linhas 293-312) ===
             if ($isRealizado) {
                 $tituloTipo = 'CONSULTA - FLUXO DE CAIXA';
@@ -52,10 +58,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ORDER BY dtApr";
                 $campoData = 'dtApr';
             } else {
+                // PROJEÇÃO — verifica títulos vencidos em aberto (vencimento < hoje)
+                // Só mostra diálogo se NÃO for o segundo POST (confirmação)
+                if (!isset($_POST['vencidos_confirmado'])) {
+                    $vencidos = totalizaTitulosVencidos($db, $hoje);
+                    if ($vencidos['qtd'] > 0) {
+                        // Monta mensagem para JS confirm (espelha JOptionPane do Java)
+                        $msgVencidos = "Foram encontrados {$vencidos['qtd']} título(s) pendente(s) vencido(s) em aberto (vencimento anterior a hoje):\n\n"
+                                     . "A receber: " . formatMoeda($vencidos['receber']) . "\n"
+                                     . "A pagar: " . formatMoeda($vencidos['pagar']) . "\n"
+                                     . "Saldo líquido: " . formatMoeda($vencidos['receber'] + $vencidos['pagar']) . "\n\n"
+                                     . "Deseja considerar estes valores na Projeção de Caixa?";
+                    }
+                }
+
                 $tituloTipo = 'CONSULTA - PROJEÇÃO DE CAIXA';
+                // FILTRO COMPLETO (7 vrecursos, igual Java atualizado)
                 $sql = "SELECT * FROM tbmovimento
                     WHERE dtVcto BETWEEN ? AND ?
-                      AND vrecurso IN ('1.002.001','2.001.002','2.001.003','2.001.004')
+                      AND vrecurso IN ('1.001.001', '1.001.002', '1.002.001', '1.003.001', '2.001.002', '2.001.003', '2.001.004')
                       AND recurso <> '0080'
                       AND statusMov = ''
                     ORDER BY dtVcto, recurso, dtEmi";
@@ -110,7 +131,7 @@ function fxDiaSemana($dataDDMMYYYY) {
 <div class="alert alert-danger"><?= htmlspecialchars($erro) ?></div>
 <?php endif; ?>
 
-<form method="POST" class="row g-3 mb-3">
+<form method="POST" class="row g-3 mb-3" id="formFluxoCaixa">
     <div class="col-md-2 offset-md-3">
         <label class="form-label">Período de Vencimentos — de</label>
         <input type="text" name="data_ini" class="form-control datepicker"
@@ -128,6 +149,12 @@ function fxDiaSemana($dataDDMMYYYY) {
     <div class="col-md-1 d-flex align-items-end">
         <button type="submit" class="btn btn-primary w-100">Pesquisar</button>
     </div>
+    <!-- Hidden fields para confirmação de títulos vencidos (projeção) -->
+    <?php if ($msgVencidos && $vencidos): ?>
+    <input type="hidden" name="vencidos_confirmado" id="vencidos_confirmado" value="0">
+    <input type="hidden" name="vencidos_receber" id="vencidos_receber" value="<?= $vencidos['receber'] ?>">
+    <input type="hidden" name="vencidos_pagar" id="vencidos_pagar" value="<?= $vencidos['pagar'] ?>">
+    <?php endif; ?>
 </form>
 
 <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($erro)): ?>
@@ -289,12 +316,24 @@ function exportarFluxoCaixa() {
     });
     var csv = '\uFEFF' + linhas.join('\n');
     var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    var link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'Relatorio_Fluxo_Caixa.csv';
-    link.click();
-}
-</script>
-<?php endif; ?>
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Relatorio_Fluxo_Caixa.csv';
+        link.click();
+    }
 
-<?php include '../includes/footer.php';
+    // Handler para confirmação de títulos vencidos na projeção
+    document.addEventListener('DOMContentLoaded', function() {
+        var vencidosConfirmado = document.getElementById('vencidos_confirmado');
+        if (vencidosConfirmado) {
+            var msg = "<?= addslashes($msgVencidos ?? '') ?>";
+            if (msg && confirm(msg)) {
+                vencidosConfirmado.value = '1';
+                document.getElementById('formFluxoCaixa').submit();
+            }
+        }
+    });
+    </script>
+    <?php endif; ?>
+
+    <?php include '../includes/footer.php';
