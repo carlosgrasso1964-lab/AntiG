@@ -453,15 +453,16 @@ public class Tela_Consulta_Recursos extends javax.swing.JFrame {
                 if (tfRecurso.getText().equals("1.002.001")) {
 
                     sql = "SELECT * FROM tbmovimento WHERE dtVcto BETWEEN ? AND ? AND recurso = ? AND statusMov <> 'RC' ORDER BY dtVcto";
-
+                  
                 } else if (tfRecurso.getText().equals("2.001.002")) {
 
                     sql = "SELECT * FROM tbmovimento WHERE dtVcto BETWEEN ? AND ? AND recurso = ? AND statusMov <> 'PG' ORDER BY dtVcto";
-
+                 
                 } else {
 
-                    sql = "SELECT * FROM tbmovimento WHERE dtVcto BETWEEN ? AND ? AND recurso = ? AND statusMov <> 'PG' ORDER BY dtVcto";
-
+                    //sql = "SELECT * FROM tbmovimento WHERE dtVcto BETWEEN ? AND ? AND recurso = ? AND statusMov <> 'PG' ORDER BY dtVcto";
+                    sql = "SELECT * FROM tbmovimento WHERE dtVcto BETWEEN ? AND ? AND recurso = ? ORDER BY dtVcto";
+                  
                 }
 
                 PreparedStatement stmt = con.prepareStatement(sql);
