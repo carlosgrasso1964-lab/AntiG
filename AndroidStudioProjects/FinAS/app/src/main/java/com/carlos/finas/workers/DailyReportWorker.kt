@@ -21,7 +21,7 @@ class DailyReportWorker(
         const val TAG = "DailyReportWorker"
         const val WORK_NAME = "daily_report_worker"
         const val KEY_RESERVA = "valor_reserva"
-        const val DEFAULT_RESERVA = 500.00
+        const val DEFAULT_RESERVA = 0.00
     }
 
     override suspend fun doWork(): Result {
@@ -35,12 +35,12 @@ class DailyReportWorker(
                 return Result.success()
             }
 
-            val enviado = TelegramService.sendMessage(applicationContext, texto, parseMode = "HTML")
+            val (enviado, erro) = TelegramService.sendMessage(applicationContext, texto, parseMode = "HTML")
             if (enviado) {
                 Log.d(TAG, "Relatório diário enviado ao Telegram com sucesso")
                 Result.success()
             } else {
-                Log.w(TAG, "Falha ao enviar relatório — WorkManager tentará novamente")
+                Log.w(TAG, "Falha ao enviar relatório — WorkManager tentará novamente: $erro")
                 Result.retry()
             }
         } catch (e: Exception) {

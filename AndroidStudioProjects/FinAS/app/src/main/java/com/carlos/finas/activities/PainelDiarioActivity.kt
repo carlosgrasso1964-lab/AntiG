@@ -1,6 +1,7 @@
 package com.carlos.finas.activities
 
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -62,6 +63,11 @@ class PainelDiarioActivity : AppCompatActivity() {
             .setPositiveButton("Continuar") { _, _ ->
                 val valorStr = editText.text.toString()
                 valorReserva = valorStr.toDoubleOrNull() ?: 0.00
+                // Persistir em SharedPreferences para o agendamento automático
+                getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+                    .edit()
+                    .putFloat("valor_reserva", valorReserva.toFloat())
+                    .apply()
                 carregarDados()
             }
             .setNegativeButton("Cancelar") { _, _ ->
@@ -103,16 +109,17 @@ class PainelDiarioActivity : AppCompatActivity() {
         Thread {
             try {
                 val texto = PainelDiarioRepository.gerarEFormatar(this, valorReserva)
-                val sucesso = TelegramService.sendMessage(this, texto, "HTML")
+                val (sucesso, erro) = TelegramService.sendMessage(this, texto, "HTML")
 
                 runOnUiThread {
                     binding.btnEnviarTelegram.isEnabled = true
                     binding.btnEnviarTelegram.text = "Enviar Telegram"
-                    Toast.makeText(
-                        this,
-                        if (sucesso) "✅ Relatório enviado ao Telegram!" else "❌ Falha ao enviar — verifique token/chat_id",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    val msg = if (sucesso) {
+                        "✅ Relatório enviado ao Telegram!"
+                    } else {
+                        "❌ Falha ao enviar: ${erro ?: "erro desconhecido"}"
+                    }
+                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 runOnUiThread {

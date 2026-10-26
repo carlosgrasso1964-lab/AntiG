@@ -2961,26 +2961,26 @@ class DatabaseHelper(private val context: Context) :
     data class MovimentoSimples(val descricao: String, val valor: Double)
 
     data class RelatorioPainel(
-        var saldoInicial: Double = 0.0,
-        var entradas: MutableList<MovimentoSimples> = mutableListOf(),
-        var saidas: MutableList<MovimentoSimples> = mutableListOf(),
-        var saldoFinalDia: Double = 0.0,
-        var reserva: Double = 500.00,
-        var sugestaoAplicar: Double = 0.0,
-        var sugestaoResgate: Double = 0.0,
-        var saldoPoupanca: Double = 0.0,
-        var alerta: String = "",
-        var menorSaldoProjetado: Double = 0.0,
-        var dataMenorSaldo: String = "",
-        var sugestaoSeguraAplicar: Double = 0.0,
-        var totalEntradasDia: Double = 0.0,
-        var totalSaidasDia: Double = 0.0
-    ) {
+            var saldoInicial: Double = 0.0,
+            var entradas: MutableList<MovimentoSimples> = mutableListOf(),
+            var saidas: MutableList<MovimentoSimples> = mutableListOf(),
+            var saldoFinalDia: Double = 0.0,
+            var reserva: Double = 0.00,
+            var sugestaoAplicar: Double = 0.0,
+            var sugestaoResgate: Double = 0.0,
+            var saldoPoupanca: Double = 0.0,
+            var alerta: String = "",
+            var menorSaldoProjetado: Double = 0.0,
+            var dataMenorSaldo: String = "",
+            var sugestaoSeguraAplicar: Double = 0.0,
+            var totalEntradasDia: Double = 0.0,
+            var totalSaidasDia: Double = 0.0
+        ) {
         fun totalEntradas(): Double = totalEntradasDia
         fun totalSaidas(): Double = totalSaidasDia
     }
 
-    fun gerarRelatorioDiario(data: String, reserva: Double = 500.00): RelatorioPainel {
+    fun gerarRelatorioDiario(data: String, reserva: Double = 0.00): RelatorioPainel {
 
         val rel = RelatorioPainel(reserva = reserva)
         // Formatos para moeda e data

@@ -37,19 +37,24 @@ class DailyReportAlarmReceiver : BroadcastReceiver() {
             acquire(30_000L) // 30s máx
         }
 
+        // Extrair reserva do intent antes da thread
+        val reserva = intent.getDoubleExtra(
+            DailyReportScheduler.EXTRA_RESERVA,
+            0.0
+        )
+
         Thread {
             try {
-                val reserva = intent.getDoubleExtra(
-                    DailyReportScheduler.EXTRA_RESERVA,
-                    DailyReportWorker.DEFAULT_RESERVA
-                )
-
                 val texto = PainelDiarioRepository.gerarEFormatar(context, reserva)
                 if (texto.isBlank()) {
                     Log.w(TAG, "Relatório vazio — nada a enviar")
                 } else {
-                    val enviado = TelegramService.sendMessage(context, texto, parseMode = "HTML")
-                    Log.d(TAG, if (enviado) "Painel enviado ao Telegram" else "Falha ao enviar (será re-agendado amanhã)")
+                    val (enviado, erro) = TelegramService.sendMessage(context, texto, parseMode = "HTML")
+                    if (enviado) {
+                        Log.d(TAG, "Painel enviado ao Telegram")
+                    } else {
+                        Log.w(TAG, "Falha ao enviar (será re-agendado amanhã): $erro")
+                    }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Erro ao gerar/enviar Painel: ${e.message}", e)
@@ -59,7 +64,7 @@ class DailyReportAlarmReceiver : BroadcastReceiver() {
             }
         }.start()
 
-        // Re-agenda o próximo disparo para o dia seguinte.
-        DailyReportScheduler.scheduleNext(context)
+        // Re-agenda o próximo disparo para o dia seguinte passando a mesma reserva.
+        DailyReportScheduler.scheduleNext(context, reserva)
     }
 }

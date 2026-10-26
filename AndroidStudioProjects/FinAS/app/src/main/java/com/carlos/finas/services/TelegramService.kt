@@ -23,19 +23,20 @@ object TelegramService {
 
     /**
      * Envia uma mensagem de texto via Telegram.
-     * Agora com tratamento de erro detalhado.
+     * Retorna Pair<Boolean, String?> onde:
+     * - first = sucesso
+     * - second = mensagem de erro (null se sucesso)
      */
     fun sendMessage(
         context: Context,
         text: String,
         parseMode: String? = "HTML"
-    ): Boolean {
+    ): Pair<Boolean, String?> {
         if (BOT_TOKEN.isEmpty() || CHAT_ID.isEmpty()) {
             Log.e(TAG, "Configuração ausente: BOT_TOKEN ou CHAT_ID vazios.")
-            return false
+            return false to "BOT_TOKEN ou CHAT_ID vazios"
         }
 
-        // Limpar e preparar o texto
         val sanitizedText = if (parseMode == "HTML") sanitizeHtml(text) else text
         
         val urlString = "$BASE_URL$BOT_TOKEN$SEND_MESSAGE_ENDPOINT"
@@ -59,15 +60,14 @@ object TelegramService {
 
             if (responseCode == 200) {
                 Log.d(TAG, "Sucesso: Relatório enviado ao Telegram.")
-                true
+                true to null
             } else {
-                // Aqui o Logcat vai dizer EXATAMENTE o erro (ex: Bad Request: can't parse entities)
                 Log.e(TAG, "Falha no Telegram (HTTP $responseCode): $responseBody")
-                false
+                false to "HTTP $responseCode: $responseBody"
             }
         } catch (e: Exception) {
             Log.e(TAG, "Erro de conexão: ${e.message}")
-            false
+            false to "Erro de conexão: ${e.message}"
         }
     }
 

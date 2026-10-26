@@ -24,7 +24,7 @@ object PainelDiarioRepository {
     /**
      * Gera o relatório bruto (estrutura RelatorioPainel) consultando o SQLite.
      */
-    fun gerarRelatorio(context: Context, reserva: Double = 500.00): RelatorioPainel {
+    fun gerarRelatorio(context: Context, reserva: Double = 0.00): RelatorioPainel {
         val db = DatabaseHelper(context)
         db.ensureViewsExist()
         val dataHoje = dateFormatInput.format(Date())
@@ -92,7 +92,7 @@ object PainelDiarioRepository {
     /**
      * Convenience: gera e formata em uma chamada só.
      */
-    fun gerarEFormatar(context: Context, reserva: Double = 500.00): String {
+    fun gerarEFormatar(context: Context, reserva: Double = 0.00): String {
         val relatorio = gerarRelatorio(context, reserva)
         return formatarParaTelegram(relatorio)
     }
