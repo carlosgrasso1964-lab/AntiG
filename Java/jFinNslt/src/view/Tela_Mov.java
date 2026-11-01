@@ -10,7 +10,12 @@ import java.awt.event.MouseAdapter;
 
 import java.awt.event.MouseEvent;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import java.sql.Connection;
 
@@ -243,6 +248,7 @@ public class Tela_Mov extends javax.swing.JFrame {
         btnExcluir = new javax.swing.JButton();
         btnFechar = new javax.swing.JButton();
         btnListarDados = new javax.swing.JButton();
+        btnGerarScriptSQL = new javax.swing.JButton();
         jButtonReceb = new javax.swing.JButton();
         jButtonPag = new javax.swing.JButton();
         jButtonLimpar = new javax.swing.JButton();
@@ -347,6 +353,14 @@ public class Tela_Mov extends javax.swing.JFrame {
             }
         });
 
+        btnGerarScriptSQL.setText("Gerar Script SQL");
+        btnGerarScriptSQL.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnGerarScriptSQL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerarScriptSQLActionPerformed(evt);
+            }
+        });
+
         jButtonReceb.setBackground(new java.awt.Color(153, 255, 51));
         jButtonReceb.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jButtonReceb.setForeground(new java.awt.Color(51, 51, 255));
@@ -392,6 +406,8 @@ public class Tela_Mov extends javax.swing.JFrame {
                 .addGap(13, 13, 13)
                 .addComponent(jButtonLimpar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnGerarScriptSQL, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButtonReceb, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButtonPag, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -411,11 +427,12 @@ public class Tela_Mov extends javax.swing.JFrame {
                     .addComponent(btnListarDados)
                     .addComponent(jButtonReceb)
                     .addComponent(jButtonPag)
-                    .addComponent(jButtonLimpar))
+                    .addComponent(jButtonLimpar)
+                    .addComponent(btnGerarScriptSQL))
                 .addGap(0, 8, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btSalvar, btnAtualizar, btnExcluir, btnFechar, btnListarDados, jButtonLimpar, jButtonPag, jButtonReceb});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btSalvar, btnAtualizar, btnExcluir, btnFechar, btnListarDados, jButtonLimpar, jButtonPag, jButtonReceb, btnGerarScriptSQL});
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Abrir Dados"));
 
@@ -1715,6 +1732,115 @@ public class Tela_Mov extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnListarDadosActionPerformed
 
+
+    private void btnGerarScriptSQLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarScriptSQLActionPerformed
+        int[] selectedRows = tbDadosMov.getSelectedRows();
+        
+        if (selectedRows.length == 0) {
+            JOptionPane.showMessageDialog(this, "Selecione pelo menos uma linha na tabela para gerar o script.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Obter o caminho da Área de Trabalho
+        String desktopPath = System.getProperty("user.home") + "/Desktop";
+        File desktopDir = new File(desktopPath);
+        if (!desktopDir.exists()) {
+            // Tentar em português (Windows BR)
+            desktopPath = System.getProperty("user.home") + "/Área de Trabalho";
+            desktopDir = new File(desktopPath);
+        }
+        
+        if (!desktopDir.exists()) {
+            JOptionPane.showMessageDialog(this, "Não foi possível localizar a Área de Trabalho.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Nome do arquivo com timestamp
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File outputFile = new File(desktopPath, "import_movimento_" + timestamp + ".sql");
+        
+        try (BufferedWriter writer = Files.newBufferedWriter(outputFile.toPath(), StandardCharsets.UTF_8)) {
+            writer.write("-- Lançamentos gerados pelo FinAS - Exportado em " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "\n\n");
+            
+            DecimalFormat df = new DecimalFormat("#0.00");
+            
+            for (int row : selectedRows) {
+                // Converter para model row (caso haja ordenação)
+                int modelRow = tbDadosMov.convertRowIndexToModel(row);
+                
+                // Extrair valores das colunas (baseado na estrutura da tabela)
+                // 0=idMov, 1=recurso, 2=vrecurso, 3=clifor, 4=vCliFor, 5=dtlancto, 6=dtEmi, 7=dtVcto, 8=documento, 9=classif, 10=Descr, 11=Valor, 12=dtApr, 13=statusMov, 14=Prev, 15=Saldo
+                String recurso = getStringValue(modelRow, 1);
+                String vrecurso = getStringValue(modelRow, 2);
+                String clifor = getStringValue(modelRow, 3);
+                String vCliFor = getStringValue(modelRow, 4);
+                String dtlancto = formatDateForSQL(getStringValue(modelRow, 5));
+                String dtEmi = formatDateForSQL(getStringValue(modelRow, 6));
+                String dtVcto = formatDateForSQL(getStringValue(modelRow, 7));
+                String documento = escapeSql(getStringValue(modelRow, 8));
+                String classif = getStringValue(modelRow, 9);
+                String descr = escapeSql(getStringValue(modelRow, 10));
+                String valor = formatValorForSQL(getStringValue(modelRow, 11));
+                String dtApr = formatDateForSQL(getStringValue(modelRow, 12));
+                String statusMov = getStringValue(modelRow, 13);
+                String prev = getStringValue(modelRow, 14);
+                
+                String sql = String.format(
+                    "INSERT INTO tbmovimento (recurso,vrecurso,clifor,vCliFor,dtlancto,dtEmi,dtVcto,documento,classif,Descr,Valor,dtApr,statusMov,Prev) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s');\n",
+                    recurso, vrecurso, clifor, vCliFor, dtlancto, dtEmi, dtVcto, documento, classif, descr, valor, dtApr, statusMov, prev
+                );
+                
+                writer.write(sql);
+            }
+            
+            writer.flush();
+            JOptionPane.showMessageDialog(this, "Script gerado com sucesso!\nArquivo: " + outputFile.getAbsolutePath(), "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Tela_Mov.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Erro ao gerar script: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnGerarScriptSQLActionPerformed
+
+    // Métodos auxiliares para o script SQL
+    private String getStringValue(int modelRow, int col) {
+        Object val = tbDadosMov.getModel().getValueAt(modelRow, col);
+        return val != null ? val.toString().trim() : "";
+    }
+    
+    private String escapeSql(String s) {
+        return s.replace("'", "''");
+    }
+    
+    private String formatDateForSQL(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) return "";
+        try {
+            // Tenta parsear como dd/MM/yyyy
+            if (dateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                Date d = new SimpleDateFormat("dd/MM/yyyy").parse(dateStr);
+                return new SimpleDateFormat("yyyy-MM-dd").format(d);
+            }
+            // Se já está no formato yyyy-MM-dd
+            if (dateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                return dateStr;
+            }
+        } catch (ParseException e) {
+            // Ignora e retorna vazio
+        }
+        return "";
+    }
+    
+    private String formatValorForSQL(String valorStr) {
+        if (valorStr == null || valorStr.trim().isEmpty()) return "0";
+        // Remove formatação brasileira (pontos de milhar, vírgula decimal) -> ponto decimal
+        String clean = valorStr.replaceAll("\\.", "").replace(",", ".");
+        try {
+            double v = Double.parseDouble(clean);
+            return String.valueOf(v);
+        } catch (NumberFormatException e) {
+            return "0";
+        }
+    }
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
 
@@ -3084,6 +3210,7 @@ public class Tela_Mov extends javax.swing.JFrame {
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnListarDados;
+    private javax.swing.JButton btnGerarScriptSQL;
     private javax.swing.JComboBox<String> cbxClass;
     private javax.swing.JButton jButtonLimpar;
     private javax.swing.JButton jButtonPag;
