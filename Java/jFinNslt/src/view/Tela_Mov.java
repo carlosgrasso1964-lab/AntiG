@@ -1781,14 +1781,14 @@ public class Tela_Mov extends javax.swing.JFrame {
                 String classif = getStringValue(modelRow, 9);
                 String descr = escapeSql(getStringValue(modelRow, 10));
                 String valor = formatValorForSQL(getStringValue(modelRow, 11));
-                String dtApr = formatDateForSQL(getStringValue(modelRow, 12));
-                String statusMov = getStringValue(modelRow, 13);
-                String prev = getStringValue(modelRow, 14);
-                
-                String sql = String.format(
-                    "INSERT INTO tbmovimento (recurso,vrecurso,clifor,vCliFor,dtlancto,dtEmi,dtVcto,documento,classif,Descr,Valor,dtApr,statusMov,Prev) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s');\n",
-                    recurso, vrecurso, clifor, vCliFor, dtlancto, dtEmi, dtVcto, documento, classif, descr, valor, dtApr, statusMov, prev
-                );
+                String dtApr = formatDateAprForSQL(getStringValue(modelRow, 12));
+                                String statusMov = getStringValue(modelRow, 13);
+                                String prev = getStringValue(modelRow, 14);
+
+                                String sql = String.format(
+                                    "INSERT INTO tbmovimento (recurso,vrecurso,clifor,vCliFor,dtlancto,dtEmi,dtVcto,documento,classif,Descr,Valor,dtApr,statusMov,Prev) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s','%s');\n",
+                                    recurso, vrecurso, clifor, vCliFor, dtlancto, dtEmi, dtVcto, documento, classif, descr, valor, dtApr, statusMov, prev
+                                );
                 
                 writer.write(sql);
             }
@@ -1807,11 +1807,11 @@ public class Tela_Mov extends javax.swing.JFrame {
         Object val = tbDadosMov.getModel().getValueAt(modelRow, col);
         return val != null ? val.toString().trim() : "";
     }
-    
+
     private String escapeSql(String s) {
         return s.replace("'", "''");
     }
-    
+
     private String formatDateForSQL(String dateStr) {
         if (dateStr == null || dateStr.trim().isEmpty()) return "";
         try {
@@ -1829,7 +1829,25 @@ public class Tela_Mov extends javax.swing.JFrame {
         }
         return "";
     }
-    
+
+    private String formatDateAprForSQL(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) return "NULL";
+        try {
+            // Tenta parsear como dd/MM/yyyy
+            if (dateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                Date d = new SimpleDateFormat("dd/MM/yyyy").parse(dateStr);
+                return "'" + new SimpleDateFormat("yyyy-MM-dd").format(d) + "'";
+            }
+            // Se já está no formato yyyy-MM-dd
+            if (dateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                return "'" + dateStr + "'";
+            }
+        } catch (ParseException e) {
+            // Ignora e retorna NULL
+        }
+        return "NULL";
+    }
+
     private String formatValorForSQL(String valorStr) {
         if (valorStr == null || valorStr.trim().isEmpty()) return "0";
         // Remove formatação brasileira (pontos de milhar, vírgula decimal) -> ponto decimal
