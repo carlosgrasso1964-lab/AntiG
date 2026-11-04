@@ -1,3 +1,15 @@
+import java.util.Properties
+
+// Lê local.properties para injetar no BuildConfig
+val localProps = Properties()
+val localPropsFile = rootProject.file("local.properties")
+if (localPropsFile.exists()) {
+    localPropsFile.inputStream().use { localProps.load(it) }
+}
+
+val telegramBotToken = localProps.getProperty("TELEGRAM_BOT_TOKEN", "")
+val telegramChatId = localProps.getProperty("TELEGRAM_CHAT_ID", "")
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,6 +34,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Credenciais do Telegram via local.properties (não commitado)
+            buildConfigField("String", "TELEGRAM_BOT_TOKEN", "\"$telegramBotToken\"")
+            buildConfigField("String", "TELEGRAM_CHAT_ID", "\"$telegramChatId\"")
         }
         release {
             isMinifyEnabled = false
@@ -30,6 +45,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "TELEGRAM_BOT_TOKEN", "\"$telegramBotToken\"")
+            buildConfigField("String", "TELEGRAM_CHAT_ID", "\"$telegramChatId\"")
         }
     }
     compileOptions {
