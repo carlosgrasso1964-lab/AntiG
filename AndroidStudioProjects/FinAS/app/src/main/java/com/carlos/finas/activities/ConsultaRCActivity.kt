@@ -1363,7 +1363,10 @@ class ConsultaRCActivity : AppCompatActivity() {
                 }
 
                 val inflacao = inflacaoStr.replace(",", ".").toDoubleOrNull() ?: 0.0
-                val anoAtual = Calendar.getInstance().get(Calendar.YEAR)
+                                // Usa o ano da data inicial do filtro (período de vencimentos), não o ano corrente do sistema
+                                val cal = Calendar.getInstance()
+                                cal.time = dataIniParsed
+                                val anoAtual = cal.get(Calendar.YEAR)
 
                 lifecycleScope.launch(Dispatchers.IO) {
                     val db = DatabaseHelper(this@ConsultaRCActivity)

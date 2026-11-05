@@ -1176,7 +1176,18 @@ public class Tela_de_Consulta_RC extends javax.swing.JFrame {
 
         // 2. Agora, vamos salvar os dados na tb_plano_diretor
         double inflacao = Double.parseDouble(inflacaoStr.replace(",", "."));
-        int anoAtual = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+        // Usa o ano da data inicial do filtro (período de vencimentos), não o ano corrente do sistema
+        java.text.SimpleDateFormat formatoEntrada = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        java.util.Date dataIni;
+        try {
+            dataIni = formatoEntrada.parse(jFormattedTextFieldDataIni.getText().trim());
+        } catch (java.text.ParseException e) {
+            JOptionPane.showMessageDialog(this, "Data inicial inválida: " + e.getMessage());
+            return;
+        }
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(dataIni);
+        int anoAtual = cal.get(java.util.Calendar.YEAR);
 
         Connection conn = null;
         PreparedStatement pst = null;
