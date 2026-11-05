@@ -62,10 +62,18 @@ public class Form_Planeja_Auditoria extends JFrame {
         btnExcluir = new JButton("Excluir");
         btnFechar = new JButton("Fechar");
 
-        modelo = new DefaultTableModel(new Object[]{"Conta", "Ano", "Mês", "Valor Planejado", "Inflação"}, 0);
-        tabela = new JTable(modelo);
+        modelo = new DefaultTableModel(new Object[]{"id", "Conta", "Ano", "Mês", "Valor Planejado", "Inflação"}, 0);
+                tabela = new JTable(modelo);
+                tabela.getColumnModel().getColumn(0).setMinWidth(0);
+                tabela.getColumnModel().getColumn(0).setMaxWidth(0);
+                tabela.getColumnModel().getColumn(0).setPreferredWidth(0);
+                tabela.getColumnModel().getColumn(0).setWidth(0);
+                tabela.getColumnModel().getColumn(0).setResizable(false);
         
+        //tabela.setSelectionBackground(new java.awt.Color(255, 255, 204));
+        // Configuração das cores de seleção (fundo e texto)
         tabela.setSelectionBackground(new java.awt.Color(255, 255, 204));
+        tabela.setSelectionForeground(new java.awt.Color(51, 51, 51));
         
         JScrollPane scrollPane = new JScrollPane(tabela);
 
@@ -100,11 +108,11 @@ public class Form_Planeja_Auditoria extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = tabela.getSelectedRow();
                 if (row >= 0) {
-                    txtConta.setText(modelo.getValueAt(row, 0).toString());
-                    spnAno.setValue(modelo.getValueAt(row, 1));
-                    cmbMes.setSelectedItem(modelo.getValueAt(row, 2));
-                    txtValor.setText(modelo.getValueAt(row, 3).toString());
-                    txtInflacao.setText(modelo.getValueAt(row, 4).toString());
+                    txtConta.setText(modelo.getValueAt(row, 1).toString());
+                    spnAno.setValue(modelo.getValueAt(row, 2));
+                    cmbMes.setSelectedItem(modelo.getValueAt(row, 3));
+                    txtValor.setText(modelo.getValueAt(row, 4).toString());
+                    txtInflacao.setText(modelo.getValueAt(row, 5).toString());
                 }
             }
         });
@@ -132,11 +140,11 @@ public class Form_Planeja_Auditoria extends JFrame {
             int anoIni = getAnoFromDate(dataIni);
             int anoFim = getAnoFromDate(dataFim);
             
-            sql = "SELECT conta, ano_referencia, mes, valor_planejado, inflacao_premissa "
-                + "FROM tb_plano_diretor "
-                + "WHERE ((ano_referencia = ? AND mes >= ?) OR (ano_referencia > ?)) "
-                + "AND ((ano_referencia = ? AND mes <= ?) OR (ano_referencia < ?)) "
-                + "ORDER BY ano_referencia DESC, mes DESC, conta";
+            sql = "SELECT id, conta, ano_referencia, mes, valor_planejado, inflacao_premissa "
+                                + "FROM tb_plano_diretor "
+                                + "WHERE ((ano_referencia = ? AND mes >= ?) OR (ano_referencia > ?)) "
+                                + "AND ((ano_referencia = ? AND mes <= ?) OR (ano_referencia < ?)) "
+                                + "ORDER BY ano_referencia DESC, mes DESC, conta";
             
             try {
                 stmt = conexao.prepareStatement(sql);
@@ -151,8 +159,8 @@ public class Form_Planeja_Auditoria extends JFrame {
                 return;
             }
         } else {
-            sql = "SELECT conta, ano_referencia, mes, valor_planejado, inflacao_premissa "
-                + "FROM tb_plano_diretor ORDER BY ano_referencia DESC, mes DESC, conta";
+                    sql = "SELECT id, conta, ano_referencia, mes, valor_planejado, inflacao_premissa "
+                            + "FROM tb_plano_diretor ORDER BY ano_referencia DESC, mes DESC, conta";
             
             try {
                 stmt = conexao.prepareStatement(sql);
@@ -165,6 +173,7 @@ public class Form_Planeja_Auditoria extends JFrame {
         try (ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 modelo.addRow(new Object[]{
+                    rs.getInt("id"),
                     rs.getString("conta"),
                     rs.getInt("ano_referencia"),
                     rs.getInt("mes"),
@@ -216,85 +225,77 @@ public class Form_Planeja_Auditoria extends JFrame {
     }
 
     private void atualizarPlanejamento() {
-        int row = tabela.getSelectedRow();
-        if (row < 0) {
-            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela!");
-            return;
-        }
-        
-        String contaAntiga = modelo.getValueAt(row, 0).toString();
-        int anoAntigo = (int) modelo.getValueAt(row, 1);
-        int mesAntigo = (int) modelo.getValueAt(row, 2);
-        
-        String contaNova = txtConta.getText().trim();
-        int anoNovo = (int) spnAno.getValue();
-        int mesNovo = (int) cmbMes.getSelectedItem();
-        
-        if (contaNova.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Informe o nome da Conta!");
-            return;
-        }
-        
-        double valor;
-        double inflacao;
-        try {
-            valor = Double.parseDouble(txtValor.getText().replace(".", "").replace(",", "."));
-            inflacao = Double.parseDouble(txtInflacao.getText().replace(",", "."));
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Valor ou Inflação inválidos!");
-            return;
-        }
+            int row = tabela.getSelectedRow();
+            if (row < 0) {
+                JOptionPane.showMessageDialog(this, "Selecione um registro na tabela!");
+                return;
+            }
 
-        String sql = "UPDATE tb_plano_diretor SET conta=?, ano_referencia=?, mes=?, valor_planejado=?, inflacao_premissa=? "
-                   + "WHERE conta=? AND ano_referencia=? AND mes=?";
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            stmt.setString(1, contaNova);
-            stmt.setInt(2, anoNovo);
-            stmt.setInt(3, mesNovo);
-            stmt.setDouble(4, valor);
-            stmt.setDouble(5, inflacao);
-            stmt.setString(6, contaAntiga);
-            stmt.setInt(7, anoAntigo);
-            stmt.setInt(8, mesAntigo);
-            stmt.execute();
-            JOptionPane.showMessageDialog(this, "Registro atualizado com sucesso!");
-            carregarPlanejamento();
-            limparCampos();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Erro ao atualizar: " + e.getMessage());
-        }
-    }
+            int idRegistro = (int) modelo.getValueAt(row, 0);
 
-    private void excluirPlanejamento() {
-        int row = tabela.getSelectedRow();
-        if (row < 0) {
-            JOptionPane.showMessageDialog(this, "Selecione um registro na tabela!");
-            return;
-        }
-        
-        int confirm = JOptionPane.showConfirmDialog(this, 
-            "Deseja realmente excluir o registro?", "Confirmar Exclusão", 
-            JOptionPane.YES_NO_OPTION);
-        
-        if (confirm == JOptionPane.YES_OPTION) {
-            String conta = modelo.getValueAt(row, 0).toString();
-            int ano = (int) modelo.getValueAt(row, 1);
-            int mes = (int) modelo.getValueAt(row, 2);
-            
-            String sql = "DELETE FROM tb_plano_diretor WHERE conta=? AND ano_referencia=? AND mes=?";
+            String contaNova = txtConta.getText().trim();
+            int anoNovo = (int) spnAno.getValue();
+            int mesNovo = (int) cmbMes.getSelectedItem();
+
+            if (contaNova.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Informe o nome da Conta!");
+                return;
+            }
+
+            double valor;
+            double inflacao;
+            try {
+                valor = Double.parseDouble(txtValor.getText().replace(".", "").replace(",", "."));
+                inflacao = Double.parseDouble(txtInflacao.getText().replace(",", "."));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Valor ou Inflação inválidos!");
+                return;
+            }
+
+            String sql = "UPDATE tb_plano_diretor SET conta=?, ano_referencia=?, mes=?, valor_planejado=?, inflacao_premissa=? "
+                    + "WHERE id=?";
             try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-                stmt.setString(1, conta);
-                stmt.setInt(2, ano);
-                stmt.setInt(3, mes);
+                stmt.setString(1, contaNova);
+                stmt.setInt(2, anoNovo);
+                stmt.setInt(3, mesNovo);
+                stmt.setDouble(4, valor);
+                stmt.setDouble(5, inflacao);
+                stmt.setInt(6, idRegistro);
                 stmt.execute();
-                JOptionPane.showMessageDialog(this, "Registro excluído com sucesso!");
+                JOptionPane.showMessageDialog(this, "Registro atualizado com sucesso!");
                 carregarPlanejamento();
                 limparCampos();
             } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Erro ao excluir: " + e.getMessage());
+                JOptionPane.showMessageDialog(this, "Erro ao atualizar: " + e.getMessage());
             }
         }
-    }
+
+    private void excluirPlanejamento() {
+            int row = tabela.getSelectedRow();
+            if (row < 0) {
+                JOptionPane.showMessageDialog(this, "Selecione um registro na tabela!");
+                return;
+            }
+        
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Deseja realmente excluir o registro?", "Confirmar Exclusï¿½o",
+                    JOptionPane.YES_NO_OPTION);
+        
+            if (confirm == JOptionPane.YES_OPTION) {
+                int id = (int) modelo.getValueAt(row, 0);
+            
+                String sql = "DELETE FROM tb_plano_diretor WHERE id=?";
+                try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+                    stmt.setInt(1, id);
+                    stmt.execute();
+                    JOptionPane.showMessageDialog(this, "Registro excluído com sucesso!");
+                    carregarPlanejamento();
+                    limparCampos();
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(this, "Erro ao excluir: " + e.getMessage());
+                }
+            }
+        }
     
     private void limparCampos() {
         txtConta.setText("");
