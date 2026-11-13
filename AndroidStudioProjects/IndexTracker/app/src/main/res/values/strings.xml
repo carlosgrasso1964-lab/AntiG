@@ -1,19 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">IndexTracker</string>
-    <string name="titulo">📈 Índices &amp; Moedas + ₿ Bitcoin</string>
-    <string name="adicionar_indice">➕ Novo índice</string>
+    <string name="titulo">📈 Índices &amp; Cotações</string>
+    <string name="subtitulo">🔄 Fechamento diário · registre manualmente ou busque automático</string>
+    <string name="historico">📊 Histórico</string>
+    <string name="novo_indice">➕ Novo</string>
+    <string name="gerenciar">⚙️ Gerenciar</string>
     <string name="atualizar">🔄 Atualizar</string>
-    <string name="arquivar">📦 Arquivar > 1 ano</string>
-    <string name="ultima_atualizacao">última atualização: %1$s</string>
-    <string name="sem_dados">Nenhum índice cadastrado.\nToque em ➕ para adicionar.</string>
-    <string name="form_nome">Nome (ex: Dólar, Bitcoin, IBOVESPA)</string>
-    <string name="form_ativo">Ativo (símbolo/ticker)</string>
-    <string name="form_fonte">Fonte da cotação</string>
-    <string name="form_sufixo">Sufixo (ex: R$, pts, $)</string>
-    <string name="form_cor">Cor (hex)</string>
-    <string name="form_salvar">Salvar</string>
-    <string name="form_cancelar">Cancelar</string>
-    <string name="confirmar_excluir">Excluir este índice e todo seu histórico?</string>
-    <string name="confirmar_arquivar">Remover registros com mais de 1 ano?</string>
+    <string name="reiniciar_historico">📋 Reiniciar histórico</string>
+    <string name="fazer_backup">💾 Backup</string>
+    <string name="restaurar">📥 Restaurar</string>
+    <string name="restaurar_titulo">Restaurar backup</string>
+    <string name="confirmar_restaurar">Substituir os dados atuais por este backup?\n\n%1$d índice(s) e %2$d registro(s) do histórico serão restaurados. Os dados atuais serão apagados.</string>
+    <string name="backup_salvo">✅ Backup salvo com sucesso</string>
+    <string name="backup_restaurado">✅ Backup restaurado: %1$d índice(s)</string>
+    <string name="backup_erro">⚠️ Não foi possível concluir a operação com o arquivo</string>
+    <string name="backup_invalido">⚠️ Arquivo de backup inválido ou sem índices</string>
+    <string name="restaurando">⏳ Lendo o backup...</string>
+    <string name="ultima_atualizacao">último registro: %1$s</string>
+    <string name="sem_registros">⏳ Sem registros ainda. Toque em Atualizar.</string>
+    <string name="sem_indices">Nenhum índice cadastrado. Toque em ➕ Novo para adicionar.</string>
+    <string name="sem_dados_grafico">Nenhum dado para exibir nos gráficos</string>
+    <string name="sem_dados">Sem dados</string>
+    <string name="status_buscando">⏳ Buscando cotações...</string>
+    <string name="status_atualizado">✅ Dados de hoje atualizados</string>
+    <string name="status_erro">⚠️ Não foi possível buscar as cotações. Tente novamente.</string>
+    <string name="status_falha">⚠️ Não foi possível atualizar: %1$s. Mantido o último valor.</string>
+    <string name="status_manual">✅ %1$s atualizado</string>
+    <string name="status_historico_limpo">📋 Histórico reiniciado. Toque em Atualizar.</string>
+    <string name="novo_valor">Novo valor</string>
+    <string name="confirmar">✓</string>
+    <string name="badge_api">API</string>
+    <string name="badge_manual">MANUAL</string>
+    <string name="editar_icone">✏️</string>
+    <string name="excluir_icone">🗑️</string>
+
+    <string name="form_novo_titulo">Novo índice</string>
+    <string name="form_editar_titulo">Editar índice</string>
+    <string name="form_subtitulo">Cadastre índices manuais (você informa o valor) ou automáticos (cotação pela internet).</string>
+    <string name="form_nome">Nome do índice *</string>
+    <string name="form_tipo">Tipo de índice *</string>
+    <string name="form_codigo">Código da moeda (ex: EUR)</string>
+    <string name="form_codigo_ajuda">Ex.: USD, EUR, GBP. O valor será convertido para reais.</string>
+    <string name="form_api_url">URL da API (JSON)</string>
+    <string name="form_json_path">Caminho do valor no JSON (opcional)</string>
+    <string name="form_json_path_ajuda">Use ponto para navegar. Ex.: data.rates.BRL</string>
+    <string name="form_sufixo">Sufixo (ex: R$)</string>
+    <string name="form_casas_decimais">Casas decimais</string>
+    <string name="form_cor">Cor do gráfico</string>
+    <string name="form_cor_ajuda">Toque no campo ou na bolinha para escolher.</string>
+    <string name="form_escolher_cor">🎨 Escolha a cor</string>
+    <string name="form_valor_padrao">Valor padrão *</string>
+    <string name="form_valor_padrao_ajuda">Usado quando a busca automática falhar ou como ponto de partida do histórico.</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="salvar">💾 Salvar</string>
+    <string name="adicionar">➕ Adicionar</string>
+    <string name="gerenciar_titulo">⚙️ Gerenciar Índices</string>
+    <string name="confirmar_excluir">Excluir o índice \"%1$s\"?\n\nTodo o histórico dele será removido.</string>
+    <string name="confirmar_reiniciar">Todos os registros do histórico serão removidos (os índices cadastrados serão mantidos). Continuar?</string>
+    <string name="excluido">🗑️ Índice excluído</string>
+    <string name="salvo">✅ Índice salvo</string>
+    <string name="preencha_nome">Digite o nome do índice</string>
+    <string name="preencha_valor">Informe um valor padrão válido</string>
+    <string name="preencha_codigo">Informe o código da moeda</string>
+    <string name="preencha_url">Informe a URL da API</string>
+    <string name="valor_invalido">Valor inválido</string>
+    <string name="digite_valor">Digite um valor antes de salvar</string>
+
+    <string-array name="tipos_indice">
+        <item>✍️ Manual (informo o valor)</item>
+        <item>🌐 Moeda (cotação automática)</item>
+        <item>🔗 URL personalizada (JSON)</item>
+    </string-array>
 </resources>

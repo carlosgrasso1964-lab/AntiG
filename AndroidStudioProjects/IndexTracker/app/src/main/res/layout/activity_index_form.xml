@@ -1,110 +1,242 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@color/background">
-
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Novo índice"
-        android:textColor="@color/text_primary"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="24dp" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilNome"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/form_nome"
-        android:layout_marginBottom="12dp">
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/etNome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilAtivo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/form_ativo"
-        android:layout_marginBottom="12dp">
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/etAtivo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilFonte"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/form_fonte"
-        android:layout_marginBottom="12dp">
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/etFonte"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilSufixo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/form_sufixo"
-        android:layout_marginBottom="12dp">
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/etSufixo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilCor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/form_cor"
-        android:layout_marginBottom="12dp">
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/etCor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="#1a3a6b" />
-    </com.google.android.material.textfield.TextInputLayout>
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end"
-        android:layout_marginTop="16dp">
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="24dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCancelar"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cancelar"
-            android:layout_weight="1"
-            android:backgroundTint="@color/background"
-            android:textColor="@color/primary" />
+            android:text="@string/form_novo_titulo"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSalvar"
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Salvar"
-            android:layout_weight="1"
-            android:backgroundTint="@color/primary"
-            android:textColor="@android:color/white" />
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/form_subtitulo"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNome"
+            style="@style/Widget.IndexTracker.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/form_nome">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLength="30" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="6dp"
+            android:text="@string/form_tipo"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <Spinner
+            android:id="@+id/spTipo"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_input"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCodigo"
+            style="@style/Widget.IndexTracker.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:hint="@string/form_codigo"
+            app:helperText="@string/form_codigo_ajuda">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCodigo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapCharacters"
+                android:maxLength="8" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilApiUrl"
+            style="@style/Widget.IndexTracker.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:hint="@string/form_api_url"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etApiUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textUri" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilJsonPath"
+            style="@style/Widget.IndexTracker.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:hint="@string/form_json_path"
+            android:visibility="gone"
+            app:helperText="@string/form_json_path_ajuda">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etJsonPath"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.IndexTracker.TextInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/form_sufixo">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSufixo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLength="10" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.IndexTracker.TextInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:hint="@string/form_casas_decimais">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCasasDecimais"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/viewCorPrevia"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="10dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCor"
+                style="@style/Widget.IndexTracker.TextInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/form_cor"
+                app:helperText="@string/form_cor_ajuda">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:maxLength="7" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.IndexTracker.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:hint="@string/form_valor_padrao">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etValorPadrao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/form_valor_padrao_ajuda"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelar"
+                style="@style/Widget.IndexTracker.ToolbarButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cancelar"
+                android:textColor="@color/primary"
+                app:backgroundTint="@color/surface" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSalvar"
+                style="@style/Widget.IndexTracker.ToolbarButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="@string/salvar"
+                android:textColor="@color/on_primary"
+                app:backgroundTint="@color/primary_button" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

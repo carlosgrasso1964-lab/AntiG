@@ -1,57 +1,55 @@
 package com.carlos.indextracker.activities
 
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.carlos.indextracker.R
 import com.carlos.indextracker.database.Indice
+import com.carlos.indextracker.databinding.ItemGerenciarBinding
+import com.carlos.indextracker.ui.Formato
 
 class IndiceAdapter(
-    private val onEditClick: ((Indice) -> Unit)? = null,
-    private val onDeleteClick: ((Long) -> Unit)? = null
+    private val onEditar: (Indice) -> Unit,
+    private val onExcluir: (Indice) -> Unit
 ) : ListAdapter<Indice, IndiceAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_indice, parent, false)
-        return ViewHolder(view, onEditClick, onDeleteClick)
+        val binding = ItemGerenciarBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class ViewHolder(itemView: View,
-        private val onEditClick: ((Indice) -> Unit)? = null,
-        private val onDeleteClick: ((Long) -> Unit)? = null
-    ) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(private val binding: ItemGerenciarBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        private val tvNome: TextView = itemView.findViewById(R.id.tvNome)
-        private val tvAtivo: TextView = itemView.findViewById(R.id.tvAtivo)
-        private val tvFonte: TextView = itemView.findViewById(R.id.tvFonte)
-        private val ibDelete: ImageView = itemView.findViewById(R.id.ibDelete)
+        fun bind(indice: Indice) {
+            binding.tvNome.text = indice.nome
+            binding.dotCor.background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(Formato.parseCor(indice.cor))
+            }
 
-        fun bind(item: Indice) {
-            tvNome.text = item.nome
-            tvAtivo.text = "${item.ativo}"
-            tvFonte.text = item.fonte
-            ibDelete.setOnClickListener { onDeleteClick?.invoke(item.id) }
-            itemView.setOnClickListener { onEditClick?.invoke(item) }
+            val tipo = when {
+                indice.manual -> "✍️ Manual"
+                indice.fonte == Indice.FONTE_MOEDA -> "🌐 API · ${indice.codigo}"
+                else -> "🔗 API · URL"
+            }
+            binding.tvDetalhe.text = "$tipo · padrão ${Formato.valor(indice.valorPadrao, indice.casasDecimais)}${indice.sufixo}"
+
+            binding.btnEditar.setOnClickListener { onEditar(indice) }
+            binding.btnExcluir.setOnClickListener { onExcluir(indice) }
         }
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Indice>() {
-        override fun areItemsTheSame(oldItem: Indice, newItem: Indice): Boolean = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: Indice, newItem: Indice): Boolean =
-            oldItem.nome == newItem.nome &&
-                oldItem.ativo == newItem.ativo &&
-                oldItem.fonte == newItem.fonte &&
-                oldItem.sufixo == newItem.sufixo &&
-                oldItem.cor == newItem.cor
+        override fun areItemsTheSame(oldItem: Indice, newItem: Indice) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Indice, newItem: Indice) = oldItem == newItem
     }
 }

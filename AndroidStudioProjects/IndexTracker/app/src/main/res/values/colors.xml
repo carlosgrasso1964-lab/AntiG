@@ -2,12 +2,25 @@
 <resources>
     <color name="primary">#1a3a6b</color>
     <color name="primary_dark">#0f2a52</color>
+    <color name="primary_button">#1a3a6b</color>
+    <color name="on_primary">#ffffff</color>
     <color name="background">#f5f7fc</color>
     <color name="surface">#ffffff</color>
+    <color name="surface_alt">#f9faff</color>
     <color name="text_primary">#0b1c3a</color>
     <color name="text_secondary">#5e6f8d</color>
+    <color name="text_hint">#a8b6cc</color>
     <color name="divider">#e4ebf5</color>
+    <color name="chip_bg">#eef3fa</color>
+    <color name="badge_bg">#dbe6f5</color>
+    <color name="input_stroke">#cfd9ea</color>
+    <color name="chart_grid">#eef2f7</color>
+    <color name="chart_text">#8a9bb8</color>
+    <color name="manual_badge_bg">#e2d5f8</color>
+    <color name="manual_badge_text">#5c3fa3</color>
     <color name="positive">#0f7b3a</color>
     <color name="negative">#c43a3a</color>
+    <color name="neutral">#7a8caa</color>
     <color name="warning">#f7931a</color>
+    <color name="manual_purple">#7a5cbf</color>
 </resources>
