@@ -11,9 +11,17 @@ import java.sql.ResultSet;
 
 import java.sql.SQLException;
 
+import java.text.Collator;
+
 import java.text.ParseException;
 
 import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
+
+import java.util.List;
+
+import java.util.Locale;
 
 import java.util.logging.Level;
 
@@ -1238,13 +1246,24 @@ public class Tela_Pagar extends javax.swing.JFrame {
 
                     ResultSet rs = stmt.executeQuery();
 
-                    while (rs.next()) {
+                                        // Coleta todos os itens em uma lista
+                                        List<String> itens = new ArrayList<>();
+                                        while (rs.next()) {
+                                            itens.add(rs.getString(valor) + "-" + (rs.getString("codigo") + "-" + (rs.getString("fk_gpprinc"))));
+                                        }
 
-                        combo.addItem(rs.getString(valor) + "-" + (rs.getString("codigo") + "-" + (rs.getString("fk_gpprinc"))));
+                                        // Ordena alfabeticamente com Collator para Português (respeita acentos)
+                                        @SuppressWarnings("deprecation")
+                                        Collator collator = Collator.getInstance(new Locale("pt", "BR"));
+                                        collator.setStrength(Collator.TERTIARY);
+                                        itens.sort(collator);
 
-                    }
+                                        // Adiciona os itens ordenados ao combo
+                                        for (String item : itens) {
+                                            combo.addItem(item);
+                                        }
 
-                    rs.close();
+                                        rs.close();
 
                     stmt.close();
 

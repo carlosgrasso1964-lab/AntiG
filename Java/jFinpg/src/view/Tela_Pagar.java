@@ -5,9 +5,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import java.text.Collator;
+
 import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
+
+import java.util.List;
+
+import java.util.Locale;
+
 import java.util.logging.Level;
+
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -792,9 +804,24 @@ public class Tela_Pagar extends javax.swing.JFrame {
             try {
                 PreparedStatement stmt = con.prepareStatement(sql);
                 ResultSet rs = stmt.executeQuery();
+
+                // Coleta todos os itens em uma lista
+                List<String> itens = new ArrayList<>();
                 while (rs.next()) {
-                    combo.addItem(rs.getString(valor) + "-" + (rs.getString("codigo") + "-" + (rs.getString("fk_gpprinc"))));
+                    itens.add(rs.getString(valor) + "-" + (rs.getString("codigo") + "-" + (rs.getString("fk_gpprinc"))));
                 }
+
+                // Ordena alfabeticamente com Collator para Português (respeita acentos)
+                @SuppressWarnings("deprecation")
+                Collator collator = Collator.getInstance(new Locale("pt", "BR"));
+                collator.setStrength(Collator.TERTIARY);
+                itens.sort(collator);
+
+                // Adiciona os itens ordenados ao combo
+                for (String item : itens) {
+                    combo.addItem(item);
+                }
+
                 rs.close();
                 stmt.close();
                 con.close();

@@ -11,7 +11,7 @@ public class Conexao {
             String user = System.getenv("DB_USER");
             String password = System.getenv("DB_PASSWORD");
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection conectado = (Connection) DriverManager.getConnection("jdbc:mariadb://localhost:3306/mdjfin?useSSL=false&allowPublicKeyRetrieval=true", user, password);
+            Connection conectado = (Connection) DriverManager.getConnection("jdbc:mariadb://localhost:3307/mdjfin?useSSL=false&allowPublicKeyRetrieval=true", user, password);
             conectado.setAutoCommit(true); // padrão
             return conectado;
         } catch (ClassNotFoundException | SQLException e) {
